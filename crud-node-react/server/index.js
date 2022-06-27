@@ -1,30 +1,33 @@
-const express = require('express');
-const app = express();
+let sql = require("mssql")
 
-var Connection = require('tedious').Connection;  
-    var config = {  
-        server: 'localhost:1433',  //update me
-        authentication: {
-            type: 'default',
-            options: {
-                userName: 'sa', //update me
-                password: 'pasWORD1'  //update me
-            }
-        },
-        options: {
-            // If you are on Microsoft Azure, you need encryption:
-            encrypt: true,
-            database: 'master'  //update me
-        }
-    };  
-    var connection = new Connection(config);  
-    connection.on('connect', function(err) {  
-        // If no error, then good to proceed.
-        console.log("Connectado a la base de datos");  
-    });
-    
-connection.connect();
+let dbconfig = {
+  server: "localhost",
+  port : 1433,
+  database :"master",
+  user :"sa",
+  password: process.env.sql_auth,
+  trustServerCertificate: true
+}
 
-app.listen('3001', () => {
-    console.log('Aplicacion en 3001 encendida');
+//Creamos el objeto de conexion
+var conn = new sql.ConnectionPool(dbconfig);
+var req = new sql.Request(conn);
+conn.connect((err) => {
+  if(err){
+    console.log("hay errores");
+    console.log(err);
+  }
+  console.log("Connected")
+  //Running the query
+  req.query("Select * from peliculas", (err, rs) => {
+    if(err){
+      console.log("hay errores, en query");
+      console.log(err);
+    }
+    else{
+
+      console.log(rs);
+    }
+    conn.close();//HAY QUE CERRAR LA CONEXION tras la query
+  });
 });
