@@ -1,11 +1,11 @@
 let sql = require("mssql")
 
 let dbconfig = {
-  server: "localhost",
+  server: "marketing",
   port : 1433,
   database :"master",
   user :"sa",
-  password: process.env.sql_auth,
+  password: process.env.htm_auth,
   trustServerCertificate: true
 }
 
@@ -19,13 +19,12 @@ conn.connect((err) => {
   }
   console.log("Connected")
   //Running the query
-  req.query("Select * from peliculas", (err, rs) => {
+  req.query("Select TOP 10 * from Mes.dbo.tbRegEnsacado;", (err, rs) => {
     if(err){
       console.log("hay errores, en query");
       console.log(err);
     }
     else{
-
       console.log(rs);
     }
     conn.close();//HAY QUE CERRAR LA CONEXION tras la query
