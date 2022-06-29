@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { json } = require('body-parser');
+const async = require('async');
 //Check de conexion a la base de datos
 let dbconfig = {
   server: "localhost",
@@ -25,10 +26,12 @@ conn.connect((err) => {
   }
   console.log("Connected")
   conn.close();//HAY QUE CERRAR LA CONEXION tras la query
-  });
+});
+
+
 
 //Creamos la rutina para la aplicacion
-app.listen("3001","172.26.0.21");
+app.listen("3001");
 
 app.get("/", (req, res) => {
 conn.connect((err) => {
@@ -82,4 +85,26 @@ app.post("/api/insert", (request,res) =>{
     });
   });
 
+});
+
+//URL PARA MOSTRAR el contenido en front end
+app.get("/api_get", (request, res) => {
+  conn.connect((err) => {
+    if(err){
+      console.log("hay errores");
+      console.log(err);
+    }
+    console.log("Connected")
+    //Running the query
+    req.query("Select * from dbo.peliculas;", (err, rs) => {
+      if(err){
+        console.log("hay errores, en query");
+        console.log(err);
+      }
+      else{
+        res.send(rs.recordset);
+      }
+      conn.close();//HAY QUE CERRAR LA CONEXION tras la query
+    });
+  });
 });

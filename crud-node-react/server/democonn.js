@@ -1,24 +1,27 @@
-var Connection = require('tedious').Connection;  
-var config = {  
-    server: 'localhost,1433',  //update me
-    authentication: {
-        type: 'default',
-        options: {
-            userName: 'sa', //update me
-            password: process.env.sql_auth  //update me
-        }
-    },
-    options: {
-        // If you are on Microsoft Azure, you need encryption:
-        encrypt: true,
-        database: 'master'  //update me
-    }
-};  
-var connection = new Connection(config);  
-connection.on('connect', function(err) {  
-    // If no error, then good to proceed.
-    console.log("Connected");  
-});
+const sql = require('mssql')
+const sqlConfig = {
+  user: 'sa',
+  password: process.env.htm_auth,
+  database: 'master',
+  server: 'marketing',
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  },
+  options: {
+    encrypt: true, // for azure
+    trustServerCertificate: true // change to true for local dev / self-signed certs
+  }
+}
 
-connection.connect();
-
+async () => {
+ try {
+  // make sure that any items are correctly URL encoded in the connection string
+  await sql.connect(sqlConfig).then(()=>{console.log("connected")})
+  const result = await sql.query`select * from Datos19.dbo.Tb19`
+  console.dir(result)
+ } catch (err) {
+  console.log(err)
+ }
+}
