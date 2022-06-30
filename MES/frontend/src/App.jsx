@@ -3,6 +3,7 @@ import Home from './pages/home';
 import Estadistico from './pages/estadistico';
 import ErrorPage from './pages/ErrorPage';
 import EjParam from './pages/EjParam';
+import RegEnsacado from './pages/Ensacado';
 export function App() {
 
   return (
@@ -14,6 +15,7 @@ export function App() {
           <Route path='/estadistico' element ={<Estadistico />} />
           <Route path='*' element={<ErrorPage />} />
           <Route path='/ejparam/:username' element = {<EjParam />} />
+          <Route path='/RegEnsacado' element = {<RegEnsacado />} />
       </Routes>
       
       <footer>©UNNOX-GROUP 2022 </footer>
