@@ -54,7 +54,7 @@ export default function Estadistico() {
     </div>
     <p>{Selecteds.length}</p>
     <div>{Selecteds.map((i)=>{
-      return <h1>{i.lastName}</h1>
+      return <h1> Nombre: {i.firstName} Apellido: {i.lastName}</h1>
     })}</div>
     
     </Fragment>

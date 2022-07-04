@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { json } = require('body-parser');
 const async = require('async');
-app.listen('3001',() => {console.log('listening in 3001')});
+app.listen('4001',() => {console.log('listening in 3001')});
 //usando bodyparser
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());//Permitir coger la info del front end como json
