@@ -26,7 +26,7 @@ async function connectDB() {
 
     try {
         await pool.connect();
-        console.log('Connected to database');
+        //console.log('Connected to database');
 
         return pool;
     }
@@ -74,5 +74,9 @@ app.get('/RegEnsacado', (request, res) => {
 
     }
     query();
+});
+
+app.post('/UpdateEnsacado', (request, res) =>{
+    console.log(request.body)
 });
 

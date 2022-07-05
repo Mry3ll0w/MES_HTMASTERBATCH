@@ -1,19 +1,19 @@
 
 //Visuals
-import { TextField,Button,Paper,Box, Select, MenuItem } from '@mui/material';
+import { TextField,Button,Paper,Box, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
+import { makeStyles } from '@material-ui/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { Fragment } from 'react'
 import { useState } from 'react';
 import axios from 'axios'
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import dateFormat, { masks } from "dateformat";
+import dateFormat from "dateformat";
 
 export default function RegEnsacado() {
     
     //Necesitamos UseState para tratar con los TextFields
     const [M_Fecha, mfecha] = useState('')
-    const [M_Turno, mturno] = useState(['Mañana', 'Tarde', 'Noche']);
+    const [M_Turno, mturno] = useState('');
     const [M_Producto, mprod] = useState('')
     const [M_Palet, mpalet] = useState('')
     const [M_Peso_Saco, mpsaco] = useState('')
@@ -24,7 +24,7 @@ export default function RegEnsacado() {
     //Constantes para trabajar con los datos 
     const [Productos,SetProductos] = useState([]);
     const [Ensacados, SetEnsacados] = useState([]);
-    const [Seleccion, Setselected] = useState([]);
+    const [EnsMod, SetEnsMod] = useState([]);
     
     
 
@@ -53,18 +53,46 @@ export default function RegEnsacado() {
     let rows = [];
     
     Ensacados.map( (i, n) =>{
-        rows = [...rows, {id: n++, Fecha : i.Fecha, Turno : i.Turno, Producto: i.Producto, 
+        return rows = [...rows, {id: n++, Fecha : i.Fecha, Turno : i.Turno, Producto: i.Producto, 
             Palet: i.Palet, Cantidad : i.Cantidad,Resto: i.Resto, Peso_Saco : i.Peso_Saco, Ant : i.Ant}];
     });
 
-    //Funcion para tratar los textFields
-    const TextFieldHandler = (e, setter) =>{ 
-        setter(e.target.value);
-    };
+    //Funciones para tratar los textFields
 
-    //Formato de fechas
 
+
+
+    function UpdateEnsacado(){
+        SetEnsMod({
+            Fecha :M_Fecha, Turno : M_Turno, Producto : M_Producto, Palet : M_Palet, Peso_Saco : M_Peso_Saco,
+            Cantidad : M_Cantidad, Resto : M_Resto, Ant : M_Ant 
+        });
+        axios.post('http://192.168.0.123:4001/UpdateEnsacado',
+        {Ensacado : EnsMod}
+        ).then(() => {
+            console.log("No hay errores")
+            alert("Insercion realizada");
+        }).catch( err => {console.log(err)})
+        ;
+    }
     
+    const MyStyles = makeStyles(theme => {
+        formControl : {
+            minwidth : 100
+        }
+        tfield_update : {
+            m : '3px' 
+            p:'3px'
+        }
+        dotted_box : {
+            p:2
+            m:'3px'
+            border:'1px dotted blue'
+        }
+    });
+
+    const StyleClasses = MyStyles();//Creamos un objeto que se encarga de gestionar los styles
+
   return (
     <Fragment>
         <div>Bienvenido al registro de ensacado</div>
@@ -83,14 +111,12 @@ export default function RegEnsacado() {
                     selectedIDs.has(row.id)
                 );
                 console.log(selectedRowData);
-                Setselected(selectedRowData);
                 //Creacion Ensacado
                 selectedRowData.map( (i) => {
-                   const tDate = new Date(i.Fecha);
-                   dateFormat(tDate, "yyyy-mm-dd");
-                   console.log(i.Fecha);
+                   var tDate = new Date(i.Fecha);
+                   tDate = dateFormat(tDate, "yyyy-mm-dd");
+                   console.log(tDate);
                    mfecha(tDate);
-                   
                    mpalet(i.Palet);
                    mpsaco(i.Peso_Saco);
                    mcant(i.Cantidad);
@@ -102,31 +128,53 @@ export default function RegEnsacado() {
             }}
         />
         </div>
-        <Box sx={{p:2, border:'1px dotted blue'}} >
+        <Box className={StyleClasses.dotted_box} >
             <Paper>
             <h2>Modifica el Ensacado</h2>
             
-            <TextField value={M_Fecha} onChange={TextFieldHandler} label="Fecha" sx={{m : '3px', p:'3px'}}/>
-
-            <Select sx={{width : '100',m : '3px', p:'3px'}} defaultValue='Mañana' label='Turno'>
-                <MenuItem value ={'Mañana'} onClick={e => mturno('Mañana')}>Mañana</MenuItem>
-                <MenuItem value ={'Tarde'} onClick={e => mturno('Tarde')} >Tarde</MenuItem>
-                <MenuItem value ={'Noche'} onClick={e => mturno('Noche')} >Noche</MenuItem>
-            </Select>
             
-            <Select sx={{width : '100',m : '3px', p:'3px'}} defaultValue="" label='Productos'>
-                {Productos.map((i) =>{return (<MenuItem key={i.Producto} value={i.Producto} >{i.Producto}</MenuItem>)})}
-            </Select>
+            <TextField id="mdate" value={M_Fecha} onChange={e => mfecha(e.target.value)} label="Fecha" sx={{m : '3px', p:'3px'}}/>
             
-            <TextField value={M_Palet} onChange={TextFieldHandler} label="NºLote-NºPalet" sx={{m : '3px', p:'3px'}} />
-            <TextField value={M_Peso_Saco} onChange={TextFieldHandler} label="Peso Saco(kg)" sx={{m : '3px', p:'3px'}}/>
+            <FormControl>{/* Para darle formato mas limpio a los Select*/}
+                <InputLabel>Turnos</InputLabel>
+                <Select 
+                    sx={{width : '100',m : '3px', p:'3px'}} 
+                    defaultValue='' 
+                    label='Turno'
+                    onChange={e => mturno(e.target.value)}
+                >
+                    <MenuItem value ={'Mañana'} >Mañana</MenuItem>
+                    <MenuItem value ={'Tarde'}  >Tarde</MenuItem>
+                    <MenuItem value ={'Noche'} >Noche</MenuItem>
+                </Select>
+                </FormControl>
+                 
+                <Select 
+                    sx={{width : '100',m : '3px', p:'3px'}} 
+                    defaultValue="" 
+                    label='Productos'
+                    onChange={e => mprod(e.target.value)}
+                >
+                    {Productos.map((i) =>{return (<MenuItem value={i.Producto}>{i.Producto}</MenuItem>)})}
+                </Select>
+            
+            
+            
+            <TextField value={M_Palet} onChange={e => mpalet(e.target.value)} label="NºLote-NºPalet" sx={{m : '3px', p:'3px'}} />
+            <TextField value={M_Peso_Saco} onChange={e => mpsaco(e.target.value)} label="Peso Saco(kg)" sx={{m : '3px', p:'3px'}}/>
             <p></p>
-            <TextField value={M_Resto} onChange={TextFieldHandler} label="Resto (kg)" sx={{m : '3px', p:'3px'}} />
-            <TextField value={M_Cantidad} onChange={TextFieldHandler} label="Cantidad (kg)" sx={{m : '3px', p:'3px'}}/>
-            <TextField value={M_Ant} onChange={TextFieldHandler} label="Cantidad (kg)" sx={{m : '3px', p:'3px'}}/>
+            <TextField value={M_Resto} onChange={e => mresto(e.target.value)} label="Resto (kg)" sx={{m : '3px', p:'3px'}} />
+            <TextField value={M_Cantidad} onChange={e => mcant(e.target.value)} label="Cantidad (kg)" sx={{m : '3px', p:'3px'}}/>
+            <TextField value={M_Ant} onChange={e => mant(e.target.value)} label="Cantidad (kg)" sx={{m : '3px', p:'3px'}}/>
+            
             
             </Paper>
-        
+            <Button sx={{m : '4px'}}
+                onClick={UpdateEnsacado} 
+                variant="contained"
+            >
+                Modifica el Ensacado
+            </Button>
         </Box>
         
            
