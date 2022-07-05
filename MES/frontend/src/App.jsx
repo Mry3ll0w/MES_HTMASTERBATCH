@@ -4,21 +4,25 @@ import Estadistico from './pages/estadistico';
 import ErrorPage from './pages/ErrorPage';
 import EjParam from './pages/EjParam';
 import RegEnsacado from './pages/Ensacado';
+import { Header } from './Components/Header';
+import { styles} from './Style/styles';
+import Footer from './Components/Footer';
 export function App() {
 
   return (
     <Router>
-      <h1>MES v0.0.1</h1>
-
+      <Header />
+      <div style={styles.home_div}>
       <Routes>
-          <Route path ="/" element={<Home/>}/>
+          <Route path ="/" element={<Home />}/>
           <Route path='/estadistico' element ={<Estadistico />} />
           <Route path='*' element={<ErrorPage />} />
           <Route path='/ejparam/:username' element = {<EjParam />} />
           <Route path='/RegEnsacado' element = {<RegEnsacado />} />
       </Routes>
       
-      <footer>©UNNOX-GROUP 2022 </footer>
+      </div>
+      <Footer />
     </Router>);
 }
 

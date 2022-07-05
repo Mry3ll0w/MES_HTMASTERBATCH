@@ -137,8 +137,10 @@ export default function RegEnsacado() {
     
   return (
     <Fragment>
-        <div>Bienvenido al registro de ensacado</div>
-        <p>A continuación mostramos los ultimos ensacados</p>
+        <h1>
+            Bienvenido al panel de modificacion de los ensacados
+        </h1>
+        <p>Se muestran los ultimos ensacados, ordenados por fecha, seleccione UN ÚNICO ensacado y podrá modificarlo.</p>
         <div style={{ height: 300, width: '100%' }}>
         <DataGrid
             rows={rows}
