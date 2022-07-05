@@ -77,6 +77,11 @@ app.get('/RegEnsacado', (request, res) => {
 });
 
 app.post('/UpdateEnsacado', (request, res) =>{
-    console.log(request.body)
+    console.log(request.body);
+    async function q (){
+        var q_ins = await get_query(`Update MES.dbo.tbRegEnsacado SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco=${request.body.Peso_Saco},Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant} WHERE Palet = '${request.body.Palet}';`)
+        console.log(q_ins);
+    }
+    q();
 });
 

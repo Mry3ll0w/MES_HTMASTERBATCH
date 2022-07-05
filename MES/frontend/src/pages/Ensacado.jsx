@@ -1,7 +1,6 @@
 
 //Visuals
-import { TextField,Button,Paper,Box, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
-import { makeStyles } from '@material-ui/styles';
+import { TextField,Button,Paper,Box, Select, MenuItem, FormControl, InputLabel, Input, makeStyles} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { Fragment } from 'react'
 import { useState } from 'react';
@@ -63,36 +62,19 @@ export default function RegEnsacado() {
 
 
     function UpdateEnsacado(){
-        SetEnsMod({
+        
+        axios.post('http://192.168.0.123:4001/UpdateEnsacado',
+        {
             Fecha :M_Fecha, Turno : M_Turno, Producto : M_Producto, Palet : M_Palet, Peso_Saco : M_Peso_Saco,
             Cantidad : M_Cantidad, Resto : M_Resto, Ant : M_Ant 
-        });
-        axios.post('http://192.168.0.123:4001/UpdateEnsacado',
-        {Ensacado : EnsMod}
+        }
         ).then(() => {
-            console.log("No hay errores")
-            alert("Insercion realizada");
+            alert("Insercion realizada")
         }).catch( err => {console.log(err)})
         ;
     }
     
-    const MyStyles = makeStyles(theme => {
-        formControl : {
-            minwidth : 100
-        }
-        tfield_update : {
-            m : '3px' 
-            p:'3px'
-        }
-        dotted_box : {
-            p:2
-            m:'3px'
-            border:'1px dotted blue'
-        }
-    });
-
-    const StyleClasses = MyStyles();//Creamos un objeto que se encarga de gestionar los styles
-
+    
   return (
     <Fragment>
         <div>Bienvenido al registro de ensacado</div>
@@ -128,7 +110,7 @@ export default function RegEnsacado() {
             }}
         />
         </div>
-        <Box className={StyleClasses.dotted_box} >
+        {<Box sx={{p:2,m:'3px', border:'1px dotted blue'}} >
             <Paper>
             <h2>Modifica el Ensacado</h2>
             
@@ -138,7 +120,7 @@ export default function RegEnsacado() {
             <FormControl>{/* Para darle formato mas limpio a los Select*/}
                 <InputLabel>Turnos</InputLabel>
                 <Select 
-                    sx={{width : '100',m : '3px', p:'3px'}} 
+                    sx={{width : '100',m : '3px', p:'3px', minWidth : 100}} 
                     defaultValue='' 
                     label='Turno'
                     onChange={e => mturno(e.target.value)}
@@ -147,17 +129,21 @@ export default function RegEnsacado() {
                     <MenuItem value ={'Tarde'}  >Tarde</MenuItem>
                     <MenuItem value ={'Noche'} >Noche</MenuItem>
                 </Select>
-                </FormControl>
-                 
+            </FormControl>
+            
+            <FormControl>
+            <InputLabel>Productos</InputLabel>
                 <Select 
-                    sx={{width : '100',m : '3px', p:'3px'}} 
+                    sx={{width : '100',m : '3px', p:'3px', minWidth : '120px'}} 
                     defaultValue="" 
                     label='Productos'
                     onChange={e => mprod(e.target.value)}
                 >
-                    {Productos.map((i) =>{return (<MenuItem value={i.Producto}>{i.Producto}</MenuItem>)})}
+                    {Productos.map((i) =>{return (<MenuItem key ={i.Producto} value={i.Producto}>{i.Producto}</MenuItem>)})}
                 </Select>
             
+            </FormControl>
+                
             
             
             <TextField value={M_Palet} onChange={e => mpalet(e.target.value)} label="NºLote-NºPalet" sx={{m : '3px', p:'3px'}} />
@@ -175,7 +161,7 @@ export default function RegEnsacado() {
             >
                 Modifica el Ensacado
             </Button>
-        </Box>
+        </Box>}
         
            
     </Fragment>

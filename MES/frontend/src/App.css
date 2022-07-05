@@ -1,3 +1,12 @@
-.App {
-  text-align: center;
+formControl {
+  minwidth : 100
+}
+tfield_update {
+      m:'3px';
+      p:'3px';
+}
+dotted_box  {
+      p:2;
+      m:'3px';
+      border:'1px dotted blue';
 }
