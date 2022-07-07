@@ -49,7 +49,7 @@ export function Header () {
             <br />
             <Button style={styles.buttons} onClick={() => {navigate('/Ensacados');openmenu(false)}} variant='contained'>Ensacados</Button>
             <br /> 
-            <Button style={styles.buttons} onClick={() => {navigate('/Estadisctico');openmenu(false)}} variant='contained'>Estadistico</Button>
+            <Button style={styles.buttons} onClick={() => {navigate('/Estadistico');openmenu(false)}} variant='contained'>Estadistico</Button>
             <br />
           </Box>
 

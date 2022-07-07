@@ -50,9 +50,7 @@ async function get_query(q) {
 
         //return {query :err, ok : false};
     }
-    finally {
         DB.close();
-    }
 }
 
 async function execute() {
@@ -70,6 +68,7 @@ app.get('/RegEnsacado', (request, res) => {
         let q_prods = await get_query("select Producto from MES.dbo.tbRegEnsacado GROUP by Producto");
         if (q_ensacados.ok && q_prods.ok) res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
         else res.send("Fallo al hacer la query");
+        console.log(q_ensacados)
 
     }
     query();
