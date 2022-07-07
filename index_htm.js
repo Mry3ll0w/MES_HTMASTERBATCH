@@ -1,34 +1,27 @@
-let sql = require("mssql")
-
-let dbconfig = {
-  server: "marketing",
-  port : 1433,
-  database :"master",
-  user :"sa",
+const sql = require('mssql')
+const sqlConfig = {
+  user: 'sa',
   password: process.env.htm_auth,
-  trustServerCertificate: true
+  database: 'master',
+  server: 'marketing',
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  },
+  options: {
+    encrypt: true, // for azure
+    trustServerCertificate: true// change to true for local dev / self-signed certs
+  }
 }
 
-//Creamos el objeto de conexion
-var conn = new sql.ConnectionPool(dbconfig);
-var req = new sql.Request(conn);
-let resultado;
-conn.connect((err) => {
-  if(err){
-    console.log("hay errores");
-    console.log(err);
-  }
-  console.log("Connected")
-  //Running the query
-  req.query("Select TOP 10 * from Mes.dbo.tbRegEnsacado;", (err, rs) => {
-    if(err){
-      console.log("hay errores, en query");
-      console.log(err);
-    }
-    else{
-      console.log(rs);
-      resultado = rs;
-    }
-    conn.close();//HAY QUE CERRAR LA CONEXION tras la query
-  });
-});
+async () => {
+ try {
+  // make sure that any items are correctly URL encoded in the connection string
+  await sql.connect(sqlConfig)
+  const result = await sql.query`select * from MES.dbo.tbRegEnsacado;`
+  console.dir(result)
+ } catch (err) {
+  // ... error checks
+ }
+}

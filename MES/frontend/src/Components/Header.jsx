@@ -34,13 +34,12 @@ export function Header () {
           </IconButton>
           
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            M.E.S. High Technology Master Batch
+            M.E.S. UNNOX-HT
           </Typography>
           
         </Toolbar>
 
         <Drawer style={styles.drawer} open={OpenMenu} onClose={() => {openmenu(false)}} >
-
           <Box sx={{width : '400px', marginTop: '20px'}}>
             
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -48,9 +47,9 @@ export function Header () {
             </Typography>
             <Button style={styles.buttons} onClick={() => {navigate('/');openmenu(false)}} variant='contained'>Menu principal</Button>
             <br />
-            <Button style={styles.buttons} onClick={() => {navigate('/RegEnsacado');openmenu(false)}} variant='contained'>Ensacados</Button>
+            <Button style={styles.buttons} onClick={() => {navigate('/Ensacados');openmenu(false)}} variant='contained'>Ensacados</Button>
             <br /> 
-            <Button style={styles.buttons} onClick={() => {navigate('/');openmenu(false)}} variant='contained'>Estadistico</Button>
+            <Button style={styles.buttons} onClick={() => {navigate('/Estadisctico');openmenu(false)}} variant='contained'>Estadistico</Button>
             <br />
           </Box>
 

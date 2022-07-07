@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { json } = require('body-parser');
 const async = require('async');
-app.listen('4001',() => {console.log('listening in 3001')});
+app.listen('4001',() => {console.log('listening in 4001')});
 //usando bodyparser
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());//Permitir coger la info del front end como json
@@ -26,13 +26,12 @@ async function connectDB() {
 
     try {
         await pool.connect();
-        //console.log('Connected to database');
+        console.log('Connected to database');
 
         return pool;
     }
     catch(err) {
         console.log('Database connection failed!', err);
-
         return err;
     }
 }
@@ -49,7 +48,7 @@ async function get_query(q) {
     catch (err) {
         console.log(`Error querying database, query usada ${q}`, err);
 
-        return {query :err, ok : false};
+        //return {query :err, ok : false};
     }
     finally {
         DB.close();
@@ -85,3 +84,23 @@ app.post('/UpdateEnsacado', (request, res) =>{
     q();
 });
 
+app.post('/RegistraEnsacado', (request, res) =>{
+    console.log(request.body);
+    const E = request.body;
+    async function q (){
+        var q_ins = await get_query(`INSERT INTO MES.dbo.tbRegEnsacado (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant) 
+        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', ${E.Peso_Saco},${E.Cantidad},'${E.Resto}',${E.Ant});`)
+        console.log(q_ins);
+    }
+    q();
+});
+
+app.post('/DelEns', (request, res) =>{
+    console.log(request.body);
+    const E = request.body;
+    async function q(){
+        var q_ins = await get_query(`DELETE FROM MES.dbo.tbRegEnsacado WHERE Fecha='${E.Fecha}' AND Palet='${E.Palet}' AND Turno='${E.Turno}';`)
+        console.log(q_ins);
+    }
+    q();
+});

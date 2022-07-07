@@ -18,6 +18,14 @@ export const styles = {
     },
     buttons:{
         marginTop : '3px',
-        marginBottom : '3px'
+        marginBottom : '3px',
+        variant : 'contained'
+    },
+    TextDiv : {
+        p: '3px',
+        m: '3px'
+    },
+    PaperForm :{
+
     }
 }
