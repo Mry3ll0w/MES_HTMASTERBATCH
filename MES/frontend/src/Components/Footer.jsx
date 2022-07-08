@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <div style={styles.home_footer}>
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-      ©HTM-UNNOX-GROUP 2022
+      ©UNNOX-GROUP-HT 2022
       </Typography>
     </div>
   )
