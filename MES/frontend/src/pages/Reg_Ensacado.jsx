@@ -35,7 +35,8 @@ export default function RegEnsacado() {
     const [Productos,SetProductos] = useState([]);
     const [Ensacados, SetEnsacados] = useState([]);
     const [Selected, SetSelected] = useState([]);
-    
+    const [OldPalet, setOldPalet] = useState('')//Sirve para guardar el estado anterior 
+
     //Obtenemos el resultado del get
     useEffect(() => {
         axios.get('http://192.168.0.123:4001/RegEnsacado').then((response) => {
@@ -43,7 +44,7 @@ export default function RegEnsacado() {
             SetProductos(response.data.Productos);
             SetEnsacados(response.data.Ensacados);
         }).catch( error => console.log(error));
-    });
+    },[]);
 
     //Columnas 
     const columns= [
@@ -123,7 +124,7 @@ export default function RegEnsacado() {
             axios.post('http://192.168.0.123:4001/UpdateEnsacado',
             {
                 Fecha :M_Fecha, Turno : M_Turno, Producto : M_Producto, Palet : M_Palet, Peso_Saco : M_Peso_Saco,
-                Cantidad : M_Cantidad, Resto : M_Resto, Ant : M_Ant 
+                Cantidad : M_Cantidad, Resto : M_Resto, Ant : M_Ant , PaletOriginal : OldPalet
             }
             ).then(() => {
                 alert("Insercion realizada")
@@ -250,6 +251,7 @@ export default function RegEnsacado() {
                    mcant(i.Cantidad);
                    mresto(i.Resto);
                    mant(i.ant);
+                   setOldPalet(i.Palet)
                    return 0;
                 })
                 SetSelected(selectedRowData);

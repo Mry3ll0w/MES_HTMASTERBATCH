@@ -45,7 +45,7 @@ export default function Mod_Ensacado() {
             SetProductos(response.data.Productos);
             SetEnsacados(response.data.Ensacados);
         }).catch( error => console.log(error));
-    });
+    },[]);
 
     //Columnas 
     const columns= [
