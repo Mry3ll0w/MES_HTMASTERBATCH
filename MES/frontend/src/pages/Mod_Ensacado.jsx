@@ -19,6 +19,7 @@ export default function Mod_Ensacado() {
     const [M_Cantidad, mcant] = useState('')
     const [M_Resto, mresto] = useState('')
     const [M_Ant, mant] = useState('')
+    const [OldPalet, setOldPalet] = useState('')//Sirve para guardar el estado anterior 
 
     //Manejadores de errores
     const [Err_palet, err_palet] = useState(false)
@@ -32,7 +33,7 @@ export default function Mod_Ensacado() {
 
     //Constantes para trabajar con los datos 
     const [Productos,SetProductos] = useState([]);
-    const [Ensacados, SetEnsacados] = useState([]);
+    const [Ensacados, SetEnsacados] = useState([]); 
     
     
     
@@ -130,7 +131,7 @@ export default function Mod_Ensacado() {
             axios.post('http://192.168.0.123:4001/UpdateEnsacado',
             {
                 Fecha :M_Fecha, Turno : M_Turno, Producto : M_Producto, Palet : M_Palet, Peso_Saco : M_Peso_Saco,
-                Cantidad : M_Cantidad, Resto : M_Resto, Ant : M_Ant 
+                Cantidad : M_Cantidad, Resto : M_Resto, Ant : M_Ant , PaletOriginal : OldPalet
             }
             ).then(() => {
                 alert("Insercion realizada")
@@ -173,6 +174,7 @@ export default function Mod_Ensacado() {
                    mcant(i.Cantidad);
                    mresto(i.Resto);
                    mant(i.ant);
+                   setOldPalet(i.Palet);
                    return 0;
                 })
                 
@@ -212,10 +214,11 @@ export default function Mod_Ensacado() {
                 renderInput ={ (e) => <TextField {...e} value={M_Producto} onChange={e => mprod(e.target.value)} sx={{p : '3px', m : '3px', width : '250px'}}></TextField>}
                 onChange = {(e, v) => mprod(v.ProductoID)} 
                 freeSolo
+                error={Prod_error}
             />
             </FormControl>
                 
-            <h1>{M_Producto}</h1>
+            <h1>{OldPalet}</h1>
             
             <TextField 
                 value={M_Palet} onChange={e => mpalet(e.target.value)} label="NºLote-NºPalet" sx={{m : '3px', p:'3px'}}
