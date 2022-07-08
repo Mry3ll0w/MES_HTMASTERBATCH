@@ -1,6 +1,6 @@
 
 //Visuals
-import { TextField,Button,Paper,Box, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
+import { TextField,Button,Paper,Box, Select, MenuItem, FormControl, InputLabel, Autocomplete} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { Fragment } from 'react'
 import { useState } from 'react';
@@ -36,11 +36,10 @@ export default function RegEnsacado() {
     const [Ensacados, SetEnsacados] = useState([]);
     const [Selected, SetSelected] = useState([]);
     
-    
-
     //Obtenemos el resultado del get
     useEffect(() => {
         axios.get('http://192.168.0.123:4001/RegEnsacado').then((response) => {
+            
             SetProductos(response.data.Productos);
             SetEnsacados(response.data.Ensacados);
         }).catch( error => console.log(error));
@@ -223,7 +222,8 @@ export default function RegEnsacado() {
         </h1>
         <p>
             Se muestran los ultimos ensacados, ordenados por fecha, seleccione UN ÚNICO ensacado y 
-            podrá modificarlo.
+            podrá modificarlo.<br></br>
+            Para que la seleccion de la list de productos se haga correctamente debes pulsar intro cuando selecciones el producto.
         </p>
         <div style={{ height: 300, width: '100%' }}>
         <DataGrid
@@ -284,16 +284,15 @@ export default function RegEnsacado() {
             </FormControl>
             
             <FormControl>
-            <InputLabel>Productos</InputLabel>
-                <Select 
-                    sx={{width : '100',m : '3px', p:'3px', minWidth : '120px'}} 
-                    defaultValue="" 
-                    label='Productos'
-                    onChange={e => mprod(e.target.value)}
-                    error = {Prod_error}
-                >
-                    {Productos.map((i) =>{return (<MenuItem key ={i.Producto} value={i.Producto}>{i.Producto}</MenuItem>)})}
-                </Select>
+            
+            <Autocomplete 
+                options={Productos} 
+                getOptionLabel={(o)=> o.ProductoID}
+                renderInput ={ (e) => <TextField {...e} value={M_Producto} onChange={e => mprod(e.target.value)} sx={{p : '3px', m : '3px', width : '250px'}}></TextField>}
+                onChange = {(e, v) => mprod(v.ProductoID)} 
+                freeSolo
+            />
+      
             
             </FormControl>
                 

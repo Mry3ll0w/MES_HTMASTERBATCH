@@ -1,6 +1,6 @@
 
 //Visuals
-import { TextField,Button,Paper,Box, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
+import { TextField,Button,Paper,Box, Select, MenuItem, FormControl, InputLabel,Autocomplete} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React, { Fragment } from 'react'
 import { useState } from 'react';
@@ -40,6 +40,7 @@ export default function Mod_Ensacado() {
     //Obtenemos el resultado del get
     useEffect(() => {
         axios.get('http://192.168.0.123:4001/RegEnsacado').then((response) => {
+            
             SetProductos(response.data.Productos);
             SetEnsacados(response.data.Ensacados);
         }).catch( error => console.log(error));
@@ -91,7 +92,7 @@ export default function Mod_Ensacado() {
         if(M_Producto === ''){
             ok = false;
             prerror(true);
-            alert("Selecciona un Producto de la lista inferior");
+            alert("Tras la seleccion/escritura del producto debes presionar intro para que se envie correctamente.");
         }else prerror(false);
 
         if(M_Palet === '' || M_Palet.length !== 14) {
@@ -205,20 +206,16 @@ export default function Mod_Ensacado() {
             </FormControl>
             
             <FormControl>
-            <InputLabel>Productos</InputLabel>
-                <Select 
-                    sx={{width : '100',m : '3px', p:'3px', minWidth : '120px'}} 
-                    defaultValue="" 
-                    label='Productos'
-                    onChange={e => mprod(e.target.value)}
-                    error = {Prod_error}
-                >
-                    {Productos.map((i) =>{return (<MenuItem key ={i.Producto} value={i.Producto}>{i.Producto}</MenuItem>)})}
-                </Select>
-            
+            <Autocomplete 
+                options={Productos} 
+                getOptionLabel={(o)=> o.ProductoID}
+                renderInput ={ (e) => <TextField {...e} value={M_Producto} onChange={e => mprod(e.target.value)} sx={{p : '3px', m : '3px', width : '250px'}}></TextField>}
+                onChange = {(e, v) => mprod(v.ProductoID)} 
+                freeSolo
+            />
             </FormControl>
                 
-            
+            <h1>{M_Producto}</h1>
             
             <TextField 
                 value={M_Palet} onChange={e => mpalet(e.target.value)} label="NºLote-NºPalet" sx={{m : '3px', p:'3px'}}

@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { json } = require('body-parser');
 const async = require('async');
+const fs = require('fs');//Lectura de archivos para leer sql queries
 app.listen('4001',() => {console.log('listening in 4001')});
 //usando bodyparser
 app.use(bodyParser.urlencoded({extended:true}));
@@ -12,7 +13,7 @@ app.use(express.json());//Permitir coger la info del front end como json
 app.use(cors());
 // DB credentials
 const config = {
-    user: 'sa',
+    user: 'WEBAPI',
     password: process.env.htm_auth,
     server: 'marketing',
     database: 'master',
@@ -26,7 +27,7 @@ async function connectDB() {
 
     try {
         await pool.connect();
-        console.log('Connected to database');
+        //console.log('Connected to database');
 
         return pool;
     }
@@ -65,10 +66,11 @@ app.get('/RegEnsacado', (request, res) => {
     async function query(){
 
         let q_ensacados= await get_query("select * from MES.dbo.tbRegEnsacado");
-        let q_prods = await get_query("select Producto from MES.dbo.tbRegEnsacado GROUP by Producto");
+        var sql_q = fs.readFileSync('Q_Lista_productos.sql').toString();
+        let q_prods = await get_query(sql_q);
         if (q_ensacados.ok && q_prods.ok) res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
         else res.send("Fallo al hacer la query");
-        console.log(q_ensacados)
+        //console.log(q_ensacados)
 
     }
     query();
