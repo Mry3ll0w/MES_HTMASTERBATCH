@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@material-ui/pickers": "^3.3.10",
     "@material-ui/styles": "^4.11.5",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.7",

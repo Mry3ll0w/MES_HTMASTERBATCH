@@ -1,34 +1,28 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { Stack } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useState } from 'react';
-import { setDate } from 'date-fns';
-import { DatePicker } from '@mui/x-date-pickers';
-export default function MaterialUIPickers() {
-  const [value, setValue] = useState(new Date());
-  const [Data, setData] = useState(new Date())
-  const handleChange = (newValue) => {
-    setValue(newValue);
-  };
-  console.log(value.getDay);
+import dateFormat from 'dateformat';
+export default function BasicDatePicker() {
+  const [value, setValue] = useState(null);
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Stack spacing={3}>
-        <DatePicker
-          label="Date mobile"
-          inputFormat="MM/dd/yyyy"
-          value={value}
-          onChange={handleChange}
-          renderInput={(params) => <TextField {...params}/>}
-        />
-        <h1>Seleccionado {value.getDate} </h1>
-      </Stack>
+    <Fragment>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <DatePicker
+        label="Basic example"
+        value={value}
+        inputFormat="dd/mm/yyyy"
+        onChange={(newValue) => {
+          setValue(newValue);
+        }}
+        renderInput={(params) => <TextField {...params} />}
+      />
     </LocalizationProvider>
+    <h1>{dateFormat(value, "dd-mm-yyyy")}</h1>
+    </Fragment>
+    
   );
 }
