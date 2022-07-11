@@ -7,6 +7,10 @@ import { useState } from 'react';
 import axios from 'axios'
 import { useEffect } from 'react';
 import dateFormat from "dateformat";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { MobileDatePicker } from '@mui/x-date-pickers';
+import { es } from 'date-fns/locale';
 
 export default function Mod_Ensacado() {
     
@@ -68,15 +72,12 @@ export default function Mod_Ensacado() {
             Palet: i.Palet, Cantidad : i.Cantidad,Resto: i.Resto, Peso_Saco : i.Peso_Saco, Ant : i.Ant}];
     });
 
-    //Funciones para tratar los textFields
-
-
 
     //Comprueba los erorres de la posible modificacion y modifica el Ensacado seleccionado
     function UpdateEnsacado(){
         var ok = true;
         //Comprobamos que se cumplan los elementos dados
-        if (M_Fecha === '' || M_Fecha.length !== 10){
+        if (M_Fecha === ''){
             ok = false;
             ferr(true);
             alert("La Fecha no puede estar en blanco, o el formato de la fecha no es el correcto")
@@ -130,7 +131,7 @@ export default function Mod_Ensacado() {
         if(ok){
             axios.post('http://192.168.0.123:4001/UpdateEnsacado',
             {
-                Fecha :M_Fecha, Turno : M_Turno, Producto : M_Producto, Palet : M_Palet, Peso_Saco : M_Peso_Saco,
+                Fecha :dateFormat(M_Fecha,"yyyy-mm-dd"), Turno : M_Turno, Producto : M_Producto, Palet : M_Palet, Peso_Saco : M_Peso_Saco,
                 Cantidad : M_Cantidad, Resto : M_Resto, Ant : M_Ant , PaletOriginal : OldPalet
             }
             ).then(() => {
@@ -185,11 +186,16 @@ export default function Mod_Ensacado() {
             <Paper>
             <h2>Modifica el Ensacado</h2>
             
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es} >
+                <MobileDatePicker
+                    label="Fecha"
+                    inputFormat="dd/MM/yyyy"
+                    value={M_Fecha}
+                    onChange={e => mfecha(e)}
+                    renderInput={(params) => <TextField sx={{m:'3px', p :'3px'}} {...params} />}
+                  />
+            </LocalizationProvider>
             
-            <TextField 
-                id="mdate" value={M_Fecha} onChange={e => mfecha(e.target.value)} label="Fecha" sx={{m : '3px', p:'3px'}}
-                error = {F_error}
-            />
             
             <FormControl>{/* Para darle formato mas limpio a los Select*/}
                 <InputLabel>Turnos</InputLabel>
@@ -211,7 +217,7 @@ export default function Mod_Ensacado() {
             <Autocomplete 
                 options={Productos} 
                 getOptionLabel={(o)=> o.ProductoID}
-                renderInput ={ (e) => <TextField {...e} value={M_Producto} onChange={e => mprod(e.target.value)} sx={{p : '3px', m : '3px', width : '250px'}}></TextField>}
+                renderInput ={ (e) => <TextField {...e} value={M_Producto} label="Productos" onChange={e => mprod(e.target.value)} sx={{p : '3px', m : '3px', width : '250px'}} error={F_error}></TextField>}
                 onChange = {(e, v) => mprod(v.ProductoID)} 
                 freeSolo
                 error={Prod_error}

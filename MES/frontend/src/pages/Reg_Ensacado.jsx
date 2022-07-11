@@ -18,6 +18,11 @@ import { useEffect } from "react";
 import dateFormat from "dateformat";
 import { styles } from "../Style/styles";
 
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { MobileDatePicker } from '@mui/x-date-pickers';
+import { es } from 'date-fns/locale';
+
 export default function RegEnsacado() {
   //Necesitamos UseState para tratar con los TextFields
   const [M_Fecha, mfecha] = useState("");
@@ -94,7 +99,7 @@ export default function RegEnsacado() {
   function UpdateEnsacado() {
     var ok = true;
     //Comprobamos que se cumplan los elementos dados
-    if (M_Fecha === "" || M_Fecha.length !== 10) {
+    if (M_Fecha === "") {
       ok = false;
       ferr(true);
       alert(
@@ -144,7 +149,7 @@ export default function RegEnsacado() {
     if (ok) {
       axios
         .post("http://192.168.0.123:4001/UpdateEnsacado", {
-          Fecha: M_Fecha,
+          Fecha: dateFormat(M_Fecha,'yyyy-mm-dd'),
           Turno: M_Turno,
           Producto: M_Producto,
           Palet: M_Palet,
@@ -167,7 +172,7 @@ export default function RegEnsacado() {
   function InsertaEnsacado() {
     var ok = true;
     //Comprobamos que se cumplan los elementos dados
-    if (M_Fecha === "" || M_Fecha.length !== 10) {
+    if (M_Fecha === "") {
       ok = false;
       ferr(true);
       alert(
@@ -243,7 +248,7 @@ export default function RegEnsacado() {
     Selected.map((i) => {
       axios
         .post("http://192.168.0.123:4001/DelEns", {
-          Fecha: i.Fecha,
+          Fecha: dateFormat(i.Fecha,'yyyy-mm-dd'),
           Turno: i.Turno,
           Palet: i.Palet,
         })
@@ -301,17 +306,20 @@ export default function RegEnsacado() {
       </div>
       {
         <Box sx={{ p: 2, m: "3px", border: "1px dotted blue" }}>
-          <Paper style={styles.PaperForm}>
+          <Paper>
             <h2>Inserta el nuevo ensacado</h2>
 
-            <TextField
-              id="mdate"
-              value={M_Fecha}
-              onChange={(e) => mfecha(e.target.value)}
-              label="Fecha"
-              sx={{ m: "3px", p: "3px" }}
-              error={F_error}
-            />
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es} >
+                <MobileDatePicker
+                    label="Fecha"
+                    inputFormat="dd/MM/yyyy"
+                    value={M_Fecha}
+                    onChange={e => mfecha(e)}
+                    renderInput={(params) => <TextField sx={{m:'3px', p :'3px'}} {...params} />}
+                    error={F_error}
+                  />
+            </LocalizationProvider>
+            
 
             <FormControl>
               {/* Para darle formato mas limpio a los Select*/}
@@ -340,6 +348,7 @@ export default function RegEnsacado() {
                     value={M_Producto}
                     onChange={(e) => mprod(e.target.value)}
                     sx={{ p: "3px", m: "3px", width: "250px" }}
+                    label="Productos"
                   ></TextField>
                 )}
                 onChange={(e, v) => mprod(v.ProductoID)}

@@ -67,7 +67,7 @@ app.get('/RegEnsacado', (request, res) => {
 
         let q_ensacados= await get_query("select * from MES.dbo.tbRegEnsacado");
         var sql_q = fs.readFileSync('Q_Lista_productos.sql').toString();
-        let q_prods = await get_query(sql_q);
+        let q_prods = await get_query(fs.readFileSync('Q_Lista_productos.sql').toString());
         if (q_ensacados.ok && q_prods.ok) res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
         else res.send("Fallo al hacer la query");
         //console.log(q_ensacados)
@@ -104,4 +104,24 @@ app.post('/DelEns', (request, res) =>{
         console.log(q_ins);
     }
     q();
+});
+
+//Estadistico
+
+app.get('/dataEstadistico',(request, res)=>{
+    async function query(){
+
+        //Lista de Productos
+        var sql_q = fs.readFileSync('Q_Lista_productos.sql').toString();
+        let q_prods = await get_query(sql_q);
+        
+        //Lista de Tendencias
+        
+        //Lista de OFS
+
+
+        //console.log(q_ensacados)
+
+    }
+    query();
 });

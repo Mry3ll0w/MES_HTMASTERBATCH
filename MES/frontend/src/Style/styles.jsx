@@ -25,7 +25,22 @@ export const styles = {
         p: '3px',
         m: '3px'
     },
-    PaperForm :{
+    box_dotted_blue :{
+        p: '2px', m: "3px", border: "1px dotted blue",
+        marginTop : '10px', 
+        marginBottom : '10px'
+    },
+    timepickers : {
+        marginTop : '3px',
+        marginBottom : '3px',
+        
+    },
 
+    right_side_div: {
+        textAlign : 'right',
+        marginRight : '200px'
+    },
+    normal_text : {
+        fontSize : '16px'
     }
 }
