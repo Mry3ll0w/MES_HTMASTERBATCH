@@ -1,0 +1,1 @@
+Select * from WEB_API_TABLES.dbo.Tendencias order by Tendencia;

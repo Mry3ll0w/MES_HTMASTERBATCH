@@ -116,12 +116,12 @@ app.get('/dataEstadistico',(request, res)=>{
         let q_prods = await get_query(sql_q);
         
         //Lista de Tendencias
-        
+        var sql_tendecias= await get_query(fs.readFileSync('Q_Get_TotalTendencias.sql').toString());
         //Lista de OFS
-
+        var q_OFS = await get_query(fs.readFileSync('OF_PROD_Fechas.sql').toString());
 
         //console.log(q_ensacados)
-
+        res.send({Productos : q_prods.query, Tendencias : sql_tendecias.query, OFS : q_OFS.query})
     }
     query();
 });
