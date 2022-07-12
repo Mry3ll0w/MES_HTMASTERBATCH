@@ -11,7 +11,13 @@ import RegEnsacado from './pages/Reg_Ensacado';
 import { Header } from './Components/Header';
 import { styles} from './Style/styles';
 import Footer from './Components/Footer';
+import { useEffect } from 'react';
+
 export function App() {
+
+  useEffect(()=>{
+      document.title = 'M.E.S.'
+  });
 
   return (
     <Router>

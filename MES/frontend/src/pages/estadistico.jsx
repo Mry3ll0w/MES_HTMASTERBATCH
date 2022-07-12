@@ -82,10 +82,10 @@ export default function BasicDateTimePicker() {
   //Visuals
   return (
     <Fragment>
-      <div>
-      
-      
-      {/*Drop filtro */}
+    <div>
+      <div style={styles.leftbox}>
+        <h2>Izquierda:</h2>
+        {/*Drop filtro */}
       <Button
         id="demo-positioned-button"
         aria-controls={open ? 'demo-positioned-menu' : undefined}
@@ -93,6 +93,7 @@ export default function BasicDateTimePicker() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
         variant="contained"
+        
       >
         Filtrar
       </Button>
@@ -133,25 +134,11 @@ export default function BasicDateTimePicker() {
           setSelProd(false);
         }}>Filtar por Producto</MenuItem>
       </Menu>
-
-      <br />
-      <br />
-      //Formulario
-      <Box
-      component="form"
-      sx={{
-        '& .MuiTextField-root': { m: 1, width: '25ch' },
-      }}
-      noValidate
-      autoComplete="off"
-      >
-      <div>
-      <div>  
-        
-          <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
+      <br /> <br />
+      <LocalizationProvider  dateAdapter={AdapterDateFns} locale={es}>
           <DateTimePicker
             style={styles.timepickers}
-            renderInput={(props) => <TextField {...props} />}
+            renderInput={(props) => <TextField sx={{p:'3px',m:'3px',width:'250px'}} {...props} />}
             label="Limite Inferior"
             value={Fecha_Limite_Inferior}
             onChange={(e) => {
@@ -159,91 +146,78 @@ export default function BasicDateTimePicker() {
             }}
             disabled={Selector_f_rango}
           />
-          </LocalizationProvider>
-          <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
-          
-          <DateTimePicker
-            renderInput={(props) => <TextField {...props} />}
-            label="Limite Superior"
-            value={Fecha_Limite_Superior}
-            onChange={(newValue) => {
-              setSuperior(newValue);
-            }}
-            disabled={Selector_f_rango}
-          />
-
-          </LocalizationProvider>
-          
-      </div>
-      <div>{/** Filtro por Of */}
-
-           
+      </LocalizationProvider>
       
-      </div>
-      <div>
-        
-      <Autocomplete
-                options={Productos}
-                getOptionLabel={(o) => o.ProductoID}
-                renderInput={(e) => (
-                  <TextField
-                    {...e}
-                    value={Selected_Prod}
-                    onChange={(e) => setSelectedProd(e.target.value)}
-                    sx={{ p: "3px", m: "3px", width: "250px" }}
-                    label="Filtrar Por Productos"
-                    
-                  ></TextField>
-                )}
-                onChange={(e, v) => {
-                  setSelectedProd(v.ProductoID)
-                  //filtramos la lista inferior
-                  console.log(v.ProductoID)
-                  var filtro_of=[]
-                  OFS.map( i=> {
-                    if (i.ProductoID ===v.ProductoID) filtro_of = [...filtro_of,i]
-                  })
-                  console.log(filtro_of)
-                }}
-                freeSolo
+      <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
+      
+      <DateTimePicker
+        renderInput={(props) => <TextField sx={{p:'3px',m:'3px'}} {...props} />}
+        label="Limite Superior"
+        value={Fecha_Limite_Superior}
+        onChange={(newValue) => {
+          setSuperior(newValue);
+        }}
+        disabled={Selector_f_rango}
       />
 
-        
+      </LocalizationProvider>
+      
+      <br />
+      <Autocomplete
+        options={Productos}
+        getOptionLabel={(o) => o.ProductoID}
+        renderInput={(e) => (
+          <TextField
+            {...e}
+            value={Selected_Prod}
+            onChange={(e) => setSelectedProd(e.target.value)}
+            sx={{ p: "3px", m: "3px", width: "250px" }}
+            label="Filtrar Por Productos"
+            
+          ></TextField>
+        )}
+        onChange={(e, v) => {
+          setSelectedProd(v.ProductoID)
+          //filtramos la lista inferior
+          console.log(v.ProductoID)
+          var filtro_of=[]
+          OFS.map( i=> {
+            if (i.ProductoID ===v.ProductoID) filtro_of = [...filtro_of,i]
+          })
+          console.log(filtro_of)
+        }}
+        freeSolo
+      />
+
+                
+      </div> 
+      <div style={styles.rightbox}>
+        <DataGrid 
+          sx={{ height: 400, width: '100%' }}
+          rows = {rows_OF}
+          columns = {cols_of}
+          pageSize={10}
+          rowsPerPageOptions={[5]}
+          value ={Selected_OF}
+          onSelectionModelChange={(r) => {
+            const selectedIDs = new Set(r);
+            const selectedRowData = rows_OF.filter((row) =>
+            selectedIDs.has(row.id)
+            );
+            selectedRowData.map( i=> {
+            var t = new Date(i.Fecha_Fin);
+            //Limite inferior
+            t = dateFormat(addMinutes(t,-5))
+            //console.log(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
+            setLimSup(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
+            var tm = new Date(i.Fecha_Inicio);
+            tm = addMinutes(tm,+5)
+            setLimINF(dateFormat(tm,'yyyy-mm-dd hh:MM:ss'))
+            })
+          }}
+          />
       </div>
-    </div>
-    </Box>  
-    </div> 
-    <h2>Selecciona La OF de la lista inferior</h2>
-    <DataGrid 
-    sx={{ height: 400, width: '60%' }}
-              rows = {rows_OF}
-              columns = {cols_of}
-              pageSize={10}
-              rowsPerPageOptions={[5]}
-              value ={Selected_OF}
-              onSelectionModelChange={(r) => {
-                const selectedIDs = new Set(r);
-                const selectedRowData = rows_OF.filter((row) =>
-                  selectedIDs.has(row.id)
-                );
-                selectedRowData.map( i=> {
-                  var t = new Date(i.Fecha_Fin);
-                  //Limite inferior
-                  t = dateFormat(addMinutes(t,-5))
-                  //console.log(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
-                  setLimSup(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
-                  
-                  var tm = new Date(i.Fecha_Inicio);
-                  tm = addMinutes(tm,+5)
-                  setLimINF(dateFormat(tm,'yyyy-mm-dd hh:MM:ss'))
-                  
-                })
-              }}
-    />
-    <div sx={{textAlign:'center'}}>
-      <p>Media: Maximo: Minimo: </p>
     </div>  
     </Fragment>
-    
   );
 }
