@@ -25,30 +25,18 @@ export default function BasicDateTimePicker() {
   const [Tendencias, setTendencias] = useState([]);
   const [Productos,SetProductos]=useState([]);
   const [OFS,setOFs]=useState([]);
-  
+  const [Valores, setValores] = useState([])
   //Get selecciones realizadas
-  const [Selected_Prod,setSelectedProd]=useState('');
   const [Selected_Ten, setSelectedTen]=useState('#'); 
   const [Selected_OF,setSelectedOF]=useState('');
 
   const [Selector_f_rango,setRango] = useState(false);
-  const [Selector_OF,setOF] = useState(false);
-  const [Selector_Prod, setSelProd] = useState(false);
-
+  
   const [Media,SetMedia] = useState(0.00);
   const [Maximo,SetMaximo] = useState(0.00)
   const [Minimo, SetMinimo] = useState(0.00) 
   
 
-  //Visuales para menu
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   
   //Peticiones a REST API
   useEffect(()=>{
@@ -56,6 +44,7 @@ export default function BasicDateTimePicker() {
             setOFs(response.data.OFS)
             SetProductos(response.data.Productos);
             setTendencias(response.data.Tendencias);
+            //console.log(response)
         }).catch( error => console.log(error));
   },[]);
 
@@ -95,6 +84,23 @@ export default function BasicDateTimePicker() {
     }])
   });
 
+  //Construccion de filas para mostrar el resultado del calculo
+  const cols_res_c = [
+    { field: "Valor", headerName: "Valor", width: "150" },
+    { field: "FechaHora", headerName: "FechaHora", width: "450" }
+  ];
+  let rows_res_c=[];
+  Valores.map((i,n) => {
+    return (
+      rows_res_c = [...rows_res_c, {
+        id : n++,
+        Valor : i.Valor,
+        FechaHora : dateFormat(i.FechaHora,'yyyy-mm-dd hh:mm:ss')
+      }]
+    )
+  })
+
+
   //Funcion para controlar que se ha seleccionado todo lo necesario para calcular la media
   function handleCalculation(){
       var ok = true;
@@ -111,17 +117,24 @@ export default function BasicDateTimePicker() {
           }
         ).catch(e => err=e)
         .then( r => {
+          console.log(r.data)
+          setValores(r.data.Datos_Calculados)
+          console.log(Valores)
+          
+          //console.log(r.Datos_Calculados.map(Object => {return [Object.key, Object.value]}))
           if (r.data.Resultado[0].media == null || r.data.Resultado[0].max == null || r.data.Resultado[0].min == null){
             SetMedia('No hay datos para realizar el calculo');
             SetMinimo('No hay datos para realizar el calculo');
             SetMaximo('No hay datos para realizar el calculo');
+            alert("Calculo finalizado, pero no existen valores de esa tendencia")
           }
           else{
             SetMedia(r.data.Resultado[0].media.toFixed(3));
             SetMinimo(r.data.Resultado[0].min);
             SetMaximo(r.data.Resultado[0].max);
+            alert("Calculo realizado")
           } 
-          alert("Calculo correcto")
+          
           
         })//Guardamos la respuesta del post en los useStates
       }
@@ -138,55 +151,7 @@ export default function BasicDateTimePicker() {
     <div>
       <div style={styles.leftbox}>
         
-        {/*Drop filtro */}
-      <Button
-        id="demo-positioned-button"
-        aria-controls={open ? 'demo-positioned-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-        variant="contained"
-        
-      >
-        Filtrar
-      </Button>
-      <Menu
-        id="demo-positioned-menu"
-        aria-labelledby="demo-positioned-button"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-      >
-        <MenuItem onClick={() =>{
-          setAnchorEl(null);
-          setRango(false);
-          setOF(true);
-          setSelProd(true);
-        }}>
-          Filtrar por Fecha
-        </MenuItem>
-        <MenuItem onClick={() =>{
-          setAnchorEl(null);
-          setRango(true);
-          setOF(false);
-          setSelProd(true);
-          
-        }}>Filtrar por OF </MenuItem>
-        <MenuItem onClick={() => {
-          setAnchorEl(null);
-          setRango(true);
-          setOF(true);
-          setSelProd(false);
-        }}>Filtar por Producto</MenuItem>
-      </Menu>
+      
       <br /> <br />
       <LocalizationProvider  dateAdapter={AdapterDateFns} locale={es}>
           <DateTimePicker
@@ -204,7 +169,7 @@ export default function BasicDateTimePicker() {
       <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
       
       <DateTimePicker
-        renderInput={(props) => <TextField sx={{p:'3px',m:'3px'}} {...props} />}
+        renderInput={(props) => <TextField sx={{p:'3px',m:'3px',width : '250px'}} {...props} />}
         label="Limite Superior"
         value={Fecha_Limite_Superior}
         onChange={(newValue) => {
@@ -244,7 +209,7 @@ export default function BasicDateTimePicker() {
        */}
       <p>
         <Button
-              sx={{ m: "10px", marginLeft : 20}}
+              sx={{ m: "10px", marginLeft : '33%'}}
               onClick={handleCalculation}
               variant="contained"
         >
@@ -254,11 +219,19 @@ export default function BasicDateTimePicker() {
 
         
       
-      <TextField label="Media Aritmetica"value={Media} disabled/>
-      <TextField label="Valor Maximo de los datos" value={Maximo} disabled/>
-      <TextField label="Valor Minimo de los datos" value={Minimo} disabled/>
-      
+      <TextField sx={{m : '2px'}} label="Media Aritmetica"value={Media} disabled/>
+      <TextField sx={{m : '2px'}} label="Valor Maximo de los datos" value={Maximo} disabled/>
+      <TextField sx={{m : '2px'}} label="Valor Minimo de los datos" value={Minimo} disabled/>
 
+      <h2>Valores obtenidos </h2>
+      <DataGrid 
+          sx={{ height: 500, width: '93%'}}
+          rows = {rows_res_c}
+          columns = {cols_res_c}
+          pageSize={100}
+          rowsPerPageOptions={[100]}
+          
+          />
         
       </div> 
 
@@ -314,7 +287,9 @@ export default function BasicDateTimePicker() {
           }}
           />
           <br /> <br /> <br /> <br />
-        
+          
+          
+
       </div>
     </div>  
     </Fragment>
