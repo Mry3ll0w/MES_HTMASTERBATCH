@@ -6,7 +6,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dateFormat from 'dateformat';
 import { Box } from '@mui/system';
 import {Checkbox, FormControlLabel, Menu,MenuItem, Button, Autocomplete} from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar} from '@mui/x-data-grid';
 import { useState } from 'react';
 import { styles } from '../Style/styles';
 import { es } from 'date-fns/locale';
@@ -22,7 +22,7 @@ export default function BasicDateTimePicker() {
   //UseStates para controlar 
   const [Fecha_Limite_Inferior, setInferior] = useState(new Date());
   const [Fecha_Limite_Superior, setSuperior] = useState(new Date());
-  const [Tendencias, setTendencias] = useState('');
+  const [Tendencias, setTendencias] = useState([]);
   const [Productos,SetProductos]=useState([]);
   const [OFS,setOFs]=useState([]);
   
@@ -35,8 +35,7 @@ export default function BasicDateTimePicker() {
   const [Selector_OF,setOF] = useState(false);
   const [Selector_Prod, setSelProd] = useState(false);
 
-  const [Lim_Sup, setLimSup]= useState('');
-  const [Lim_Inf,setLimINF] =useState('');
+  
 
   //Visuales para menu
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -65,7 +64,7 @@ export default function BasicDateTimePicker() {
     { field: "Fecha_Fin", headerName: "Fecha Fin", width: "200" },
   ];
 
-  //Construimos las filas
+  //Construimos las filas de las OFS
   let rows_OF = [];
   
   OFS.map( (i, n) => {
@@ -78,6 +77,24 @@ export default function BasicDateTimePicker() {
     }])
   })
 
+  //Construimos las filas y columnas de las tendencias
+  const cols_ten = [
+    { field: "Tendencia", headerName: "Nº de Tendencia", width: "150" },
+    { field: "Descripcion", headerName : 'Descripcion asociada', width : "760"}
+    
+  ];
+  let rows_ten = [];
+  Tendencias.map((i,n)=>{
+    return (rows_ten = [...rows_ten,{
+      id : n++,
+      Tendencia : i.Tendencia,
+      Descripcion : i.Descripcion
+    }])
+  });
+
+  //Filtros para aplicar en los dataGrid
+  //DataGrid de OF
+  
 
   //Visuals
   return (
@@ -184,11 +201,12 @@ export default function BasicDateTimePicker() {
           OFS.map( i=> {
             if (i.ProductoID ===v.ProductoID) filtro_of = [...filtro_of,i]
           })
-          console.log(filtro_of)
+          //console.log(filtro_of)
         }}
         freeSolo
       />
 
+      <p>Media de los datos seleccionados: </p>
                 
       </div> 
       <div style={styles.rightbox}>
@@ -199,6 +217,7 @@ export default function BasicDateTimePicker() {
           pageSize={10}
           rowsPerPageOptions={[5]}
           value ={Selected_OF}
+          components={{ Toolbar: GridToolbar }}
           onSelectionModelChange={(r) => {
             const selectedIDs = new Set(r);
             const selectedRowData = rows_OF.filter((row) =>
@@ -209,13 +228,38 @@ export default function BasicDateTimePicker() {
             //Limite inferior
             t = dateFormat(addMinutes(t,-5))
             //console.log(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
-            setLimSup(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
+            setSuperior(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
             var tm = new Date(i.Fecha_Inicio);
             tm = addMinutes(tm,+5)
-            setLimINF(dateFormat(tm,'yyyy-mm-dd hh:MM:ss'))
+            setInferior(dateFormat(tm,'yyyy-mm-dd hh:MM:ss'))
+            
             })
           }}
           />
+          <br />
+          <h2>Selecciona a continuación una tendencia para realizar el calculo</h2>
+          <DataGrid 
+          sx={{ height: 400, width: '100%'}}
+          rows = {rows_ten}
+          columns = {cols_ten}
+          pageSize={100}
+          rowsPerPageOptions={[]}
+          value ={Selected_Ten}
+          components={{ Toolbar: GridToolbar }}
+          onSelectionModelChange={(r) => {
+            const selectedIDs = new Set(r);
+            const selectedRowData = rows_ten.filter((row) =>
+            selectedIDs.has(row.id)
+            );
+            
+            selectedRowData.map(i => {
+              setSelectedTen(i.Tendencia)
+            })
+            console.log(Selected_Ten)
+          }}
+          />
+          <br /> <br /> <br /> <br />
+        
       </div>
     </div>  
     </Fragment>
