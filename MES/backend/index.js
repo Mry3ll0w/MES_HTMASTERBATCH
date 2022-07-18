@@ -145,23 +145,33 @@ app.post('/calcEstadistico',(request,res)=>{
             `
     }
     else{
-        query = `select Valor,FechaHora from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}' AND FechaHora NOT IN (SELECT FechaHora from Datos19.dbo.Tb19 WHERE Valor < 101 AND FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'`
-        q_cal = `
-        Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
-        from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia}
-        WHERE  FechaHora NOT IN(
-        Select FechaHora
-        from Datos19.dbo.Tb19 
-        WHERE 
-            Valor < 101 
-            AND 
-            FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
-        )
-        ;`
+        query = `
+            Select Valor,FechaHora from Datos${request.body.Tendencia}.dbo.tb${request.body.Tendencia} WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
+            and FechaHora not IN (
+                Select FechaHora
+                from Datos19.dbo.Tb19
+            WHERE 
+                Valor < 101
+                AND 
+                FechaHora BETWEEN '${l_inf}' and '${l_sup}'
+            );
+            `
+        
+        q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
+            WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
+            and FechaHora not IN (
+                Select FechaHora
+                from Datos19.dbo.Tb19
+                WHERE 
+                    Valor < 101
+                    AND 
+                    FechaHora BETWEEN '${l_inf}' and '${l_sup}'
+        );`
     }
     
     async function q(){
-        console.log(q_cal)
+        console.log(query)
+
         var datos_calculados= await get_query(query);
         var media_min_max = await get_query(q_cal)
         console.log(media_min_max.query)

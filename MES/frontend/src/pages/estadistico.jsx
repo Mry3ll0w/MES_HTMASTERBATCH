@@ -111,9 +111,18 @@ export default function BasicDateTimePicker() {
           }
         ).catch(e => err=e)
         .then( r => {
-          SetMedia(r.data.Resultado[0].media);
-          SetMinimo(r.data.Resultado[0].min);
-          SetMaximo(r.data.Resultado[0].max);
+          if (r.data.Resultado[0].media == null || r.data.Resultado[0].max == null || r.data.Resultado[0].min == null){
+            SetMedia('No hay datos para realizar el calculo');
+            SetMinimo('No hay datos para realizar el calculo');
+            SetMaximo('No hay datos para realizar el calculo');
+          }
+          else{
+            SetMedia(r.data.Resultado[0].media);
+            SetMinimo(r.data.Resultado[0].min);
+            SetMaximo(r.data.Resultado[0].max);
+          } 
+          
+          
         })//Guardamos la respuesta del post en los useStates
       }
       if(err){
