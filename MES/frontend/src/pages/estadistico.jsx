@@ -28,13 +28,16 @@ export default function BasicDateTimePicker() {
   
   //Get selecciones realizadas
   const [Selected_Prod,setSelectedProd]=useState('');
-  const [Selected_Ten, setSelectedTen]=useState(''); 
+  const [Selected_Ten, setSelectedTen]=useState('#'); 
   const [Selected_OF,setSelectedOF]=useState('');
 
   const [Selector_f_rango,setRango] = useState(false);
   const [Selector_OF,setOF] = useState(false);
   const [Selector_Prod, setSelProd] = useState(false);
 
+  const [Media,SetMedia] = useState(0.00);
+  const [Maximo,SetMaximo] = useState(0.00)
+  const [Minimo, SetMinimo] = useState(0.00) 
   
 
   //Visuales para menu
@@ -59,7 +62,7 @@ export default function BasicDateTimePicker() {
   //Preparación DataGrid para OFS
   const cols_of = [
     { field: "OrdenFabricacionID", headerName: "OF", width: "150" },
-    {field: "ProductoID", headerName : 'Producto', width : "150"},
+    { field: "ProductoID", headerName : 'Producto', width : "150"},
     { field: "Fecha_Inicio", headerName: "Fecha Inicio", width: "200" },
     { field: "Fecha_Fin", headerName: "Fecha Fin", width: "200" },
   ];
@@ -91,6 +94,36 @@ export default function BasicDateTimePicker() {
       Descripcion : i.Descripcion
     }])
   });
+
+  //Funcion para controlar que se ha seleccionado todo lo necesario para calcular la media
+  function handleCalculation(){
+      var ok = true;
+      var err;
+      //Comprobamos que se han seleccionado la tendencia
+      if (Selected_Ten == '#'){ok = false; alert("Tienes que seleccionar una tendencia");} 
+      
+      if(ok){
+        axios.post('http://192.168.0.123:4001/calcEstadistico',
+          {
+            Lim_Sup : Fecha_Limite_Superior,
+            Lim_Inf : Fecha_Limite_Inferior,
+            Tendencia : Selected_Ten
+          }
+        ).catch(e => err=e)
+        .then( r => {
+          SetMedia(r.data.Resultado[0].media);
+          SetMinimo(r.data.Resultado[0].min);
+          SetMaximo(r.data.Resultado[0].max);
+        })//Guardamos la respuesta del post en los useStates
+      }
+      if(err){
+        alert("Fallo en el calculo");
+      }
+      //else
+        //alert("Calculo realizado correctamente")
+      
+      
+  }
 
   //Filtros para aplicar en los dataGrid
   //DataGrid de OF
@@ -205,10 +238,21 @@ export default function BasicDateTimePicker() {
         }}
         freeSolo
       />
-
-      <p>Media de los datos seleccionados: </p>
-                
+      <p>
+        <Button
+              sx={{ m: "10px" }}
+              onClick={handleCalculation}
+              variant="contained"
+        >
+          Calcula los datos
+        </Button>
+      </p>
+      <p>Media De Los Datos seleccionados: {Media} </p>
+      <p>Maximo De Los Datos Seleccionados: {Maximo}</p>
+      <p>Minimo De Los Datos Seleccionados: {Minimo}</p>
+        
       </div> 
+
       <div style={styles.rightbox}>
         <DataGrid 
           sx={{ height: 400, width: '100%' }}
@@ -243,7 +287,7 @@ export default function BasicDateTimePicker() {
           rows = {rows_ten}
           columns = {cols_ten}
           pageSize={100}
-          rowsPerPageOptions={[]}
+          rowsPerPageOptions={[100]}
           value ={Selected_Ten}
           components={{ Toolbar: GridToolbar }}
           onSelectionModelChange={(r) => {
@@ -255,7 +299,7 @@ export default function BasicDateTimePicker() {
             selectedRowData.map(i => {
               setSelectedTen(i.Tendencia)
             })
-            console.log(Selected_Ten)
+
           }}
           />
           <br /> <br /> <br /> <br />

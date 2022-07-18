@@ -125,3 +125,47 @@ app.get('/dataEstadistico',(request, res)=>{
     }
     query();
 });
+
+app.post('/calcEstadistico',(request,res)=>{
+    //console.log(request.body);
+    var query;
+    var q_cal;
+    var l_inf = request.body.Lim_Inf
+    var l_sup = request.body.Lim_Sup
+
+    if(request.body.Tendencia == '19'){
+        query = `Select Valor,FechaHora from Datos19.dbo.Tb19 WHERE Valor > 101 AND FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'`
+        q_cal = `
+            Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
+            from Datos19.dbo.Tb19
+            WHERE 
+                Valor > 101
+                AND 
+                FechaHora BETWEEN '${l_inf}' and '${l_sup}'
+            `
+    }
+    else{
+        query = `select Valor,FechaHora from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}' AND FechaHora NOT IN (SELECT FechaHora from Datos19.dbo.Tb19 WHERE Valor < 101 AND FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'`
+        q_cal = `
+        Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
+        from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia}
+        WHERE  FechaHora NOT IN(
+        Select FechaHora
+        from Datos19.dbo.Tb19 
+        WHERE 
+            Valor < 101 
+            AND 
+            FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
+        )
+        ;`
+    }
+    
+    async function q(){
+        console.log(q_cal)
+        var datos_calculados= await get_query(query);
+        var media_min_max = await get_query(q_cal)
+        console.log(media_min_max.query)
+        res.send({Datos_Calculados : datos_calculados.query, Resultado: media_min_max.query })
+    }
+    q();
+})
