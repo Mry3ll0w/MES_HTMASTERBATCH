@@ -134,7 +134,7 @@ app.post('/calcEstadistico',(request,res)=>{
     var l_sup = request.body.Lim_Sup
 
     if(request.body.Tendencia == '19'){
-        query = `Select Valor,FechaHora from Datos19.dbo.Tb19 WHERE Valor > 101 AND FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'`
+        query = `Select Valor,FechaHora from Datos19.dbo.Tb19 WHERE Valor > 101 AND FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}' order by FechaHora desc`
         q_cal = `
             Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
             from Datos19.dbo.Tb19
@@ -147,6 +147,7 @@ app.post('/calcEstadistico',(request,res)=>{
     else{
         query = `
             Select Valor,FechaHora from Datos${request.body.Tendencia}.dbo.tb${request.body.Tendencia} WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
+            and valor > 0
             and FechaHora not IN (
                 Select FechaHora
                 from Datos19.dbo.Tb19
@@ -154,11 +155,13 @@ app.post('/calcEstadistico',(request,res)=>{
                 Valor < 101
                 AND 
                 FechaHora BETWEEN '${l_inf}' and '${l_sup}'
-            );
+            )
+            order by FechaHora;
             `
         
         q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
             WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
+            and Valor > 0
             and FechaHora not IN (
                 Select FechaHora
                 from Datos19.dbo.Tb19
@@ -170,12 +173,32 @@ app.post('/calcEstadistico',(request,res)=>{
     }
     
     async function q(){
-        console.log(query)
+        //console.log(query)
 
         var datos_calculados= await get_query(query);
         var media_min_max = await get_query(q_cal)
-        console.log(media_min_max.query)
+        //console.log(media_min_max.query)
         res.send({Datos_Calculados : datos_calculados.query, Resultado: media_min_max.query })
+    }
+    q();
+})
+
+app.post('/filterEstadistico',(request,res)=>{
+    console.log(request.body)
+    async function q (){
+        var filtrados = await get_query(`use MES;
+        SELECT RTRIM(graRegInciExtendido.OrdenFabricacionID) as OrdenFabricacionID, Min(graRegInciExtendido.CompInicio) AS Fecha_Inicio, 
+        Max(graRegInciExtendido.CompFin) AS Fecha_Fin, 
+        graRegInciExtendido.ProductoID
+        FROM graRegInciExtendido
+        WHERE (((graRegInciExtendido.C0COD)='CON'))
+        AND ProductoID = '${request.body.prod}'
+        GROUP BY graRegInciExtendido.OrdenFabricacionID, graRegInciExtendido.ProductoID
+        ORDER BY Min(graRegInciExtendido.CompInicio) DESC;
+        `);
+        console.log(filtrados.query)
+        res.send(filtrados.query)
+
     }
     q();
 })

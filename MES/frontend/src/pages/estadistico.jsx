@@ -6,7 +6,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dateFormat from 'dateformat';
 import { Box } from '@mui/system';
 import {Checkbox, FormControlLabel, Menu,MenuItem, Button, Autocomplete} from '@mui/material';
-import { DataGrid, GridToolbar} from '@mui/x-data-grid';
+import { DataGrid, esES, GridToolbar} from '@mui/x-data-grid';
 import { useState } from 'react';
 import { styles } from '../Style/styles';
 import { es } from 'date-fns/locale';
@@ -100,7 +100,7 @@ export default function BasicDateTimePicker() {
       var ok = true;
       var err;
       //Comprobamos que se han seleccionado la tendencia
-      if (Selected_Ten == '#'){ok = false; alert("Tienes que seleccionar una tendencia");} 
+      if (Selected_Ten === '#'){ok = false; alert("Tienes que seleccionar una tendencia");} 
       
       if(ok){
         axios.post('http://192.168.0.123:4001/calcEstadistico',
@@ -117,33 +117,27 @@ export default function BasicDateTimePicker() {
             SetMaximo('No hay datos para realizar el calculo');
           }
           else{
-            SetMedia(r.data.Resultado[0].media);
+            SetMedia(r.data.Resultado[0].media.toFixed(3));
             SetMinimo(r.data.Resultado[0].min);
             SetMaximo(r.data.Resultado[0].max);
           } 
-          
+          alert("Calculo correcto")
           
         })//Guardamos la respuesta del post en los useStates
       }
       if(err){
         alert("Fallo en el calculo");
       }
-      //else
-        //alert("Calculo realizado correctamente")
       
       
   }
-
-  //Filtros para aplicar en los dataGrid
-  //DataGrid de OF
-  
 
   //Visuals
   return (
     <Fragment>
     <div>
       <div style={styles.leftbox}>
-        <h2>Izquierda:</h2>
+        
         {/*Drop filtro */}
       <Button
         id="demo-positioned-button"
@@ -222,7 +216,8 @@ export default function BasicDateTimePicker() {
       </LocalizationProvider>
       
       <br />
-      <Autocomplete
+      {/*
+       <Autocomplete
         options={Productos}
         getOptionLabel={(o) => o.ProductoID}
         renderInput={(e) => (
@@ -239,36 +234,43 @@ export default function BasicDateTimePicker() {
           setSelectedProd(v.ProductoID)
           //filtramos la lista inferior
           console.log(v.ProductoID)
-          var filtro_of=[]
-          OFS.map( i=> {
-            if (i.ProductoID ===v.ProductoID) filtro_of = [...filtro_of,i]
-          })
-          //console.log(filtro_of)
+          
         }}
         freeSolo
       />
+      <Button variant="contained" sx={{margin : 2}} onClick={handleOF_Filter}>Aplica el Filtro</Button>
+      <Button variant="contained" sx={{margin : 2}} onClick = {() => window.location.reload(false)}>Limpia el filtro</Button>
+      
+       */}
       <p>
         <Button
-              sx={{ m: "10px" }}
+              sx={{ m: "10px", marginLeft : 20}}
               onClick={handleCalculation}
               variant="contained"
         >
           Calcula los datos
         </Button>
       </p>
-      <p>Media De Los Datos seleccionados: {Media} </p>
-      <p>Maximo De Los Datos Seleccionados: {Maximo}</p>
-      <p>Minimo De Los Datos Seleccionados: {Minimo}</p>
+
+        
+      
+      <TextField label="Media Aritmetica"value={Media} disabled/>
+      <TextField label="Valor Maximo de los datos" value={Maximo} disabled/>
+      <TextField label="Valor Minimo de los datos" value={Minimo} disabled/>
+      
+
         
       </div> 
 
+
       <div style={styles.rightbox}>
-        <DataGrid 
+        <DataGrid
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText} 
           sx={{ height: 400, width: '100%' }}
           rows = {rows_OF}
           columns = {cols_of}
-          pageSize={10}
-          rowsPerPageOptions={[5]}
+          pageSize={100}
+          rowsPerPageOptions={[100]}
           value ={Selected_OF}
           components={{ Toolbar: GridToolbar }}
           onSelectionModelChange={(r) => {
@@ -298,7 +300,7 @@ export default function BasicDateTimePicker() {
           pageSize={100}
           rowsPerPageOptions={[100]}
           value ={Selected_Ten}
-          components={{ Toolbar: GridToolbar }}
+          //components={{ Toolbar: GridToolbar }}
           onSelectionModelChange={(r) => {
             const selectedIDs = new Set(r);
             const selectedRowData = rows_ten.filter((row) =>
