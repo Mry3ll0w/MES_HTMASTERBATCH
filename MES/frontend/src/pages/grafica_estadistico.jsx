@@ -341,7 +341,7 @@ export default function BasicDateTimePicker() {
 
 
         <div style={styles.center_box_gr}>
-            <Line options={options} data={gr_data} onClick={()=>{alert('cl')}} style={{width:'100%',height:'90%',marginRight:10}}/>      
+            <Line options={options} data={gr_data} style={{width:'100%',height:'90%',marginRight:10}}/>      
         </div>
     </div>  
     </Fragment>

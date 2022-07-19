@@ -64,8 +64,8 @@ export default function BasicDateTimePicker() {
       id : n++,
       OrdenFabricacionID: i.OrdenFabricacionID,
       ProductoID : i.ProductoID,
-      Fecha_Inicio : dateFormat(i.Fecha_Inicio,'dd/mm/yyyy hh:mm:ss'),
-      Fecha_Fin : dateFormat(i.Fecha_Fin,'dd/mm/yyyy hh:mm:ss') 
+      Fecha_Inicio : dateFormat(i.Fecha_Inicio,'yyyy-mm-dd hh:mm:ss'),
+      Fecha_Fin : dateFormat(i.Fecha_Fin,'yyyy-mm-dd hh:mm:ss') 
     }])
   })
 
@@ -95,7 +95,7 @@ export default function BasicDateTimePicker() {
       rows_res_c = [...rows_res_c, {
         id : n++,
         Valor : i.Valor,
-        FechaHora : dateFormat(i.FechaHora,'dd/mm/yyyy hh:mm:ss')
+        FechaHora : dateFormat(i.FechaHora,'yyyy-mm-dd hh:mm:ss')
       }]
     )
   })
@@ -111,8 +111,8 @@ export default function BasicDateTimePicker() {
       if(ok){
         axios.post('http://192.168.0.123:4001/calcEstadistico',
           {
-            Lim_Sup : dateFormat(Fecha_Limite_Superior,'yyyy-mm-dd hh:mm:ss'),
-            Lim_Inf : dateFormat(Fecha_Limite_Inferior,'yyyy-mm-dd hh:mm:ss'),
+            Lim_Sup : Fecha_Limite_Superior,
+            Lim_Inf : Fecha_Limite_Inferior,
             Tendencia : Selected_Ten
           }
         ).catch(e => err=e)
@@ -199,12 +199,11 @@ export default function BasicDateTimePicker() {
 
       <h2>Valores obtenidos </h2>
       <DataGrid 
-          sx={{ height: 565, width: '93%'}}
+          sx={{ height: 500, width: '93%'}}
           rows = {rows_res_c}
           columns = {cols_res_c}
           pageSize={100}
           rowsPerPageOptions={[100]}
-          components={{ Toolbar: GridToolbar }}
           
           />
         
