@@ -10,7 +10,9 @@ import {
   InputLabel,
   Autocomplete,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, esES, GridToolbar} from '@mui/x-data-grid';
+
+//import { DataGrid,esEs} from "@mui/x-data-grid";
 import React, { Fragment } from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -29,10 +31,10 @@ export default function RegEnsacado() {
   const [M_Turno, mturno] = useState("");
   const [M_Producto, mprod] = useState("");
   const [M_Palet, mpalet] = useState("");
-  const [M_Peso_Saco, mpsaco] = useState("");
-  const [M_Cantidad, mcant] = useState("");
-  const [M_Resto, mresto] = useState("");
-  const [M_Ant, mant] = useState("");
+  const [M_Peso_Saco, mpsaco] = useState(0);
+  const [M_Cantidad, mcant] = useState(0);
+  const [M_Resto, mresto] = useState(0);
+  const [M_Ant, mant] = useState(0);
 
   //Manejadores de errores
   const [Err_palet, err_palet] = useState(false);
@@ -221,6 +223,7 @@ export default function RegEnsacado() {
 
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
+
       axios
         .post("http://192.168.0.123:4001/RegistraEnsacado", {
           Fecha: M_Fecha,
@@ -266,15 +269,16 @@ export default function RegEnsacado() {
 
   return (
     <Fragment>
-      <h1>Bienvenido al panel de Inserción/Eliminación de los ensacados.</h1>
+      <h1>Bienvenido al panel de Inserción/Modificación de los ensacados.</h1>
       <p>
-        Se muestran los ultimos ensacados, ordenados por fecha, seleccione UN
-        ÚNICO ensacado y podrá modificarlo.<br></br>
-        Para que la seleccion de la list de productos se haga correctamente
-        debes pulsar intro cuando selecciones el producto.
+        Se muestran los ultimos ensacados, ordenados por fecha, en caso de querer modificar
+        seleccione UN ÚNICO ensacado.<br></br>
+        Si desea eliminar uno o varios seleccione todos aquellos que deseas cambiar, tras esto
+        pulse el boton de eliminación.
       </p>
       <div style={{ height: 300, width: "100%" }}>
         <DataGrid
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText} 
           rows={rows}
           columns={columns}
           pageSize={5}
@@ -416,7 +420,7 @@ export default function RegEnsacado() {
             onClick={UpdateEnsacado}
             variant="contained"
           >
-            Corrige el Ensacado
+            Corrige/Modifica el Ensacado
           </Button>
           <p>
             *Nota : En caso de equivocación en la inserción del ensacado

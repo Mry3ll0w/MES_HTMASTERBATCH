@@ -29,8 +29,8 @@ export function App() {
           <Route path='/estadistico' element ={<Estadistico />} />
           <Route path='*' element={<ErrorPage />} />
           <Route path='/ejparam/:username' element = {<EjParam />} />
-          <Route path='/Ensacados' element = {<Menu_Ensacado />} />
-          <Route path='/ModEnsacado' element={<Mod_Ensacado />} />
+          //<Route path='/Ensacados' element = {<Menu_Ensacado />} />
+          //<Route path='/ModEnsacado' element={<Mod_Ensacado />} />
           <Route path='/RegEnsacado' element={<RegEnsacado />} />
           <Route path='/GraficaEstadistico' element={<Grafica_Estadistico />} />
       </Routes>
