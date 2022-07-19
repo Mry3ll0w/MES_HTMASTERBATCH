@@ -53,5 +53,8 @@ export const styles = {
         width:'55%',
         height:'280px'
     },
-    
+    center_box_gr:{
+        width:'100%',
+        margin : '0 auto'
+    }
 }

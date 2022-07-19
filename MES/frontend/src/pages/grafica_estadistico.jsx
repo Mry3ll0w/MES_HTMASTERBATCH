@@ -12,7 +12,11 @@ import { es } from 'date-fns/locale';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { addMinutes } from 'date-fns/esm';
-
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 //Grafica 
 import {
     Chart as ChartJS,
@@ -104,8 +108,8 @@ export default function BasicDateTimePicker() {
   const cols_of = [
     { field: "OrdenFabricacionID", headerName: "OF", width: "150" },
     { field: "ProductoID", headerName : 'Producto', width : "150"},
-    { field: "Fecha_Inicio", headerName: "Fecha Inicio", width: "200" },
-    { field: "Fecha_Fin", headerName: "Fecha Fin", width: "200" },
+    { field: "Fecha_Inicio", headerName: "Fecha Inicio", width: "160" },
+    { field: "Fecha_Fin", headerName: "Fecha Fin", width: "160" },
   ];
 
   //Construimos las filas de las OFS
@@ -204,14 +208,14 @@ export default function BasicDateTimePicker() {
   return (
     <Fragment>
     <div>
-      <div style={styles.leftbox}>
+      <div>
         
       
       <br /> <br />
       <LocalizationProvider  dateAdapter={AdapterDateFns} locale={es}>
           <DateTimePicker
             style={styles.timepickers}
-            renderInput={(props) => <TextField sx={{p:'3px',m:'3px',width:'250px'}} {...props} />}
+            renderInput={(props) => <TextField sx={{p:'3px',m:'3px',width:'250px',marginLeft:'3%'}} {...props} />}
             label="Limite Inferior"
             value={Fecha_Limite_Inferior}
             onChange={(e) => {
@@ -224,7 +228,7 @@ export default function BasicDateTimePicker() {
       <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
       
       <DateTimePicker
-        renderInput={(props) => <TextField sx={{p:'3px',m:'3px',width : '250px'}} {...props} />}
+        renderInput={(props) => <TextField sx={{p:'3px',m:'3px',width : '250px',marginLeft : '3%'}} {...props} />}
         label="Limite Superior"
         value={Fecha_Limite_Superior}
         components={{}}
@@ -236,10 +240,10 @@ export default function BasicDateTimePicker() {
 
       </LocalizationProvider>
       
-      <br />
+      
       <p>
         <Button
-              sx={{ m: "10px", marginLeft : '33%'}}
+              sx={{ m: "10px", marginLeft : '3%'}}
               onClick={handleCalculation}
               variant="contained"
         >
@@ -249,59 +253,86 @@ export default function BasicDateTimePicker() {
 
         
       
-        <TextField sx={{m : '2px'}} label="Media Aritmetica"value={Media} disabled/>
-        <TextField sx={{m : '2px'}} label="Valor Maximo de los datos" value={Maximo} disabled/>
-        <TextField sx={{m : '2px'}} label="Valor Minimo de los datos" value={Minimo} disabled/>
+        <TextField sx={{m : '2px',marginLeft:'3%'}} label="Media Aritmetica"value={Media} disabled/>
+        <TextField sx={{m : '2px',marginLeft:'3%'}} label="Valor Maximo de los datos" value={Maximo} disabled/>
+        <TextField sx={{m : '2px',marginLeft:'3%'}} label="Valor Minimo de los datos" value={Minimo} disabled/>
         
-        <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText} 
-          sx={{ height: 400, width: '100%' }}
-          rows = {rows_OF}
-          columns = {cols_of}
-          pageSize={100}
-          rowsPerPageOptions={[100]}
-          value ={Selected_OF}
-          components={{ Toolbar: GridToolbar }}
-          onSelectionModelChange={(r) => {
-            const selectedIDs = new Set(r);
-            const selectedRowData = rows_OF.filter((row) =>
-            selectedIDs.has(row.id)
-            );
-            selectedRowData.map( i=> {
-            var t = new Date(i.Fecha_Fin);
-            //Limite inferior
-            t = dateFormat(addMinutes(t,-5))
-            //console.log(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
-            setSuperior(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
-            var tm = new Date(i.Fecha_Inicio);
-            tm = addMinutes(tm,+5)
-            setInferior(dateFormat(tm,'yyyy-mm-dd hh:MM:ss'))
-            
-            })
-          }}
-          />
-          <br />
-          <h2>Selecciona a continuación una tendencia para realizar el calculo</h2>
-          <DataGrid 
-          sx={{ height: 400, width: '100%'}}
-          rows = {rows_ten}
-          columns = {cols_ten}
-          pageSize={100}
-          rowsPerPageOptions={[100]}
-          value ={Selected_Ten}
-          //components={{ Toolbar: GridToolbar }}
-          onSelectionModelChange={(r) => {
-            const selectedIDs = new Set(r);
-            const selectedRowData = rows_ten.filter((row) =>
-            selectedIDs.has(row.id)
-            );
-            
-            selectedRowData.map(i => {
-              setSelectedTen(i.Tendencia)
-            })
-
-          }}
-          />
+        <br />
+        <br /> 
+        <div>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography>Selecciona la OF/Producto</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+              <DataGrid
+                  localeText={esES.components.MuiDataGrid.defaultProps.localeText} 
+                  sx={{ height: 500, width: '100%' }}
+                  rows = {rows_OF}
+                  columns = {cols_of}
+                  pageSize={100}
+                  rowsPerPageOptions={[100]}
+                  value ={Selected_OF}
+                  components={{ Toolbar: GridToolbar }}
+                  onSelectionModelChange={(r) => {
+                      const selectedIDs = new Set(r);
+                      const selectedRowData = rows_OF.filter((row) =>
+                      selectedIDs.has(row.id)
+                      );
+                      selectedRowData.map( i=> {
+                      var t = new Date(i.Fecha_Fin);
+                      //Limite inferior
+                      t = dateFormat(addMinutes(t,-5))
+                      //console.log(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
+                      setSuperior(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
+                      var tm = new Date(i.Fecha_Inicio);
+                      tm = addMinutes(tm,+5)
+                      setInferior(dateFormat(tm,'yyyy-mm-dd hh:MM:ss'))
+                  })
+                }}
+              />
+          
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel2a-content"
+            id="panel2a-header"
+          >
+            <Typography>Selecciona la Tendencia</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+              <DataGrid 
+                sx={{ height: 400, width: '100%'}}
+                rows = {rows_ten}
+                columns = {cols_ten}
+                pageSize={100}
+                rowsPerPageOptions={[100]}
+                value ={Selected_Ten}
+                //components={{ Toolbar: GridToolbar }}
+                onSelectionModelChange={(r) => {
+                  const selectedIDs = new Set(r);
+                  const selectedRowData = rows_ten.filter((row) =>
+                  selectedIDs.has(row.id)
+                  );
+                
+                  selectedRowData.map(i => {
+                    setSelectedTen(i.Tendencia)
+                  })
+                
+                }}
+                />
+          </AccordionDetails>
+        </Accordion>
+      <br />
+    </div>
+ 
+          
  
         
         
@@ -309,11 +340,9 @@ export default function BasicDateTimePicker() {
       </div> 
 
 
-      <div style={styles.rightbox}>
-      <Line options={options} data={gr_data} onClick={()=>{alert('cl')}} style={{width:'100%',height:'90%',marginRight:10}}/>
-      
-                 <br /> <br /> <br /> <br />
-      </div>
+        <div style={styles.center_box_gr}>
+            <Line options={options} data={gr_data} onClick={()=>{alert('cl')}} style={{width:'100%',height:'90%',marginRight:10}}/>      
+        </div>
     </div>  
     </Fragment>
   );
