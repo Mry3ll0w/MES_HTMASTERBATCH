@@ -14,28 +14,81 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { addMinutes } from 'date-fns/esm';
 
+//Grafica 
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
+
+
 export default function BasicDateTimePicker() {
   
   //Para sumar y restar los minutos
-  var addMin = require('date-fns/addMinutes');
+    var addMin = require('date-fns/addMinutes');    
+    //UseStates para controlar 
+    const [Fecha_Limite_Inferior, setInferior] = useState(new Date());
+    const [Fecha_Limite_Superior, setSuperior] = useState(new Date());
+    const [Tendencias, setTendencias] = useState([]);
+    const [Productos,SetProductos]=useState([]);
+    const [OFS,setOFs]=useState([]);
+    const [Valores, setValores] = useState([])
+    //Get selecciones realizadas
+    const [Selected_Ten, setSelectedTen]=useState('#'); 
+    const [Selected_OF,setSelectedOF]=useState(''); 
+    const [Selector_f_rango,setRango] = useState(false);
+    const [Media,SetMedia] = useState(0.00);
+    const [Maximo,SetMaximo] = useState(0.00)
+    const [Minimo, SetMinimo] = useState(0.00) 
 
-  //UseStates para controlar 
-  const [Fecha_Limite_Inferior, setInferior] = useState(new Date());
-  const [Fecha_Limite_Superior, setSuperior] = useState(new Date());
-  const [Tendencias, setTendencias] = useState([]);
-  const [Productos,SetProductos]=useState([]);
-  const [OFS,setOFs]=useState([]);
-  const [Valores, setValores] = useState([])
-  //Get selecciones realizadas
-  const [Selected_Ten, setSelectedTen]=useState('#'); 
-  const [Selected_OF,setSelectedOF]=useState('');
-
-  const [Selector_f_rango,setRango] = useState(false);
-  
-  const [Media,SetMedia] = useState(0.00);
-  const [Maximo,SetMaximo] = useState(0.00)
-  const [Minimo, SetMinimo] = useState(0.00) 
-  
+    //Opciones y Datos para la grafica seleccionada
+    const options = {
+        responsive: true,
+        maintainAspectRatio : false,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Valores obtenidos',
+            },
+            label :{
+                display : false
+            },
+        },
+    };
+    
+    const labels = Valores.map(i => {return i.FechaHora});//Los labels seran las fechas de los valores
+    const scores = Valores.map(i => {return i.Valor})
+    const gr_data = {
+        labels,
+        datasets:
+        [
+            {
+                label : `Valores Tendencia ${Selected_Ten}`,
+                data : scores,
+                borderColor:'rgb(75,192,192)'
+            }
+        ]
+    }
 
   
   //Peticiones a REST API
@@ -145,6 +198,9 @@ export default function BasicDateTimePicker() {
       
   }
 
+       
+    
+
   //Visuals
   return (
     <Fragment>
@@ -172,8 +228,9 @@ export default function BasicDateTimePicker() {
         renderInput={(props) => <TextField sx={{p:'3px',m:'3px',width : '250px'}} {...props} />}
         label="Limite Superior"
         value={Fecha_Limite_Superior}
+        components={{}}
         onChange={(newValue) => {
-          setSuperior(newValue);
+        setSuperior(newValue);
         }}
         disabled={Selector_f_rango}
       />
@@ -187,31 +244,16 @@ export default function BasicDateTimePicker() {
               onClick={handleCalculation}
               variant="contained"
         >
-          Calcula los datos
+          Genera la Grafica 
         </Button>
       </p>
 
         
       
-      <TextField sx={{m : '2px'}} label="Media Aritmetica"value={Media} disabled/>
-      <TextField sx={{m : '2px'}} label="Valor Maximo de los datos" value={Maximo} disabled/>
-      <TextField sx={{m : '2px'}} label="Valor Minimo de los datos" value={Minimo} disabled/>
-
-      <h2>Valores obtenidos </h2>
-      <DataGrid 
-          sx={{ height: 565, width: '93%'}}
-          rows = {rows_res_c}
-          columns = {cols_res_c}
-          pageSize={100}
-          rowsPerPageOptions={[100]}
-          components={{ Toolbar: GridToolbar }}
-          
-          />
+        <TextField sx={{m : '2px'}} label="Media Aritmetica"value={Media} disabled/>
+        <TextField sx={{m : '2px'}} label="Valor Maximo de los datos" value={Maximo} disabled/>
+        <TextField sx={{m : '2px'}} label="Valor Minimo de los datos" value={Minimo} disabled/>
         
-      </div> 
-
-
-      <div style={styles.rightbox}>
         <DataGrid
           localeText={esES.components.MuiDataGrid.defaultProps.localeText} 
           sx={{ height: 400, width: '100%' }}
@@ -261,10 +303,17 @@ export default function BasicDateTimePicker() {
 
           }}
           />
-          <br /> <br /> <br /> <br />
-          
-          
+ 
+        
+        
+        
+      </div> 
 
+
+      <div style={styles.rightbox}>
+      <Line options={options} data={gr_data} onClick={()=>{alert('cl')}} style={{width:'100%',height:'90%',marginRight:10}}/>
+      
+                 <br /> <br /> <br /> <br />
       </div>
     </div>  
     </Fragment>

@@ -12,7 +12,8 @@ import { Header } from './Components/Header';
 import { styles} from './Style/styles';
 import Footer from './Components/Footer';
 import { useEffect } from 'react';
-
+import Grafica_Estadistico from './pages/grafica_estadistico';
+import {} from 'chart.js'
 export function App() {
 
   useEffect(()=>{
@@ -31,6 +32,7 @@ export function App() {
           <Route path='/Ensacados' element = {<Menu_Ensacado />} />
           <Route path='/ModEnsacado' element={<Mod_Ensacado />} />
           <Route path='/RegEnsacado' element={<RegEnsacado />} />
+          <Route path='/GraficaEstadistico' element={<Grafica_Estadistico />} />
       </Routes>
       
       </div>

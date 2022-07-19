@@ -52,5 +52,6 @@ export const styles = {
         //background:'blue',
         width:'55%',
         height:'280px'
-    }
+    },
+    
 }
