@@ -10,7 +10,7 @@ import {
   InputLabel,
   Autocomplete,
 } from "@mui/material";
-import { DataGrid, esES, GridToolbar} from '@mui/x-data-grid';
+import { DataGrid, esES} from '@mui/x-data-grid';
 
 //import { DataGrid,esEs} from "@mui/x-data-grid";
 import React, { Fragment } from "react";
@@ -18,7 +18,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import dateFormat from "dateformat";
-import { styles } from "../Style/styles";
+
 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';

@@ -9,9 +9,7 @@ import { useState } from 'react';
 import {Drawer} from '@mui/material'
 import { styles } from '../Style/styles';
 import { useNavigate } from 'react-router-dom';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
+
 
 export function Header () {
   
