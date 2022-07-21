@@ -6,6 +6,8 @@ const cors = require('cors');
 const { json } = require('body-parser');
 const async = require('async');
 const fs = require('fs');//Lectura de archivos para leer sql queries
+
+var bcrypt = require('bcryptjs');
 app.listen('4001',() => {console.log('listening in 4001')});
 //usando bodyparser
 app.use(bodyParser.urlencoded({extended:true}));
@@ -183,3 +185,28 @@ app.post('/calcEstadistico',(request,res)=>{
     q();
 })
 
+//LOGIN FORM
+const salt = bcrypt.genSaltSync(10)
+    console.log(bcrypt.hashSync('2812'))
+    
+app.get('/Login', (request,res)=>{
+    
+    
+    async function f (){
+        var query = 'select Codigo,Pwd_Hashed from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL;'
+        var resultado = await get_query(query);
+        console.log(resultado)
+        res.send({user : resultado.query})
+    }
+    
+    
+    f()
+    
+});
+app.post('/Login', (request,res)=>{
+    
+    
+    var user = request.body.user;
+    console.log(user);
+    
+});
