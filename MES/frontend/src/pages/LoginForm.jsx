@@ -54,7 +54,7 @@ export default function LoginForm() {
                 alert('Acceso Correcto');
             }
             else
-                alert('Incorrecto')
+                alert('Acceso Incorrecto')
 
         }
     }
