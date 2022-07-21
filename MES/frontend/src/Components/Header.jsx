@@ -47,14 +47,8 @@ export function Header () {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 Opciones Disponibles
             </Typography>
-            <Button style={styles.buttons} onClick={() => {navigate('/');openmenu(false)}} variant='contained'>Menu principal</Button>
-            <br />
-            <Button style={styles.buttons} onClick={() => {navigate('/RegEnsacado');openmenu(false)}} variant='contained'>Ensacados</Button>
-            <br /> 
-            <Button style={styles.buttons} onClick={() => {navigate('/Estadistico');openmenu(false)}} variant='contained'>Estadistico</Button>
-            <br />
-            <Button style={styles.buttons} onClick={() => {navigate('/graficaEstadistico');openmenu(false)}} variant='contained'>Grafica del Estadistico</Button>
-            <br />
+            <Button style={styles.buttons} onClick={() => {navigate('/');openmenu(false)}} variant='contained'>Departamento de Produccion</Button>
+            
           </Box>
 
         </Drawer>

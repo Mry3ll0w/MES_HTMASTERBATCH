@@ -56,5 +56,12 @@ export const styles = {
     center_box_gr:{
         width:'100%',
         margin : '0 auto'
-    }
+    },
+    header_font:{
+        background: '#1876D2',
+        color : '#FFFFFF',
+    },
+    td_style :{
+        padding : '10px'
+    },
 }
