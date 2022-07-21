@@ -51,7 +51,7 @@ export default function LoginForm() {
             
             var verified = bcrypt.compareSync(Pass,Sel_user.Pwd_Hashed)
             if(verified){
-                alert('Correcto');
+                alert('Acceso Correcto');
             }
             else
                 alert('Incorrecto')
