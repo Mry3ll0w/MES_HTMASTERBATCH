@@ -189,11 +189,13 @@ app.post('/calcEstadistico',(request,res)=>{
     
 app.get('/Login', (request,res)=>{
     
+    const salt = bcrypt.genSaltSync(10)
+    console.log(`pwd : ${bcrypt.hashSync('1234',salt)}`)
     
     async function f (){
-        var query = 'select Codigo,Pwd_Hashed from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL;'
+        var query = 'select Codigo,Pwd_Hashed,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;'
         var resultado = await get_query(query);
-        console.log(resultado)
+        //console.log(resultado)
         res.send({user : resultado.query})
     }
     

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
 import { Box } from '@mui/system';
-import { Fragment } from 'react';
+import { Fragment,} from 'react';
 import { TextField,Autocomplete, Button } from '@mui/material';
 import { useState} from 'react';
 import axios from 'axios';
 import { styles } from '../Style/styles';
+import { useNavigate } from 'react-router-dom';
 //const {scryptSync, randomBytes} = require('crypto')
 const bcrypt = require('bcryptjs');
 
@@ -12,12 +13,19 @@ const bcrypt = require('bcryptjs');
 
 export default function LoginForm({LoginLogo}) {
     
+    const navigate = useNavigate();
+
+    function nav_home(){
+        navigate('/')
+    }
+
     const [Usuarios,setUsuarios]= useState([]);
     const [User,Setuser]= useState('');
     const [Pass,setPass]= useState('');
     const [UserError,setUerror]= useState(false);
     const [PassError,setPassError] = useState(false);
     const [Verified,setVerified] = useState(false)
+    const [Nombre,setNombre] = useState('')
 
     useEffect(() => {
         axios
@@ -57,10 +65,13 @@ export default function LoginForm({LoginLogo}) {
             var verified = bcrypt.compareSync(Pass,Sel_user[0].Pwd_Hashed)
             
             if(verified){
-                alert('Acceso Correcto');
+                
+                alert('M.E.S',`Acceso Correcto, bienvenido al M.E.S.`);
+                nav_home();
             }
             else
-                alert('Acceso Incorrecto')
+                alert('Acceso Incorrecto, comprueba el usuario y/o la contraseña')
+                window.location.reload(false);
 
         }
     }
@@ -76,11 +87,12 @@ export default function LoginForm({LoginLogo}) {
         <br></br> <br></br>
         <div style={styles.centered_div}>
             
+            
             <Autocomplete
                 options={Usuarios}
-                getOptionLabel={(o) => o.Codigo}
+                getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                 renderInput={(e) => (
-                  <TextField {...e} value={User} error = {UserError} onChange={e => Setuser(e.target.value)} sx={{margin:5}} label='Usuario'></TextField>
+                  <TextField {...e} value={User} error = {UserError} onChange={e => Setuser(e.target.value)} sx={{ width : '400px'}} label='Usuario'></TextField>
             
                 )}
                 onChange={(e, v) => Setuser(v.Codigo)}
