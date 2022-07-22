@@ -186,8 +186,6 @@ app.post('/calcEstadistico',(request,res)=>{
 })
 
 //LOGIN FORM
-const salt = bcrypt.genSaltSync(10)
-    console.log(bcrypt.hashSync('2812'))
     
 app.get('/Login', (request,res)=>{
     
@@ -201,12 +199,5 @@ app.get('/Login', (request,res)=>{
     
     
     f()
-    
-});
-app.post('/Login', (request,res)=>{
-    
-    
-    var user = request.body.user;
-    console.log(user);
     
 });
