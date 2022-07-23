@@ -92,8 +92,7 @@ export default function LoginForm({LoginLogo}) {
                 options={Usuarios}
                 getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                 renderInput={(e) => (
-                  <TextField {...e} value={User} error = {UserError} onChange={e => Setuser(e.target.value)} sx={{ width : '400px'}} label='Usuario'></TextField>
-            
+                    <TextField {...e} value={User} error = {UserError} onChange={e => Setuser(e.target.value)} sx={{ width : '400px'}} label='Usuario'></TextField>
                 )}
                 onChange={(e, v) => Setuser(v.Codigo)}
                 freeSolo
