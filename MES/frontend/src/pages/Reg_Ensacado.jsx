@@ -83,7 +83,7 @@ export default function RegEnsacado() {
       ...rows,
       {
         id: n++,
-        Fecha: dateFormat(i.Fecha, "dd/mm/yyyy"),
+        Fecha: dateFormat(i.Fecha, "yyyy-mm-dd"),
         Turno: i.Turno,
         Producto: i.Producto,
         Palet: i.Palet,
@@ -293,7 +293,7 @@ export default function RegEnsacado() {
             //Creacion Ensacado
             selectedRowData.map((i) => {
               var tDate = new Date(i.Fecha);
-              tDate = dateFormat(tDate, "dd/mm/yyyy");
+              tDate = dateFormat(tDate, "yyyy-mm-dd");
               console.log(tDate);
               mfecha(tDate);
               mpalet(i.Palet);

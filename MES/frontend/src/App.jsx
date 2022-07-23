@@ -12,6 +12,9 @@ import Footer from './Components/Footer';
 import { useEffect } from 'react';
 import Grafica_Estadistico from './pages/grafica_estadistico';
 import {} from 'chart.js'
+
+//Imagenes
+import LoginLogo from '../src/img/LoginLogo.png'
 export function App() {
 
   useEffect(()=>{
@@ -29,7 +32,7 @@ export function App() {
           <Route path='/ejparam/:username' element = {<EjParam />} />
           <Route path='/RegEnsacado' element={<RegEnsacado />} />
           <Route path='/GraficaEstadistico' element={<Grafica_Estadistico />} />
-          <Route path='/Login' element={<LoginForm />} />
+          <Route path='/Login' element={<LoginForm LoginLogo={LoginLogo}/>} />
       </Routes>
       
       </div>
