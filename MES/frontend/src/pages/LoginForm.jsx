@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { Box } from '@mui/system';
 import { Fragment,} from 'react';
 import { TextField,Autocomplete, Button } from '@mui/material';
 import { useState} from 'react';
@@ -25,9 +24,7 @@ export default function LoginForm({LoginLogo, LoggedUser}) {
     const [Pass,setPass]= useState('');
     const [UserError,setUerror]= useState(false);
     const [PassError,setPassError] = useState(false);
-    const [Verified,setVerified] = useState(false)
-    const [Nombre,setNombre] = useState('')
-
+    
     useEffect(() => {
         axios
           .get("http://192.168.0.123:4001/Login")
@@ -69,9 +66,10 @@ export default function LoginForm({LoginLogo, LoggedUser}) {
                 var temp_apellidos =  Sel_user[0].Apellidos.split(' ');
                 var iniciales = `${Sel_user[0].Nombre[0]}${temp_apellidos[0][0]}${temp_apellidos[1][0]}`
                 
-                alert('M.E.S',`Acceso Correcto, bienvenido al M.E.S.`);
+                alert(`Acceso Correcto, bienvenido al M.E.S.`);
                 sessionStorage.setItem('logged',Sel_user[0].Nombre)
                 sessionStorage.setItem('iniciales',iniciales)//Para la visualizacion en el registro de ensacado
+                sessionStorage.setItem('codigo',Sel_user[0].Codigo)//Para la visualizacion en el registro de ensacado
                 nav_home();
             }
             else

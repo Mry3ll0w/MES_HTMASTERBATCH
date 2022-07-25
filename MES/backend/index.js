@@ -203,3 +203,26 @@ app.get('/Login', (request,res)=>{
     f()
     
 });
+
+app.get('/Profile/:user',(request,res)=>{
+    var user = request.params.user;
+    async function f(){
+        var query = `select * from WEB_API_TABLES.dbo.tbEmpleados where Codigo = '${user}';`
+        var resultado = await get_query(query);
+        console.log(resultado.query)
+        res.send({user : resultado.query})
+    }
+    f();
+})
+
+app.post('/Profile',(request,res)=>{
+    var Codigo = request.body.Codigo;
+    var Pwd_Hashed = request.body.NewPass;
+    async function f(){
+        var query = `update WEB_API_TABLES.dbo.tbEmpleados set Pwd_Hashed = '${Pwd_Hashed}' where Codigo = '${Codigo}';`
+        var resultado = await get_query(query);
+        console.log(resultado)
+        //res.send({user : resultado.query})
+    }
+    f();
+})
