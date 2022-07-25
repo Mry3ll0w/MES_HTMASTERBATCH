@@ -24,7 +24,7 @@ jobs:
         with:
           find: "192.168.0.133"
           replace: "192.168.0.123"
-          include: "MES/frontend"
+          include: "MES/frontend/*"
           regex: false
           
           
