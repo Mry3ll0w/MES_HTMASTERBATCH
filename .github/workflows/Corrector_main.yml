@@ -1,15 +1,24 @@
-name: My Workflow
-on: [push, pull_request]
+name: find&replace strings
+
+on:
+  push:
+    branches:
+      - main
+      
+
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Find and Replace
-        uses: jacobtomlinson/gha-find-replace@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          find: "192.168.0.123:4001"
-          replace: "192.168.0.133:4001"
-          include: "MES/frontend/**"
-          regex: true
-          
+          fetch-depth: 0
+
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "192.168.0.123"
+          replace: "192.168.0.133"
+
+      
