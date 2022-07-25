@@ -15,6 +15,7 @@ import {} from 'chart.js'
 
 //Imagenes
 import LoginLogo from '../src/img/LoginLogo.png'
+let loggeduser=''
 export function App() {
 
   useEffect(()=>{
@@ -26,13 +27,14 @@ export function App() {
       <Header />
       <div style={styles.home_div}>
       <Routes>
-          <Route path ="/" element={<Home />}/>
+          <Route path ="/" element={<LoginForm />} />
+          <Route path = "/home" element={<Home />} />
           <Route path='/estadistico' element ={<Estadistico />} />
           <Route path='*' element={<ErrorPage />} />
           <Route path='/ejparam/:username' element = {<EjParam />} />
           <Route path='/RegEnsacado' element={<RegEnsacado />} />
           <Route path='/GraficaEstadistico' element={<Grafica_Estadistico />} />
-          <Route path='/Login' element={<LoginForm LoginLogo={LoginLogo}/>} />
+          <Route path='/Login' element={<LoginForm LoginLogo={LoginLogo} />} />
       </Routes>
       
       </div>

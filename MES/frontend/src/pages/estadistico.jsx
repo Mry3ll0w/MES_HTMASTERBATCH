@@ -4,8 +4,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dateFormat from 'dateformat';
-import { Box } from '@mui/system';
-import {Checkbox, FormControlLabel, Menu,MenuItem, Button, Autocomplete} from '@mui/material';
+import { Button } from '@mui/material';
 import { DataGrid, esES, GridToolbar} from '@mui/x-data-grid';
 import { useState } from 'react';
 import { styles } from '../Style/styles';
@@ -13,9 +12,21 @@ import { es } from 'date-fns/locale';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { addMinutes } from 'date-fns/esm';
-
-export default function BasicDateTimePicker() {
+import { useNavigate } from 'react-router-dom';
+export default function GraficaEstadistico() {
   
+  //redirect
+  const navigate = useNavigate();
+  const nav_login = () =>{
+    navigate('/Login')
+  }
+ 
+  //alert(`Nombre : ${sessionStorage.getItem('logged')}`)
+  if(sessionStorage.getItem('logged') === null){
+    alert('Para acceder a esta pagina necesita iniciar sesión, pida a un administrador que le de de alta o acceda con su usuario');
+    nav_login();
+  }
+
   //Para sumar y restar los minutos
   var addMin = require('date-fns/addMinutes');
 

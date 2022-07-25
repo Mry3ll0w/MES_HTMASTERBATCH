@@ -9,6 +9,8 @@ import { useState } from 'react';
 import {Drawer} from '@mui/material'
 import { styles } from '../Style/styles';
 import { useNavigate } from 'react-router-dom';
+import { set } from 'date-fns';
+import { useEffect } from 'react';
 
 
 export function Header () {
@@ -18,6 +20,15 @@ export function Header () {
 
   //Navegabilidad de los botones
   const navigate = useNavigate();
+  const [On_Login, setOnLogin] = useState(()=> {
+    if(window.location.href === 'http://localhost:3000/Login'){
+      return true;
+    }
+    else{
+      return false;
+    }
+  });
+    
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -30,7 +41,7 @@ export function Header () {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-
+            disabled = {On_Login}
           >
             <MenuIcon />
           </IconButton>
@@ -38,7 +49,15 @@ export function Header () {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             M.E.S. UNNOX-HT
           </Typography>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 , textAlign : 'left', marginLeft: 110}}>
           
+          <Button 
+            style={styles.buttons} onClick={() => {navigate('/Login');openmenu(false);sessionStorage.clear();setOnLogin(true);}} 
+            variant='contained' hidden={On_Login}>
+              Cerrar sesion {sessionStorage.getItem('logged')}
+            </Button>
+            
+          </Typography>
         </Toolbar>
 
         <Drawer style={styles.drawer} open={OpenMenu} onClose={() => {openmenu(false)}} >
@@ -47,7 +66,7 @@ export function Header () {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 Opciones Disponibles
             </Typography>
-            <Button style={styles.buttons} onClick={() => {navigate('/');openmenu(false)}} variant='contained'>Departamento de Produccion</Button>
+            <Button style={styles.buttons} onClick={() => {navigate('/home');openmenu(false)}} variant='contained'>Departamento de Produccion</Button>
             
           </Box>
 

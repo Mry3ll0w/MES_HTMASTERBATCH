@@ -18,14 +18,26 @@ import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import dateFormat from "dateformat";
-
-
+import { useNavigate } from "react-router-dom";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers';
 import { es } from 'date-fns/locale';
 
-export default function RegEnsacado() {
+export default function RegEnsacado({LoggedUser}) {
+
+  const navigate = useNavigate();
+  const nav_login = () =>{
+    navigate('/Login')
+  }
+ 
+  //alert(`Nombre : ${sessionStorage.getItem('logged')}`)
+  if(sessionStorage.getItem('logged') === null){
+    alert('Para acceder a esta pagina necesita iniciar sesión, pida a un administrador que le de de alta o acceda con su usuario');
+    nav_login();
+  }
+
+
   //Necesitamos UseState para tratar con los TextFields
   const [M_Fecha, mfecha] = useState("");
   const [M_Turno, mturno] = useState("");

@@ -9,14 +9,15 @@ import { useNavigate } from 'react-router-dom';
 //const {scryptSync, randomBytes} = require('crypto')
 const bcrypt = require('bcryptjs');
 
+window.logged = ''
 
 
-export default function LoginForm({LoginLogo}) {
+export default function LoginForm({LoginLogo, LoggedUser}) {
     
     const navigate = useNavigate();
 
     function nav_home(){
-        navigate('/')
+        navigate('/home')
     }
 
     const [Usuarios,setUsuarios]= useState([]);
@@ -67,6 +68,7 @@ export default function LoginForm({LoginLogo}) {
             if(verified){
                 
                 alert('M.E.S',`Acceso Correcto, bienvenido al M.E.S.`);
+                sessionStorage.setItem('logged',Sel_user[0].Nombre)
                 nav_home();
             }
             else
@@ -76,7 +78,7 @@ export default function LoginForm({LoginLogo}) {
         }
     }
     
-
+    
   return (
     <Fragment>
         <div 
@@ -103,12 +105,6 @@ export default function LoginForm({LoginLogo}) {
             <TextField value={Pass} error={PassError} onChange={e => setPass(e.target.value)} sx={{margin :5}} label='Contraseña' type="password"></TextField>
             
             <Button onClick={send_data} variant='contained'>Iniciar Sesion</Button>
-        </div>
-        <div>
-            
-                
-            
-            
         </div>
         
     </Fragment>

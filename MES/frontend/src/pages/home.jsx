@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { styles } from '../Style/styles'
 export default function Home() {
   
+
   
   const navigate = useNavigate();
   
@@ -19,6 +20,18 @@ export default function Home() {
   
   const nav_Ensacado = () => {
     navigate('/RegEnsacado');
+  }
+  
+  const nav_login = () =>{
+    navigate('/Login')
+  }
+ 
+  
+  if(sessionStorage.getItem('logged') === null){
+    
+    nav_login();
+    alert('Para acceder a esta pagina necesita iniciar sesión, pida a un administrador que le de de alta o acceda con su usuario');
+    
   }
 
   
