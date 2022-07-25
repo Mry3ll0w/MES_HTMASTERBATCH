@@ -49,7 +49,7 @@ export function Header () {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             M.E.S. UNNOX-HT
           </Typography>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 , textAlign : 'left', marginLeft: 110}}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 , textAlign : 'left', marginLeft: '65%'}}>
           
           <Button 
             style={styles.buttons} onClick={() => {navigate('/Login');openmenu(false);sessionStorage.clear();setOnLogin(true);}} 
@@ -66,7 +66,7 @@ export function Header () {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 Departamentos 
             </Typography>
-            <Button style={styles.buttons} onClick={() => {navigate('/profile');openmenu(false)}} variant='contained'>Perfil</Button>
+            <Button style={styles.buttons} onClick={() => {navigate('/profile');openmenu(false)}} variant='contained' type="password">Perfil</Button>
             <br />
             <Button style={styles.buttons} onClick={() => {navigate('/home');openmenu(false)}} variant='contained'>Departamento de Produccion</Button>
             
