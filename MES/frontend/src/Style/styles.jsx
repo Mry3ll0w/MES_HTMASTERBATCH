@@ -1,9 +1,9 @@
-import backgroundLogo from '../img/backgroundLogo.png'
+
 export const styles = {
     home_div: {
         marginTop:'40px',
         marginBottom:'90px',
-        backgroundImg : `url(${backgroundLogo})`
+        
     },
     home_footer: {
         background: '#1876D2',

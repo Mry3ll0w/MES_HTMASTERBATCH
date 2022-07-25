@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState, useRef } from 'react'
 import { Navigate, useNavigate} from 'react-router-dom'
 import { Box } from '@mui/system';
 import axios from 'axios';
@@ -12,6 +12,10 @@ export default function Profile() {
     const [OldPass, setOldPass]= useState('');
     const [OldPassErr, setOldPassErr]= useState(false);
     const [PassError, setPassError]= useState(false);
+
+    //Para los focus
+    const RefNewPass= useRef(null);
+    const RefChangePass = useRef(null);
 
     useEffect(() => {
         axios.get(`http://192.168.0.123:4001/Profile/${sessionStorage.getItem('codigo')}`).
@@ -99,13 +103,24 @@ export default function Profile() {
                         <h2>¿ Quieres cambiar tu contraseña ?</h2>
                         <TextField label="Introduce la contraseña anterior" sx={{width : '300px', margin : 2}} 
                         type="password" value={OldPass} onChange={(e) => setOldPass(e.target.value)} error={OldPassErr}
+                        
+                        inputProps = {{
+                            onKeyPress: event => {
+                              const { key } = event;
+                              console.log(key);
+                              if (key === "Enter") {
+                                RefNewPass.current.focus();
+                              }
+                            }
+                          }}
                         />
                         <br />
                         <TextField label="Nueva Contraseña" sx={{width : '300px', margin : 2}} type="password"
-                            value={Pass} onChange={(e) => setPass(e.target.value)} error={PassError}
+                            value={Pass} onChange={(e) => setPass(e.target.value)} error={PassError} 
+                            inputRef={RefNewPass}
                         />
                         <br />
-                        <Button sx={{margin : 2}} onClick={handlePass}variant='contained'>Cambiar contraseña</Button>
+                        <Button sx={{margin : 2}} onClick={handlePass} variant='contained' >Cambiar contraseña</Button>
                     </div>
                 </Box>
             </div>

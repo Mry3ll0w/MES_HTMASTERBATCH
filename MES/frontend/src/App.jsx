@@ -15,11 +15,13 @@ import Profile from './pages/Profile';
 
 //Imagenes
 import LoginLogo from '../src/img/LoginLogo.png'
+import Personal from './pages/AdminUsers';
 let loggeduser=''
 export function App() {
 
   useEffect(()=>{
       document.title = 'M.E.S.'
+      
   });
 
   return (
@@ -36,6 +38,7 @@ export function App() {
           <Route path='/RegEnsacado' element={<RegEnsacado />} />
           <Route path='/GraficaEstadistico' element={<Grafica_Estadistico />} />
           <Route path='/Login' element={<LoginForm LoginLogo={LoginLogo} />} />
+          <Route path='/Personal' element={<Personal />} />
       </Routes>
       
       </div>
