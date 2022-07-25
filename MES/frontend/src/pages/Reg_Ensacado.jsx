@@ -301,7 +301,7 @@ export default function RegEnsacado({LoggedUser}) {
       window.location.reload(false);
     }
   }
-
+  //Probando workflows
   return (
     <Fragment>
       <h1>Bienvenido al panel de Inserción/Modificación de los ensacados.</h1>
