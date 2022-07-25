@@ -66,9 +66,12 @@ export default function LoginForm({LoginLogo, LoggedUser}) {
             var verified = bcrypt.compareSync(Pass,Sel_user[0].Pwd_Hashed)
             
             if(verified){
+                var temp_apellidos =  Sel_user[0].Apellidos.split(' ');
+                var iniciales = `${Sel_user[0].Nombre[0]}${temp_apellidos[0][0]}${temp_apellidos[1][0]}`
                 
                 alert('M.E.S',`Acceso Correcto, bienvenido al M.E.S.`);
                 sessionStorage.setItem('logged',Sel_user[0].Nombre)
+                sessionStorage.setItem('iniciales',iniciales)//Para la visualizacion en el registro de ensacado
                 nav_home();
             }
             else

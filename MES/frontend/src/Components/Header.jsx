@@ -64,8 +64,10 @@ export function Header () {
           <Box sx={{width : '400px', marginTop: '20px'}}>
             
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Opciones Disponibles
+                Departamentos 
             </Typography>
+            <Button style={styles.buttons} onClick={() => {navigate('/profile');openmenu(false)}} variant='contained'>Perfil</Button>
+            <br />
             <Button style={styles.buttons} onClick={() => {navigate('/home');openmenu(false)}} variant='contained'>Departamento de Produccion</Button>
             
           </Box>

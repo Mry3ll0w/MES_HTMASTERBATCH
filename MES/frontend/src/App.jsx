@@ -11,7 +11,7 @@ import { styles} from './Style/styles';
 import Footer from './Components/Footer';
 import { useEffect } from 'react';
 import Grafica_Estadistico from './pages/grafica_estadistico';
-import {} from 'chart.js'
+import Profile from './pages/Profile';
 
 //Imagenes
 import LoginLogo from '../src/img/LoginLogo.png'
@@ -29,6 +29,7 @@ export function App() {
       <Routes>
           <Route path ="/" element={<LoginForm />} />
           <Route path = "/home" element={<Home />} />
+          <Route path='/profile' element={<Profile />} />
           <Route path='/estadistico' element ={<Estadistico />} />
           <Route path='*' element={<ErrorPage />} />
           <Route path='/ejparam/:username' element = {<EjParam />} />

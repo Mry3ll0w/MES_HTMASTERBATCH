@@ -21,12 +21,15 @@ export default function Home() {
   const nav_Ensacado = () => {
     navigate('/RegEnsacado');
   }
-  
+
+  const nav_personal = ()=>{
+    navigate('/Personal')
+  }
+ 
   const nav_login = () =>{
     navigate('/Login')
   }
- 
-  
+
   if(sessionStorage.getItem('logged') === null){
     
     nav_login();
@@ -50,6 +53,11 @@ export default function Home() {
     }
   ];
 
+  const menu_Personal = [
+    {
+      element : <Button  onClick={nav_personal} variant='contained'>Personal</Button>
+    }
+  ];
 
   return (
     <Fragment>
@@ -59,6 +67,7 @@ export default function Home() {
       <table>
         <td style={styles.td_style}><DropDownMenu elements={menu_resumen} label={"Resumen"} /></td>
         <td style={styles.td_style}><DropDownMenu elements={menu_RegistroPlanta} label={"Registro de Planta"} /></td>
+        <td style={styles.td_style}><DropDownMenu elements={menu_Personal} label={"Personal De Planta"} /></td>
         
       </table>
       
