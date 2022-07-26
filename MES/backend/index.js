@@ -232,3 +232,7 @@ app.get('/RegPlanta',(request,res)=>{
     }
     f();
 });
+
+app.post('/RegPlanta',(request,res)=>{
+    console.log(request.body)
+})

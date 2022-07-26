@@ -1,5 +1,5 @@
 SELECT 
-    MES.dbo.tbRegPlantaComun.ID,  
+    MES.dbo.tbRegPlanta.ID,  
     MES.dbo.tbRegPlantaComun.[OrdenFabricacionID] as 'OF'
     ,MES.dbo.tbRegPlantaComun.[ProductoID]
     ,[FechaHoraRegInicio]
@@ -8,13 +8,15 @@ SELECT
     ,FORMAT(FechaFin,'yyyy-MM-dd') as FechaFin
     ,[HoraInicio]
     ,[HoraFin]
-    ,[EnsacadoEstadoID]
+    ,[EnsacadoEstadoID] as Estado
     ,[Observacion],
     MES.dbo.tbRegPlanta.Seleccion,
     MES.dbo.tbRegPlanta.Plasta,
     MES.dbo.tbRegPlanta.Desperdicio,
-    Rechazo
+    Rechazo,
+    TurnoID
       
   FROM [MES].[dbo].[tbRegPlantaComun],MES.dbo.tbRegPlanta
   WHERE MES.dbo.tbRegPlantaComun.ID = MES.dbo.tbRegPlanta.RegPlantaComunID
+
   order by ID desc;
