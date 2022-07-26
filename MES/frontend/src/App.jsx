@@ -5,7 +5,7 @@ import ErrorPage from './pages/ErrorPage';
 import EjParam from './pages/EjParam';
 import RegEnsacado from './pages/Reg_Ensacado';
 import LoginForm from './pages/LoginForm';
-
+import RegistroPlanta from './pages/RegistroPlanta';
 import { Header } from './Components/Header';
 import { styles} from './Style/styles';
 import Footer from './Components/Footer';
@@ -14,7 +14,6 @@ import Grafica_Estadistico from './pages/grafica_estadistico';
 import Profile from './pages/Profile';
 
 //Imagenes
-import LoginLogo from '../src/img/LoginLogo.png'
 import Personal from './pages/AdminUsers';
 let loggeduser=''
 export function App() {
@@ -37,8 +36,9 @@ export function App() {
           <Route path='/ejparam/:username' element = {<EjParam />} />
           <Route path='/RegEnsacado' element={<RegEnsacado />} />
           <Route path='/GraficaEstadistico' element={<Grafica_Estadistico />} />
-          <Route path='/Login' element={<LoginForm LoginLogo={LoginLogo} />} />
+          <Route path='/Login' element={<LoginForm />} />
           <Route path='/Personal' element={<Personal />} />
+          <Route path='/RegistroPlanta' element={<RegistroPlanta />} />
       </Routes>
       
       </div>

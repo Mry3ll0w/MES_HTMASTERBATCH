@@ -56,19 +56,13 @@ async function get_query(q) {
         DB.close();
 }
 
-async function execute() {
-    let result = await get_query("select top 10 * from Datos19.dbo.Tb19");
-    console.dir(JSON.stringify(result));
 
-    return result;
-}
 
 app.get('/RegEnsacado', (request, res) => {
 
     async function query(){
 
         let q_ensacados= await get_query("select * from MES.dbo.tbRegEnsacado order by Palet desc");
-        var sql_q = fs.readFileSync('Q_Lista_productos.sql').toString();
         let q_prods = await get_query(fs.readFileSync('Q_Lista_productos.sql').toString());
         if (q_ensacados.ok && q_prods.ok) res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
         else res.send("Fallo al hacer la query");
@@ -226,3 +220,15 @@ app.post('/Profile',(request,res)=>{
     }
     f();
 })
+
+
+//Registro de Planta
+app.get('/RegPlanta',(request,res)=>{
+    async function f(){
+        
+        var resultado = await get_query(fs.readFileSync('Datos_RegPlanta.sql').toString());
+        //console.log(resultado)
+        res.send({Datos : resultado.query})
+    }
+    f();
+});

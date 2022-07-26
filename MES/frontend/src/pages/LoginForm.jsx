@@ -5,13 +5,13 @@ import { useState} from 'react';
 import axios from 'axios';
 import { styles } from '../Style/styles';
 import { useNavigate } from 'react-router-dom';
-//const {scryptSync, randomBytes} = require('crypto')
+import LoginLogo from '../img/LoginLogo.png'
 const bcrypt = require('bcryptjs');
 
 window.logged = ''
 
 
-export default function LoginForm({LoginLogo, LoggedUser}) {
+export default function LoginForm() {
     
     const navigate = useNavigate();
 

@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { addMinutes } from 'date-fns/esm';
 import { useNavigate } from 'react-router-dom';
+import { corrector_fecha } from './grafica_estadistico';
 export default function GraficaEstadistico() {
   
   //redirect
@@ -75,8 +76,8 @@ export default function GraficaEstadistico() {
       id : n++,
       OrdenFabricacionID: i.OrdenFabricacionID,
       ProductoID : i.ProductoID,
-      Fecha_Inicio : dateFormat(i.Fecha_Inicio,'yyyy-mm-dd hh:mm:ss'),
-      Fecha_Fin : dateFormat(i.Fecha_Fin,'yyyy-mm-dd hh:mm:ss') 
+      Fecha_Inicio : corrector_fecha(i.Fecha_Inicio),
+      Fecha_Fin : corrector_fecha(i.Fecha_Fin) 
     }])
   })
 

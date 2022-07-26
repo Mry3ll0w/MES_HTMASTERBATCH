@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import { DataGrid, esES} from '@mui/x-data-grid';
 
-//import { DataGrid,esEs} from "@mui/x-data-grid";
 import React, { Fragment,useRef } from "react";
 import { useState } from "react";
 import axios from "axios";

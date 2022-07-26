@@ -5,4 +5,5 @@ graRegInciExtendido.ProductoID
 FROM graRegInciExtendido
 WHERE (((graRegInciExtendido.C0COD)='CON'))
 GROUP BY graRegInciExtendido.OrdenFabricacionID, graRegInciExtendido.ProductoID
-ORDER BY Min(graRegInciExtendido.CompInicio) DESC;
+ORDER BY Min(graRegInciExtendido.CompInicio) DESC
+;

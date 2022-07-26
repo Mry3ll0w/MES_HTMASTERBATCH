@@ -71,4 +71,12 @@ export const styles = {
         alignItems: 'center',
         justifyContent: 'center',
     },
+    AdjustableLeftBox :{
+        float:'left',
+        //background:'Red',
+        width:'40%',
+        height:'630px',
+        resize: 'horizontal',
+        overflow: 'auto'
+    },
 }

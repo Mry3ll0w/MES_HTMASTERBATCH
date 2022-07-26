@@ -41,6 +41,13 @@ ChartJS.register(
     Legend
 );
 
+export function corrector_fecha(f){
+  var [tFecha, tHora] = f.split('T');
+    //console.log(tHora)
+    var [horas,minutos,segundos] = tHora.split(':');
+    var [f_sec,resto] = segundos.split('.');
+    return `${tFecha} ${horas}:${minutos}:${f_sec}`
+}
 
 
 export default function BasicDateTimePicker() {
@@ -130,12 +137,13 @@ export default function BasicDateTimePicker() {
   let rows_OF = [];
   
   OFS.map( (i, n) => {
+    
     return (rows_OF=[...rows_OF,{
       id : n++,
       OrdenFabricacionID: i.OrdenFabricacionID,
       ProductoID : i.ProductoID,
-      Fecha_Inicio : dateFormat(i.Fecha_Inicio,'yyyy-mm-dd hh:mm:ss'),
-      Fecha_Fin : dateFormat(i.Fecha_Fin,'yyyy-mm-dd hh:mm:ss') 
+      Fecha_Inicio : corrector_fecha(i.Fecha_Inicio),
+      Fecha_Fin : corrector_fecha(i.Fecha_Fin) 
     }])
   })
 
