@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { addMinutes } from 'date-fns/esm';
 import { useNavigate } from 'react-router-dom';
-import { corrector_fecha } from './grafica_estadistico';
+
 export default function GraficaEstadistico() {
   
   //redirect
@@ -71,13 +71,17 @@ export default function GraficaEstadistico() {
   //Construimos las filas de las OFS
   let rows_OF = [];
   
+  const corrector_fecha = (fecha) => {
+    let fecha_correcta = new Date(fecha);
+    return dateFormat(fecha_correcta, "yyyy-mm-dd HH:MM:ss");
+  }
   OFS.map( (i, n) => {
     return (rows_OF=[...rows_OF,{
       id : n++,
       OrdenFabricacionID: i.OrdenFabricacionID,
       ProductoID : i.ProductoID,
       Fecha_Inicio : corrector_fecha(i.Fecha_Inicio),
-      Fecha_Fin : corrector_fecha(i.Fecha_Fin) 
+      Fecha_Fin : corrector_fecha(i.Fecha_Fin)
     }])
   })
 
@@ -102,12 +106,20 @@ export default function GraficaEstadistico() {
     { field: "FechaHora", headerName: "FechaHora", width: "450" }
   ];
   let rows_res_c=[];
+
   Valores.map((i,n) => {
+    var ft = i.FechaHora;
+    var [date, time] = ft.split('T')
+    
+    var [sec, mils] = time.split('.')
+
+    ft = `${date} ${sec}`
+
     return (
       rows_res_c = [...rows_res_c, {
         id : n++,
         Valor : i.Valor,
-        FechaHora : dateFormat(i.FechaHora,'yyyy-mm-dd hh:mm:ss')
+        FechaHora : ft
       }]
     )
   })
@@ -123,8 +135,8 @@ export default function GraficaEstadistico() {
       if(ok){
         axios.post('http://192.168.0.123:4001/calcEstadistico',
           {
-            Lim_Sup : Fecha_Limite_Superior,
-            Lim_Inf : Fecha_Limite_Inferior,
+            Lim_Sup : corrector_fecha(Fecha_Limite_Superior),
+            Lim_Inf : corrector_fecha(Fecha_Limite_Inferior),
             Tendencia : Selected_Ten
           }
         ).catch(e => err=e)
@@ -241,11 +253,11 @@ export default function GraficaEstadistico() {
             var t = new Date(i.Fecha_Fin);
             //Limite inferior
             t = dateFormat(addMinutes(t,-5))
-            //console.log(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
-            setSuperior(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
+            //console.log(dateFormat(t,'yyyy-mm-dd HH:MM:ss'))
+            setSuperior(dateFormat(t,'yyyy-mm-dd HH:MM:ss'))
             var tm = new Date(i.Fecha_Inicio);
             tm = addMinutes(tm,+5)
-            setInferior(dateFormat(tm,'yyyy-mm-dd hh:MM:ss'))
+            setInferior(dateFormat(tm,'yyyy-mm-dd HH:MM:ss'))
             
             })
           }}

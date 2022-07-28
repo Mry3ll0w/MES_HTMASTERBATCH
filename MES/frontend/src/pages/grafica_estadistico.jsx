@@ -173,7 +173,7 @@ export default function BasicDateTimePicker() {
       rows_res_c = [...rows_res_c, {
         id : n++,
         Valor : i.Valor,
-        FechaHora : dateFormat(i.FechaHora,'yyyy-mm-dd hh:mm:ss')
+        FechaHora : dateFormat(i.FechaHora,'yyyy-mm-dd HH:MM:ss')
       }]
     )
   })
@@ -309,11 +309,11 @@ export default function BasicDateTimePicker() {
                       var t = new Date(i.Fecha_Fin);
                       //Limite inferior
                       t = dateFormat(addMinutes(t,-5))
-                      //console.log(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
-                      setSuperior(dateFormat(t,'yyyy-mm-dd hh:MM:ss'))
+                      //console.log(dateFormat(t,'yyyy-mm-dd HH:MM:ss'))
+                      setSuperior(dateFormat(t,'yyyy-mm-dd HH:MM:ss'))
                       var tm = new Date(i.Fecha_Inicio);
                       tm = addMinutes(tm,+5)
-                      setInferior(dateFormat(tm,'yyyy-mm-dd hh:MM:ss'))
+                      setInferior(dateFormat(tm,'yyyy-mm-dd HH:MM:ss'))
                   })
                 }}
               />

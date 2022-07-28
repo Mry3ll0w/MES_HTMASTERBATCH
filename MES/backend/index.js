@@ -123,14 +123,21 @@ app.get('/dataEstadistico',(request, res)=>{
 });
 
 app.post('/calcEstadistico',(request,res)=>{
-    //console.log(request.body);
+    console.log(request.body);
     var query;
     var q_cal;
     var l_inf = request.body.Lim_Inf
     var l_sup = request.body.Lim_Sup
-
+    
     if(request.body.Tendencia == '19'){
-        query = `Select Valor,FechaHora from Datos19.dbo.Tb19 WHERE Valor > 101 AND FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}' order by FechaHora desc`
+        query =`
+        Select * from Datos19.dbo.tb19
+        WHere
+            valor > 100
+            AND
+            FechaHora BETWEEN '${l_inf}' AND '${l_sup}'
+        order by FechaHora desc;`
+        console.log(query);
         q_cal = `
             Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
             from Datos19.dbo.Tb19
@@ -142,7 +149,9 @@ app.post('/calcEstadistico',(request,res)=>{
     }
     else{
         query = `
-            Select Valor,FechaHora from Datos${request.body.Tendencia}.dbo.tb${request.body.Tendencia} WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
+            Select Valor,FechaHora from Datos${request.body.Tendencia}.dbo.tb${request.body.Tendencia} 
+            WHERE 
+            FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
             and valor > 0
             and FechaHora not IN (
                 Select FechaHora
@@ -152,7 +161,7 @@ app.post('/calcEstadistico',(request,res)=>{
                 AND 
                 FechaHora BETWEEN '${l_inf}' and '${l_sup}'
             )
-            order by FechaHora;
+            order by FechaHora desc;
             `
         
         q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
