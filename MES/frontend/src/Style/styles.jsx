@@ -74,9 +74,17 @@ export const styles = {
     AdjustableLeftBox :{
         float:'left',
         //background:'Red',
-        width:'40%',
+        width:'19%',
         height:'630px',
         resize: 'horizontal',
         overflow: 'auto'
+    },
+    AdjustableRightBox :{
+        float:'right',
+        //background:'blue',
+        borderStyle: 'dotted',
+        borderColor: '#1876D2',
+        height:'500px',
+        
     },
 }

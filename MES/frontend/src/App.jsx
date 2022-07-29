@@ -19,7 +19,7 @@ let loggeduser=''
 export function App() {
 
   useEffect(()=>{
-      document.title = 'M.E.S.'
+      document.title = 'MES'
       
   });
 

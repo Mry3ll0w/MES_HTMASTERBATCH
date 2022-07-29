@@ -123,7 +123,7 @@ app.get('/dataEstadistico',(request, res)=>{
 });
 
 app.post('/calcEstadistico',(request,res)=>{
-    console.log(request.body);
+    
     var query;
     var q_cal;
     var l_inf = request.body.Lim_Inf
@@ -137,7 +137,7 @@ app.post('/calcEstadistico',(request,res)=>{
             AND
             FechaHora BETWEEN '${l_inf}' AND '${l_sup}'
         order by FechaHora desc;`
-        console.log(query);
+        
         q_cal = `
             Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
             from Datos19.dbo.Tb19
@@ -235,7 +235,7 @@ app.post('/Profile',(request,res)=>{
 app.get('/RegPlanta',(request,res)=>{
     async function f(){
         
-        var resultado = await get_query(fs.readFileSync('Datos_RegPlanta.sql').toString());
+        var resultado = await get_query(fs.readFileSync('OF_UNIDAS.sql').toString());
         //console.log(resultado)
         res.send({Datos : resultado.query})
     }
@@ -244,4 +244,39 @@ app.get('/RegPlanta',(request,res)=>{
 
 app.post('/RegPlanta',(request,res)=>{
     console.log(request.body)
+    async function f ()  {
+        var query = `
+        SELECT [ID]
+        ,[OrdenFabricacionID]
+        ,[ProductoID]
+        ,[FechaHoraRegInicio]
+        ,[FechaHoraRegFin]
+        ,[FechaInicio]
+        ,[FechaFin]
+        , CAST(HoraInicio as time) as HoraInicio
+        , Cast(HoraFin as time) as HoraFin
+        ,[EstadoID]
+        ,[TipoOFID]
+        ,[ProcesoEstadoID]
+        ,[EnsacadoEstadoID]
+        ,[TurnoInicioID]
+        ,[TurnoFinID]
+        ,[Observacion]
+        ,[D1]
+        ,[D2]
+        ,[D3]
+        ,[D4]
+        ,[D5]
+        ,[D6]
+        ,[FormulaTipoID]
+        ,[ObsAdit]
+        FROM [MES].[dbo].[tbRegPlantaComun]
+        WHERE id = ${request.body.RegPlantaComunID}
+        order by FechaInicio desc        
+        `
+        var resultado = await get_query(query);
+        console.log(resultado.query)
+        res.send({Datos : resultado.query})
+    }
+    f()
 })

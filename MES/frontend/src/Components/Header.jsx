@@ -47,7 +47,7 @@ export function Header () {
           </IconButton>
           
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            M.E.S. UNNOX-HT
+            MES UNNOX-HT
           </Typography>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 , textAlign : 'left', marginLeft: '65%'}}>
           

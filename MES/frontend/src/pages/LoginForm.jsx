@@ -66,7 +66,7 @@ export default function LoginForm() {
                 var temp_apellidos =  Sel_user[0].Apellidos.split(' ');
                 var iniciales = `${Sel_user[0].Nombre[0]}${temp_apellidos[0][0]}${temp_apellidos[1][0]}`
                 
-                alert(`Acceso Correcto, bienvenido al M.E.S.`);
+                alert(`Acceso Correcto, bienvenido al MES`);
                 sessionStorage.setItem('logged',Sel_user[0].Nombre)
                 sessionStorage.setItem('iniciales',iniciales)//Para la visualizacion en el registro de ensacado
                 sessionStorage.setItem('codigo',Sel_user[0].Codigo)//Para la visualizacion en el registro de ensacado

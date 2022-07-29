@@ -14,9 +14,10 @@ SELECT
     MES.dbo.tbRegPlanta.Plasta,
     MES.dbo.tbRegPlanta.Desperdicio,
     Rechazo,
-    TurnoID
+    TurnoID,
+    MES.dbo.tbRegPlanta.[RegPlantaComunID]
       
   FROM [MES].[dbo].[tbRegPlantaComun],MES.dbo.tbRegPlanta
   WHERE MES.dbo.tbRegPlantaComun.ID = MES.dbo.tbRegPlanta.RegPlantaComunID
-
+  GROUP BY MES.dbo.tbRegPlanta.ID
   order by ID desc;
