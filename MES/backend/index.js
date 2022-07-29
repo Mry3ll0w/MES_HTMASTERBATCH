@@ -231,7 +231,7 @@ app.post('/Profile',(request,res)=>{
 })
 
 
-//Registro de Planta
+//*Registro de Planta
 app.get('/RegPlanta',(request,res)=>{
     async function f(){
         
@@ -246,37 +246,22 @@ app.post('/RegPlanta',(request,res)=>{
     console.log(request.body)
     async function f ()  {
         var query = `
-        SELECT [ID]
-        ,[OrdenFabricacionID]
-        ,[ProductoID]
-        ,[FechaHoraRegInicio]
-        ,[FechaHoraRegFin]
-        ,[FechaInicio]
-        ,[FechaFin]
-        , CAST(HoraInicio as time) as HoraInicio
-        , Cast(HoraFin as time) as HoraFin
-        ,[EstadoID]
-        ,[TipoOFID]
-        ,[ProcesoEstadoID]
-        ,[EnsacadoEstadoID]
-        ,[TurnoInicioID]
-        ,[TurnoFinID]
-        ,[Observacion]
-        ,[D1]
-        ,[D2]
-        ,[D3]
-        ,[D4]
-        ,[D5]
-        ,[D6]
-        ,[FormulaTipoID]
-        ,[ObsAdit]
-        FROM [MES].[dbo].[tbRegPlantaComun]
-        WHERE id = ${request.body.RegPlantaComunID}
-        order by FechaInicio desc        
+        use MES; 
+        Select 
+            TurnoID, Produccion, Seleccion, Rechazo, Desperdicio,Plasta,
+            RechazoTA, Ensacado, ArrS1, ArrBB1,ArrBB2,ArrBB3,ArrBB4,
+            ArrBB5,ArrLIQ,ArrL2,ArrL3,
+            RetS1,RetBB1,RetBB2,RetSG1,RetBB3,RetBB4,RetBB5,
+            RetL2,RetLIQ,RetL3
+            
+        from tbRegPlanta
+        WHERE OrdenFabricacionID = '${request.body.OF}'
+        
         `
         var resultado = await get_query(query);
         console.log(resultado.query)
         res.send({Datos : resultado.query})
     }
-    f()
+    f();
+    
 })

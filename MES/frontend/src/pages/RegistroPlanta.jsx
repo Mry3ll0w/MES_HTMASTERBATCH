@@ -114,23 +114,18 @@ export default function RegistroPlanta() {
                 const selectedRowData = DatosPlanta.filter((row) =>
                   selectedIDs.has(row.id)
                 );
-                
+                console.log(selectedRowData)
                 //Guardar datos del seleccionado en la lista
                 setSelLista(DatosPlanta.filter( i => {
-                      return i.OF === selectedRowData[0].OF && i.TurnoID === selectedRowData[0].TurnoID
+                      return i.OF === selectedRowData[0].OF
                     }
                   )
                 )
                 //Seleccion del ensacado, filtramos por OF y TurnoID (1,2,5)
                 axios.post('http://localhost:4001/RegPlanta',{
-                        OF : selectedRowData[0].OF,
-                        TurnoID : selectedRowData[0].TurnoID,
-                        RegPlantaComunID : DatosPlanta.filter( i => {
-                          return i.OF === selectedRowData[0].OF && i.TurnoID === selectedRowData[0].TurnoID
-                        }
-                        )[0].RegPlantaComunID
-
-                })
+                        OF : selectedRowData[0].OF
+                  }
+                )
                 .catch(error=>console.log(error))
                 .then(r => {
                   //Correcion formato de Hora recibida
