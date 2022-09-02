@@ -1,1 +1,1 @@
-sed -i 's/Prueba/1234/gI' p.jsx
+sed -i 's/Prueba/1234/g' p2.jsx
