@@ -44,7 +44,7 @@ export default function Mod_Ensacado() {
 
     //Obtenemos el resultado del get
     useEffect(() => {
-        axios.get('http://192.168.0.123:4001/RegEnsacado').then((response) => {
+        axios.get('http://192.168.0.118:4001/RegEnsacado').then((response) => {
             
             SetProductos(response.data.Productos);
             SetEnsacados(response.data.Ensacados);
@@ -129,7 +129,7 @@ export default function Mod_Ensacado() {
         
         //Si todo esta correcto enviamos el post para que el backend trate la query
         if(ok){
-            axios.post('http://192.168.0.123:4001/UpdateEnsacado',
+            axios.post('http://192.168.0.118:4001/UpdateEnsacado',
             {
                 Fecha :dateFormat(M_Fecha,"yyyy-mm-dd"), Turno : M_Turno, Producto : M_Producto, Palet : M_Palet, Peso_Saco : M_Peso_Saco,
                 Cantidad : M_Cantidad, Resto : M_Resto, Ant : M_Ant , PaletOriginal : OldPalet

@@ -18,7 +18,7 @@ jobs:
       - name: Find and Replace
         uses: jacobtomlinson/gha-find-replace@master
         with:
-          find: "192.168.0.123"
+          find: "192.168.0.118"
           replace: "192.168.0.133"
 
       

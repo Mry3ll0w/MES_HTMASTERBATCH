@@ -41,12 +41,31 @@ ChartJS.register(
     Legend
 );
 
+/**
+ * @brief Funcion encargada de dar formato a la fecha entrante, para ponerla en formato esES
+ * @param {Date object or string} f 
+ * @returns string
+ */
 export function corrector_fecha(f){
-  var [tFecha, tHora] = f.split('T');
-    //console.log(tHora)
-    var [horas,minutos,segundos] = tHora.split(':');
-    var [f_sec,resto] = segundos.split('.');
-    return `${tFecha} ${horas}:${minutos}:${f_sec}`
+    //console.log(f);
+    
+    if(typeof(f) == "string"){
+      var [tFecha, tHora] = f.split("T");
+      //console.log(tHora)
+      var [horas, minutos, segundos] = tHora.split(":");
+      var [f_sec, resto] = segundos.split(".");
+      return `${tFecha} ${horas}:${minutos}:${f_sec}`;
+    }
+    else{
+      var date = Date(f);
+      var date_string = date.toString();
+
+      var [tFecha, tHora] = date_string.split("T");
+      var [horas, minutos, segundos] = tHora.split(":");
+    
+      return `${tFecha} ${horas}:${minutos}`;
+    }
+    
 }
 
 
@@ -117,7 +136,7 @@ export default function BasicDateTimePicker() {
   
   //Peticiones a REST API
   useEffect(()=>{
-    axios.get('http://192.168.0.123:4001/dataEstadistico').then((response) => {
+    axios.get('http://192.168.0.118:4001/dataEstadistico').then((response) => {
             setOFs(response.data.OFS)
             SetProductos(response.data.Productos);
             setTendencias(response.data.Tendencias);
@@ -187,7 +206,7 @@ export default function BasicDateTimePicker() {
       if (Selected_Ten === '#'){ok = false; alert("Tienes que seleccionar una tendencia");} 
       
       if(ok){
-        axios.post('http://192.168.0.123:4001/calcEstadistico',
+        axios.post('http://192.168.0.118:4001/calcEstadistico',
           {
             Lim_Sup : Fecha_Limite_Superior,
             Lim_Inf : Fecha_Limite_Inferior,

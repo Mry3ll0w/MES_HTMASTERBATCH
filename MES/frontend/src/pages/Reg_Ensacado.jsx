@@ -76,7 +76,7 @@ export default function RegEnsacado({LoggedUser}) {
   //Obtenemos el resultado del get
   useEffect(() => {
     axios
-      .get("http://192.168.0.123:4001/RegEnsacado")
+      .get("http://192.168.0.118:4001/RegEnsacado")
       .then((response) => {
         SetProductos(response.data.Productos);
         SetEnsacados(response.data.Ensacados);
@@ -170,7 +170,7 @@ export default function RegEnsacado({LoggedUser}) {
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
       axios
-        .post("http://192.168.0.123:4001/UpdateEnsacado", {
+        .post("http://192.168.0.118:4001/UpdateEnsacado", {
           Fecha: dateFormat(M_Fecha,'yyyy-mm-dd'),
           Turno: M_Turno,
           Producto: M_Producto,
@@ -256,7 +256,7 @@ export default function RegEnsacado({LoggedUser}) {
         Ant: M_Ant,
       })
       axios
-        .post("http://192.168.0.123:4001/RegistraEnsacado", {
+        .post("http://192.168.0.118:4001/RegistraEnsacado", {
           Fecha: M_Fecha,
           Turno: M_Turno,
           Producto: M_Producto,
@@ -284,7 +284,7 @@ export default function RegEnsacado({LoggedUser}) {
       var[d,m,year]=i.Fecha.split('/');
       var ft=`${year}-${m}-${d}`
       axios
-        .post("http://192.168.0.123:4001/DelEns", {
+        .post("http://192.168.0.118:4001/DelEns", {
           Fecha: ft,
           Turno: i.Turno,
           Palet: i.Palet,

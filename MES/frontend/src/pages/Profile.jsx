@@ -18,7 +18,7 @@ export default function Profile() {
     const RefChangePass = useRef(null);
 
     useEffect(() => {
-        axios.get(`http://192.168.0.123:4001/Profile/${sessionStorage.getItem('codigo')}`).
+        axios.get(`http://192.168.0.118:4001/Profile/${sessionStorage.getItem('codigo')}`).
         then(response => {
             setUser(response.data.user);
         }).catch(error => console.log(error));
@@ -81,7 +81,7 @@ export default function Profile() {
         if(ok){
             const salt = bcrypt.genSaltSync(10);
             const hash = bcrypt.hashSync(Pass, salt);
-            axios.post(`http://192.168.0.123:4001/Profile`,{
+            axios.post(`http://192.168.0.118:4001/Profile`,{
                 NewPass : hash,
                 Codigo : sessionStorage.getItem('codigo')
             }).catch((e) => error=e)
