@@ -1,24 +1,14 @@
-name: find&replace strings
-
+name: Correccion de ip para subida en main
 on:
   push:
     branches:
       - main
-      
 
 jobs:
-  release:
+  build:
+
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Find and Replace
-        uses: jacobtomlinson/gha-find-replace@master
-        with:
-          find: "192.168.0.118"
-          replace: "192.168.0.133"
-
-      
+    - uses: actions/checkout@v3
+    - name: Script
+      run: sh ip_fix.sh
