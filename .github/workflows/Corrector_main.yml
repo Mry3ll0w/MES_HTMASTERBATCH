@@ -3,12 +3,14 @@ on:
   push:
     branches:
       - main
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Script
-      run: sh ip_fix.sh
+      - uses: actions/checkout@v2
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "Prueba"
+          replace: "world"
+          include: "**p.jsx" # Will match all README.md files in any nested directory
