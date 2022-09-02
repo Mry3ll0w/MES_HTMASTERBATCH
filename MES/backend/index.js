@@ -265,3 +265,8 @@ app.post('/RegPlanta',(request,res)=>{
     f();
     
 })
+
+app.get('/RegPlanta', (request, res) => {
+    
+
+})
