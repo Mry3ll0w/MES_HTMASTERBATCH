@@ -1,6 +1,6 @@
 import React,{useState,useEffect, Fragment} from 'react'
 import axios from 'axios'
-import { TextField,Button, Autocomplete } from '@mui/material'
+import { TextField,Button, Autocomplete, TextareaAutosize } from '@mui/material'
 import { styles } from '../Style/styles';
 import { DataGrid, esES} from '@mui/x-data-grid';
 import clsx from 'clsx';
@@ -23,26 +23,23 @@ export default function RegistroPlanta() {
     const [D4,setD4]= useState('');
     const [D5,setD5]= useState('');
     const [D6,setD6]= useState('');
+    const [Observaciones, setObservaciones] = useState('');
     const [EstadoEnsacado,setEstadoEnsacado]= useState('');
     const [ProcesoEstado, setProcesoEstado] = useState('');
     const [Permiso,setPermiso]= useState('');
     const [FechaFin,setFechaFin]= useState('');
     const [FechaInicio,setFechaInicio] = useState('');
     const [TurnoFin,setTurnoFin]= useState('');
-
+    const [TurnoInicio,setTurnoInicio] = useState('');
+    const [OF,setOF] = useState("");
     const [RState, setRState] = useState({ width: '80%', height: '630px' });
     //Variables para guardar los datos
-    const [DatosPlanta,setDatosPlanta] = useState([]);
-    const [PLC, setDatosPLC] = useState([]);
+    const [DatosRegPlanta, setDatosRegPlanta] = useState([]);
+    const [DatosRegPlantaComun, setDatosRegPlantaComun] = useState([]);
+    const [DatosPlanta, setDatosPlanta] = useState([]);
     const [SelLista, setSelLista] = useState([]);
-    console.log({plc : PLC, Seleccionado : SelLista})
     //Funcion encargada de actualizar los datos existentes, tras la respuesta del POST
-    const actualiza_Estado_Datos = () =>{
-        SetHoraFin(PLC.HoraFin);
-        SetHoraInicio(PLC.HoraInicio);
-        setD1(PLC.D1);
-
-    }
+    
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
         axios.get('http://localhost:4001/RegPlanta')
@@ -51,6 +48,14 @@ export default function RegistroPlanta() {
             setDatosPlanta(response.data.Datos)
         })
     },[])
+
+    /**
+     * @brief Actualiza los datos que se han seleccionado en la tabla
+     * @param none
+     * @return none
+     */
+    
+
     //console.log(DatosPlanta)
     const columns = [
         {field : 'Estado' ,renderCell : (rowData) => {
@@ -134,12 +139,27 @@ export default function RegistroPlanta() {
               .catch((error) => console.log(error))
               .then((r) => {
                 //Correcion formato de Hora recibida
-                r.data.Datos[0].HoraFin = format_hour(r.data.Datos[0].HoraFin);
-                r.data.Datos[0].HoraInicio = format_hour(
-                  r.data.Datos[0].HoraInicio
+                console.log(r.data);
+                //console.log(r.data.DatosRegPlantaComun[0])
+                setDatosRegPlanta(r.data.DatosRegPlanta);
+                setDatosRegPlantaComun(r.data.DatosRegPlantaComun[0]);
+
+                //Metemos los datos del registro de Planta Comun
+                console.log(DatosRegPlantaComun);
+                SetHoraInicio(
+                  format_hour(DatosRegPlantaComun.FechaHoraRegInicio)
                 );
-                setDatosPLC(r.data.Datos[0]);
-                actualiza_Estado_Datos();
+                SetHoraFin(format_hour(DatosRegPlantaComun.FechaHoraRegFin));
+                setD1(DatosRegPlantaComun.D1);
+                setD2(DatosRegPlantaComun.D2);
+                setD3(DatosRegPlantaComun.D3);
+                setD4(DatosRegPlantaComun.D4);
+                setD5(DatosRegPlantaComun.D5);
+                setD6(DatosRegPlantaComun.D6);
+                setFechaInicio(DatosRegPlantaComun.FechaInicio);
+                setFechaFin(DatosRegPlantaComun.FechaFin);
+                setObservaciones(DatosRegPlantaComun.Observacion);
+                setOF(DatosRegPlantaComun.OrdenFabricacionID);
               });
           }}
         />
@@ -158,7 +178,7 @@ export default function RegistroPlanta() {
         <div style={styles.centered_div}>
           <TextField
             sx={{ margin: 2, width: "400px" }}
-            value={PLC.OrdenFabricacionID || ""}
+            value={OF || ""}
             disabled={true}
             label="Orden de Fabricación"
             inputProps={{ style: { textAlign: "center" } }}
@@ -166,6 +186,32 @@ export default function RegistroPlanta() {
         </div>
         <div>
           <table>
+            <td>
+              <Autocomplete
+                options={["Mañana", "Tarde", "Noche"]}
+                //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
+                renderInput={(e) => (
+                  <TextField
+                    {...e}
+                    value={TurnoInicio}
+                    onChange={(e) => {
+                      var str = String(e.target.value);
+                      if (str.includes("M")) {
+                        setTurnoInicio(1);
+                      } else if (str.includes("T")) {
+                        setTurnoInicio(2);
+                      } else {
+                        setTurnoInicio(3);
+                      }
+                    }}
+                    sx={{ width: "150px" }}
+                    label="Turno Fin"
+                  ></TextField>
+                )}
+                onChange={(e, v) => setTOf(v.Codigo)}
+                sx={{ marginLeft: 2, marginTop: 2, width: "150px" }}
+              />
+            </td>
             <td>
               <TextField
                 sx={{ marginLeft: 2, width: "150px" }}
@@ -378,6 +424,27 @@ export default function RegistroPlanta() {
                   label="D6"
                   sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
                 ></TextField>
+              </td>
+            </tr>
+          </table>
+          <br />
+
+          <table>
+            <tr>
+              <td></td>
+              <td>
+                <h2>Observaciones:</h2>
+                <TextareaAutosize
+                  value={Observaciones}
+                  onChange={(e) => setObservaciones(e.target.value)}
+                  style={{
+                    width: "700px",
+                    fontSize: "16px",
+                    marginLeft: 2,
+                    marginTop: 2,
+                  }}
+                  placeholder="No existe una observacion"
+                ></TextareaAutosize>
               </td>
             </tr>
           </table>

@@ -248,19 +248,21 @@ app.post('/RegPlanta',(request,res)=>{
         var query = `
         use MES; 
         Select 
-            TurnoID, Produccion, Seleccion, Rechazo, Desperdicio,Plasta,
-            RechazoTA, Ensacado, ArrS1, ArrBB1,ArrBB2,ArrBB3,ArrBB4,
-            ArrBB5,ArrLIQ,ArrL2,ArrL3,
-            RetS1,RetBB1,RetBB2,RetSG1,RetBB3,RetBB4,RetBB5,
-            RetL2,RetLIQ,RetL3
-            
+            *
         from tbRegPlanta
         WHERE OrdenFabricacionID = '${request.body.OF}'
-        
         `
-        var resultado = await get_query(query);
-        console.log(resultado.query)
-        res.send({Datos : resultado.query})
+        var resultado_planta = await get_query(query);
+        
+        var q_comun = `
+            use MES;
+            Select * from tbRegPlantaComun
+            WHERE OrdenFabricacionID = '${request.body.OF}'
+        `
+        var resultado_comun = await get_query(q_comun)
+
+        //console.log(resultado_planta.query)
+        res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query})
     }
     f();
     
