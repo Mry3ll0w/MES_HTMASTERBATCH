@@ -3,7 +3,6 @@ import axios from 'axios'
 import { TextField,Button, Autocomplete, TextareaAutosize } from '@mui/material'
 import { styles } from '../Style/styles';
 import { DataGrid, esES} from '@mui/x-data-grid';
-import clsx from 'clsx';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 import {Resizable} from 're-resizable';
@@ -32,17 +31,22 @@ export default function RegistroPlanta() {
     const [TurnoFin,setTurnoFin]= useState('');
     const [TurnoInicio,setTurnoInicio] = useState('');
     const [OF,setOF] = useState("");
-    const [RState, setRState] = useState({ width: '80%', height: '630px' });
-    //Variables para guardar los datos
+    const [RState, setRState] = useState({ width: '80%', height: '630px' });//Estilo Dinamico
+    //Variables para guardar los datos de los turnos (el valor final es numerico y el mostrado es string)
     const [DatosRegPlanta, setDatosRegPlanta] = useState([]);
     const [DatosRegPlantaComun, setDatosRegPlantaComun] = useState([]);
     const [DatosPlanta, setDatosPlanta] = useState([]);
     const [SelLista, setSelLista] = useState([]);
     const [DispTI, setDispTI] = useState("")
     const [DispTF, setDispTF] = useState("")
+    const [DispPermisos, setDispPermisos] = useState("")
+    const [DispTEns, setDispTEns] = useState("")
+    
+
     
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
+        //alert("Bienvenido al Registro de Planta, seleccione con DOBLE click el elemento de la lista que desea tratar")
         axios.get('http://localhost:4001/RegPlanta')
         .catch(error=>console.log(error))
         .then(response=>{
@@ -64,6 +68,14 @@ export default function RegistroPlanta() {
         return "Noche"
     }
 
+    /**
+     * @brief Obtener el size de DatosRegPlanta
+     */
+    function size_reg_planta(D){
+      var i = 0
+      var t = Array(D).length
+      return t
+    }
     //console.log(DatosPlanta)
     const columns = [
         {field : 'Estado' ,renderCell : (rowData) => {
@@ -92,7 +104,7 @@ export default function RegistroPlanta() {
         return `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`;
       }
       else
-        return d;
+        return null;
     }
 
     function format_hour(d){
@@ -115,7 +127,7 @@ export default function RegistroPlanta() {
             
         }
     );
-    //console.log(PLC)
+    
     
   return (
     <Fragment>
@@ -125,6 +137,7 @@ export default function RegistroPlanta() {
           rows={DatosPlanta}
           columns={columns}
           pageSize={100}
+          //loading = {true}
           //checkboxSelection
           rowsPerPageOptions={[10]}
           onSelectionModelChange={(r) => {
@@ -132,7 +145,7 @@ export default function RegistroPlanta() {
             const selectedRowData = DatosPlanta.filter((row) =>
               selectedIDs.has(row.id)
             );
-            console.log(selectedRowData);
+            //console.log(selectedRowData);
             //Guardar datos del seleccionado en la lista
             setSelLista(
               DatosPlanta.filter((i) => {
@@ -168,11 +181,14 @@ export default function RegistroPlanta() {
                 setFechaFin(DatosRegPlantaComun.FechaFin);
                 setObservaciones(DatosRegPlantaComun.Observacion);
                 setOF(DatosRegPlantaComun.OrdenFabricacionID);
+                setTOf(DatosRegPlantaComun.TipoOFID);
+                setDispTEns(
+                  DatosRegPlantaComun.TipoOFID == 1 ? "Normal" : "Prueba"
+                );
                 setTurnoFin(DatosRegPlantaComun.TurnoFinID);
-                setTurnoInicio(DatosRegPlantaComun.TurnoInicioID)
-                setDispTI(asigna_turno(TurnoInicio))
-                setDispTF(asigna_turno(TurnoFin))
-
+                setTurnoInicio(DatosRegPlantaComun.TurnoInicioID);
+                setDispTI(asigna_turno(TurnoInicio));
+                setDispTF(asigna_turno(TurnoFin));
               });
           }}
         />
@@ -203,7 +219,7 @@ export default function RegistroPlanta() {
               <Autocomplete
                 value={DispTI}
                 options={["Mañana", "Tarde", "Noche"]}
-                isOptionEqualToValue = {(option, value) => option == value}
+                isOptionEqualToValue={(option, value) => option == value}
                 renderInput={(e) => (
                   <TextField
                     {...e}
@@ -238,13 +254,18 @@ export default function RegistroPlanta() {
 
             <td>
               <Autocomplete
+                value={DispTEns}
+                isOptionEqualToValue={(option, value) => option == value}
                 options={["Normal", "Prueba"]}
                 //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                 renderInput={(e) => (
                   <TextField
                     {...e}
-                    value={TipoOf}
-                    onChange={(e) => setTOf(e.target.value)}
+                    value={DispTEns}
+                    onChange={(e) => {
+                      setTOf(e.target.value);
+                      setTOf(DispTEns == "Normal" ? 1 : 2);
+                    }}
                     sx={{ width: "150px" }}
                     label="Tipo de OF"
                   ></TextField>
@@ -334,12 +355,15 @@ export default function RegistroPlanta() {
               <td>
                 <Autocomplete
                   options={["Mañana", "Tarde", "Noche"]}
+                  value={DispTF}
+                  isOptionEqualToValue={(option, value) => option == value}
                   //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                   renderInput={(e) => (
                     <TextField
                       {...e}
-                      value={TurnoFin}
+                      value={DispTF}
                       onChange={(e) => {
+                        setDispTF(DispTF);
                         var str = String(e.target.value);
                         if (str.includes("M")) {
                           setTurnoFin(1);
@@ -461,6 +485,24 @@ export default function RegistroPlanta() {
                   placeholder="No existe una observacion"
                 ></TextareaAutosize>
               </td>
+            </tr>
+          </table>
+
+          <table>
+            <tr>
+              <p style={{ fontSize: "30px" }}>Turno</p>
+            </tr>
+
+            <tr>
+              <th>SCADA</th>
+              <td>
+                <TextField
+                  label="Producción"
+                  sx={{ margin: "1px", width: "110px" }}
+                />
+              </td>
+
+              <td></td>
             </tr>
           </table>
         </div>
