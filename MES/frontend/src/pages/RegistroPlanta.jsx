@@ -2,7 +2,7 @@ import React,{useState,useEffect, Fragment} from 'react'
 import axios from 'axios'
 import { TextField,Button, Autocomplete, TextareaAutosize, Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material'
 import { styles } from '../Style/styles';
-import { DataGrid, esES} from '@mui/x-data-grid';
+import { DataGrid,GridToolbar, esES} from '@mui/x-data-grid';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 import {Resizable} from 're-resizable';
@@ -60,9 +60,9 @@ export default function RegistroPlanta() {
      * @return none
      */
     function asigna_turno(e){
-      if(e == 1)
+      if(e === 1)
         return "Mañana"
-      else if(e == 2)
+      else if(e === 2)
         return "Tarde"
       else
         return "Noche"
@@ -74,9 +74,9 @@ export default function RegistroPlanta() {
      * @return String 
      */
     function asigna_tipo_produccion(s){
-      if(s == 2)
+      if(s === 2)
         return "Producción | Producción dentro de un turno"
-      else if(s == 3)
+      else if(s === 3)
         return "Ensacado | Ensacado durante un turno"
       else
         return "Ajuste | SCADA:Incremental"
@@ -131,6 +131,33 @@ export default function RegistroPlanta() {
         return d;
     }
 
+    /**
+     * Devuelve el estado en el que se encuentra la producción
+     * @param {int} e 
+     * @returns String
+     */
+    function asignar_Estado(e){
+      if( e === 1)
+        return "Sin iniciar | La OF no ha sido cerrada"
+      else if(e === 2 )
+        return "Arrancada | La Producción ha comenzado"
+      else  
+        return "Finalizada | La Producción ha finalizado"
+    }
+  
+    /**
+     * Asigna el permiso, o por quien ha sido aprobado
+     * @param {int} e 
+     * @returns 
+     */
+    function asignar_permisos(e){
+      if( e === 1)
+        return "Planta | Registro agreado en Planta"
+      else if(e == 2)
+        return "Aprobado | Registro aprobado por Dpto."
+      else
+          return "Bloqueado | Registro Desechado"
+    }
     
     DatosPlanta.map((i,n)=>{
             i.id = n++;
@@ -149,6 +176,7 @@ export default function RegistroPlanta() {
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={DatosPlanta}
           columns={columns}
+          components={{ Toolbar: GridToolbar }}
           pageSize={100}
           //loading = {true}
           //checkboxSelection
@@ -202,6 +230,10 @@ export default function RegistroPlanta() {
                 setTurnoInicio(DatosRegPlantaComun.TurnoInicioID);
                 setDispTI(asigna_turno(TurnoInicio));
                 setDispTF(asigna_turno(TurnoFin));
+                setProcesoEstado(DatosRegPlantaComun.ProcesoEstadoID);
+                setEstadoEnsacado(DatosRegPlantaComun.EnsacadoEstadoID);
+                setPermiso(DatosRegPlantaComun.EstadoID);
+                setDispPermisos(asignar_permisos(Permiso));
               });
           }}
         />
@@ -322,7 +354,7 @@ export default function RegistroPlanta() {
             </td>
 
             {/**Fin de la primera linea  */}
-
+                    
             <tr>
               <td>
                 <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
@@ -345,6 +377,11 @@ export default function RegistroPlanta() {
 
               <td>
                 <Autocomplete
+                  value={
+                    EstadoEnsacado == 1
+                      ? "Finalizado | Ensacado Terminado"
+                      : "Pendiente | Ensacado pendiente de terminar "
+                  }
                   options={[
                     "Finalizado | Ensacado Terminado",
                     "Pendiente | Ensacado pendiente de terminar ",
@@ -404,7 +441,7 @@ export default function RegistroPlanta() {
                   sx={{ marginLeft: 2, marginTop: 2, width: "150px" }}
                 />
               </td>
-
+              <td></td>
               <td>
                 <TextField
                   value={D2}
@@ -428,6 +465,8 @@ export default function RegistroPlanta() {
               <td></td>
               <td>
                 <Autocomplete
+                  value={DispPermisos}
+                  isOptionEqualToValue={(option, value) => option == value}
                   options={[
                     "Planta | Registro agreado en Planta",
                     "Aprobado | Registro aprobado por Dpto.",
@@ -438,15 +477,15 @@ export default function RegistroPlanta() {
                     <TextField
                       InputLabelProps={{ shrink: true }}
                       {...e}
-                      value={TurnoFin}
+                      value={asignar_permisos(Permiso)}
                       onChange={(e) => {
                         var str = String(e.target.value);
-                        if (str.includes("M")) {
-                          setTurnoFin(1);
-                        } else if (str.includes("T")) {
-                          setTurnoFin(2);
+                        if (str.includes("Planta")) {
+                          setPermiso(1);
+                        } else if (str.includes("Aprobado")) {
+                          setPermiso(2);
                         } else {
-                          setTurnoFin(3);
+                          setPermiso(3);
                         }
                       }}
                       sx={{ width: "150px" }}
@@ -476,7 +515,7 @@ export default function RegistroPlanta() {
                   />
                 </LocalizationProvider>
               </td>
-
+              <td></td>
               <td>
                 <TextField
                   InputLabelProps={{ shrink: true }}

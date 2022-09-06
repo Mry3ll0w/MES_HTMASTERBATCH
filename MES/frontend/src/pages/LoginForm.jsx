@@ -54,7 +54,7 @@ export default function LoginForm() {
             setPassError(false);
         }
 
-        if(User != '' && Pass != ''){
+        if(User !== '' && Pass !== ''){
             
             
             const Sel_user = Usuarios.filter(i => i.Codigo === User);
