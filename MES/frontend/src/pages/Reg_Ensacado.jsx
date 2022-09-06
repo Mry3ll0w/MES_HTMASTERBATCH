@@ -358,15 +358,7 @@ export default function RegEnsacado({LoggedUser}) {
                     renderInput={(params) => 
                       <TextField 
                         sx={{m:'3px', p :'3px'}} {...params} 
-                        inputProps = {{
-                            onKeyPress: event => {
-                              const { key } = event;
-                              console.log(key);
-                              if (key === "Enter") {
-                                TurnoRef.current.focus();
-                              }
-                            }
-                          }}
+                        
                     />}
                     error={F_error}
                   />
