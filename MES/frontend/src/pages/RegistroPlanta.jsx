@@ -206,6 +206,7 @@ export default function RegistroPlanta() {
       >
         <div style={styles.centered_div}>
           <TextField
+            InputLabelProps={{ shrink: true }}
             sx={{ margin: 2, width: "400px" }}
             value={OF || ""}
             disabled={true}
@@ -222,6 +223,7 @@ export default function RegistroPlanta() {
                 isOptionEqualToValue={(option, value) => option == value}
                 renderInput={(e) => (
                   <TextField
+                    InputLabelProps={{ shrink: true }}
                     {...e}
                     value={DispTI}
                     onChange={(e) => {
@@ -245,6 +247,7 @@ export default function RegistroPlanta() {
             </td>
             <td>
               <TextField
+                InputLabelProps={{ shrink: true }}
                 sx={{ marginLeft: 2, width: "150px" }}
                 label="H.Inicio"
                 value={HoraInicio}
@@ -260,6 +263,7 @@ export default function RegistroPlanta() {
                 //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                 renderInput={(e) => (
                   <TextField
+                    InputLabelProps={{ shrink: true }}
                     {...e}
                     value={DispTEns}
                     onChange={(e) => {
@@ -278,6 +282,7 @@ export default function RegistroPlanta() {
 
             <td>
               <TextField
+                InputLabelProps={{ shrink: true }}
                 sx={{ marginLeft: 2, width: "150px" }}
                 label="H.Fin"
                 value={HoraFin}
@@ -287,6 +292,7 @@ export default function RegistroPlanta() {
 
             <td>
               <TextField
+                InputLabelProps={{ shrink: true }}
                 sx={{ marginLeft: 2, width: "85px" }}
                 label="D1"
                 value={D1}
@@ -295,6 +301,7 @@ export default function RegistroPlanta() {
 
             <td>
               <TextField
+                InputLabelProps={{ shrink: true }}
                 sx={{ marginLeft: 2, width: "85px" }}
                 label="D4"
                 value={D4}
@@ -314,6 +321,7 @@ export default function RegistroPlanta() {
                     }}
                     renderInput={(params) => (
                       <TextField
+                        InputLabelProps={{ shrink: true }}
                         {...params}
                         sx={{ marginLeft: 2, marginTop: 2, width: "150px" }}
                       />
@@ -331,6 +339,7 @@ export default function RegistroPlanta() {
                   //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                   renderInput={(e) => (
                     <TextField
+                      InputLabelProps={{ shrink: true }}
                       {...e}
                       value={EstadoEnsacado}
                       onChange={(e) => {
@@ -360,6 +369,7 @@ export default function RegistroPlanta() {
                   //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                   renderInput={(e) => (
                     <TextField
+                      InputLabelProps={{ shrink: true }}
                       {...e}
                       value={DispTF}
                       onChange={(e) => {
@@ -386,12 +396,14 @@ export default function RegistroPlanta() {
                 <TextField
                   value={D2}
                   label="D2"
+                  InputLabelProps={{ shrink: true }}
                   sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
                 ></TextField>
               </td>
 
               <td>
                 <TextField
+                  InputLabelProps={{ shrink: true }}
                   value={D5}
                   label="D5"
                   sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
@@ -411,6 +423,7 @@ export default function RegistroPlanta() {
                   //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                   renderInput={(e) => (
                     <TextField
+                      InputLabelProps={{ shrink: true }}
                       {...e}
                       value={TurnoFin}
                       onChange={(e) => {
@@ -442,6 +455,7 @@ export default function RegistroPlanta() {
                     }}
                     renderInput={(params) => (
                       <TextField
+                        InputLabelProps={{ shrink: true }}
                         {...params}
                         sx={{ marginLeft: 2, marginTop: 2, width: "150px" }}
                       />
@@ -452,6 +466,7 @@ export default function RegistroPlanta() {
 
               <td>
                 <TextField
+                  InputLabelProps={{ shrink: true }}
                   value={D3}
                   label="D3"
                   sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
@@ -459,6 +474,7 @@ export default function RegistroPlanta() {
               </td>
               <td>
                 <TextField
+                  InputLabelProps={{ shrink: true }}
                   value={D6}
                   label="D6"
                   sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
@@ -487,8 +503,8 @@ export default function RegistroPlanta() {
               </td>
             </tr>
           </table>
-          {DatosRegPlanta.map(e => {
-            console.log(e)
+          {DatosRegPlanta.map((e) => {
+            console.log(e);
             return (
               <Fragment>
                 <br />
@@ -504,7 +520,9 @@ export default function RegistroPlanta() {
                     <div style={{ marginLeft: "2px" }}>
                       <table>
                         <tr>
-                          <p style={{ fontSize: "30px" }}>Turno de {asigna_turno(e.TurnoID)}</p>
+                          <p style={{ fontSize: "30px" }}>
+                            Turno de {asigna_turno(e.TurnoID)}
+                          </p>
                         </tr>
 
                         <tr>
@@ -512,6 +530,8 @@ export default function RegistroPlanta() {
                           <th style={{ backgroundColor: "#DFE5ED" }}>SCADA</th>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
+                              value={e.Produccion}
                               label="Producción"
                               sx={{
                                 margin: "1px",
@@ -522,7 +542,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="Selección"
+                              value={e.Seleccion}
                               sx={{
                                 margin: "1px",
                                 width: "150px",
@@ -532,7 +554,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="Rechazo"
+                              value={e.Rechazo}
                               sx={{
                                 margin: "1px",
                                 width: "150px",
@@ -542,7 +566,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="Desperdicio"
+                              value={e.Desperdicio}
                               sx={{
                                 margin: "1px",
                                 width: "150px",
@@ -559,7 +585,9 @@ export default function RegistroPlanta() {
                           </th>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="Ensacado"
+                              value={e.Ensacado}
                               sx={{
                                 margin: "1px",
                                 width: "150px",
@@ -569,7 +597,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="Rechazo TA"
+                              value={e.RechazoTA}
                               sx={{
                                 margin: "1px",
                                 width: "150px",
@@ -579,7 +609,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="Plasta"
+                              value={e.Plasta}
                               sx={{
                                 margin: "1px",
                                 width: "150px",
@@ -600,7 +632,9 @@ export default function RegistroPlanta() {
                           <td></td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="S1"
+                              value={e.ArrS1}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -609,7 +643,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="BB1"
+                              value={e.ArrBB1}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -619,6 +655,8 @@ export default function RegistroPlanta() {
                           <td>
                             <TextField
                               label="BB2"
+                              InputLabelProps={{ shrink: true }}
+                              value={e.ArrBB2}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -627,7 +665,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="SG1"
+                              value={e.ArrSG1}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -636,7 +676,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="SP2"
+                              value={e.ArrSP2}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -645,7 +687,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="SP3"
+                              value={e.ArrSP3}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -654,7 +698,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="BB3"
+                              value={e.ArrBB3}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -663,6 +709,8 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
+                              value={e.ArrBB4}
                               label="BB4"
                               sx={{
                                 margin: "1px",
@@ -672,7 +720,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="BB5"
+                              value={e.ArrBB5}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -685,6 +735,7 @@ export default function RegistroPlanta() {
                           <td></td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="LIQ"
                               sx={{
                                 margin: "1px",
@@ -694,6 +745,7 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="L2"
                               sx={{
                                 margin: "1px",
@@ -703,6 +755,7 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="L3"
                               sx={{
                                 margin: "1px",
@@ -725,7 +778,9 @@ export default function RegistroPlanta() {
                           <td></td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="S1"
+                              value={e.RetS1}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -734,7 +789,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="BB1"
+                              value={e.RetBB1}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -743,7 +800,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="BB2"
+                              value={e.RetBB2}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -752,7 +811,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="SG1"
+                              value={e.RetSG1}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -761,7 +822,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="SP2"
+                              value={e.RetSP2}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -770,7 +833,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="SP3"
+                              value={e.RetSP3}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -779,7 +844,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="BB3"
+                              value={e.RetBB3}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -788,7 +855,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="BB4"
+                              value={e.RetBB4}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -797,7 +866,9 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="BB5"
+                              value={e.RetBB5}
                               sx={{
                                 margin: "1px",
                                 width: "90px",
@@ -810,6 +881,7 @@ export default function RegistroPlanta() {
                           <td></td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="LIQ"
                               sx={{
                                 margin: "1px",
@@ -819,6 +891,7 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="L2"
                               sx={{
                                 margin: "1px",
@@ -828,6 +901,7 @@ export default function RegistroPlanta() {
                           </td>
                           <td>
                             <TextField
+                              InputLabelProps={{ shrink: true }}
                               label="L3"
                               sx={{
                                 margin: "1px",
@@ -846,7 +920,6 @@ export default function RegistroPlanta() {
               </Fragment>
             );
           })}
-          
         </div>
       </Resizable>
     </Fragment>
