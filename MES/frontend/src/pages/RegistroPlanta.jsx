@@ -258,7 +258,11 @@ export default function RegistroPlanta() {
             label="Orden de Fabricación"
             inputProps={{ style: { textAlign: "center" } }}
           />
+          <div>
+            
+          </div>
         </div>
+
         <div>
           <table>
             <td>
@@ -338,7 +342,7 @@ export default function RegistroPlanta() {
             <td>
               <TextField
                 InputLabelProps={{ shrink: true }}
-                sx={{ marginLeft: 2, width: "85px" }}
+                sx={{ marginLeft: 2, width: "100px" }}
                 label="D1"
                 value={D1}
               />
@@ -347,7 +351,7 @@ export default function RegistroPlanta() {
             <td>
               <TextField
                 InputLabelProps={{ shrink: true }}
-                sx={{ marginLeft: 2, width: "85px" }}
+                sx={{ marginLeft: 2, width: "100px" }}
                 label="D4"
                 value={D4}
               />
@@ -447,7 +451,7 @@ export default function RegistroPlanta() {
                   value={D2}
                   label="D2"
                   InputLabelProps={{ shrink: true }}
-                  sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
+                  sx={{ marginLeft: 2, marginTop: 2, width: "100px" }}
                 ></TextField>
               </td>
 
@@ -456,7 +460,7 @@ export default function RegistroPlanta() {
                   InputLabelProps={{ shrink: true }}
                   value={D5}
                   label="D5"
-                  sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
+                  sx={{ marginLeft: 2, marginTop: 2, width: "100px" }}
                 ></TextField>
               </td>
             </tr>
@@ -521,7 +525,7 @@ export default function RegistroPlanta() {
                   InputLabelProps={{ shrink: true }}
                   value={D3}
                   label="D3"
-                  sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
+                  sx={{ marginLeft: 2, marginTop: 2, width: "100px" }}
                 ></TextField>
               </td>
               <td>
@@ -529,7 +533,7 @@ export default function RegistroPlanta() {
                   InputLabelProps={{ shrink: true }}
                   value={D6}
                   label="D6"
-                  sx={{ marginLeft: 2, marginTop: 2, width: "85px" }}
+                  sx={{ marginLeft: 2, marginTop: 2, width: "100px" }}
                 ></TextField>
               </td>
             </tr>
