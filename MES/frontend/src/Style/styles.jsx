@@ -81,10 +81,12 @@ export const styles = {
     },
     AdjustableRightBox :{
         float:'right',
+        width :'auto',
         //background:'blue',
         borderStyle: 'dotted',
         borderColor: '#1876D2',
         height:'500px',
-        
+        display : 'inline-block',
+        overflow : 'auto'
     },
 }

@@ -487,24 +487,346 @@ export default function RegistroPlanta() {
               </td>
             </tr>
           </table>
+          {DatosRegPlanta.map(e => {
+            return (
+              <div style={{ marginLeft: "2px" }}>
+                <table>
+                  <tr>
+                    <p style={{ fontSize: "30px" }}>Turno</p>
+                  </tr>
 
-          <table>
-            <tr>
-              <p style={{ fontSize: "30px" }}>Turno</p>
-            </tr>
+                  <tr>
+                    <td></td>
+                    <th style={{ backgroundColor: "#DFE5ED" }}>SCADA</th>
+                    <td>
+                      <TextField
+                        label="Producción"
+                        sx={{
+                          margin: "1px",
+                          width: "150px",
+                          backgroundColor: "#DFE5ED",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="Selección"
+                        sx={{
+                          margin: "1px",
+                          width: "150px",
+                          backgroundColor: "#DFE5ED",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="Rechazo"
+                        sx={{
+                          margin: "1px",
+                          width: "150px",
+                          backgroundColor: "#DFE5ED",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="Desperdicio"
+                        sx={{
+                          margin: "1px",
+                          width: "150px",
+                          backgroundColor: "#DFE5ED",
+                        }}
+                      />
+                    </td>
+                  </tr>
 
-            <tr>
-              <th>SCADA</th>
-              <td>
-                <TextField
-                  label="Producción"
-                  sx={{ margin: "1px", width: "110px" }}
-                />
-              </td>
+                  <tr style={{ margin: 2 }}>
+                    <td></td>
+                    <th style={{ backgroundColor: "#E6EDD7" }}>Por Turno</th>
+                    <td>
+                      <TextField
+                        label="Ensacado"
+                        sx={{
+                          margin: "1px",
+                          width: "150px",
+                          backgroundColor: "#E6EDD7",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="Rechazo TA"
+                        sx={{
+                          margin: "1px",
+                          width: "150px",
+                          backgroundColor: "#E6EDD7",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="Plasta"
+                        sx={{
+                          margin: "1px",
+                          width: "150px",
+                          backgroundColor: "#E6EDD7",
+                        }}
+                      />
+                    </td>
+                  </tr>
+                </table>
 
-              <td></td>
-            </tr>
-          </table>
+                <br></br>
+                <p style={{ fontSize: "20px", marginLeft: "2px" }}>Arr.</p>
+                <table>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <TextField
+                        label="S1"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB1"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB2"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="SG1"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="SP2"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="SP3"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB3"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB4"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB5"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <TextField
+                        label="LIQ"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="L2"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="L3"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ marginBottom: "3px" }}></td>
+                  </tr>
+                </table>
+
+                <p style={{ fontSize: "20px", marginLeft: "2px" }}>Ret.</p>
+                <table>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <TextField
+                        label="S1"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB1"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB2"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="SG1"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="SP2"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="SP3"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB3"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB4"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="BB5"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <TextField
+                        label="LIQ"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="L2"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <TextField
+                        label="L3"
+                        sx={{
+                          margin: "1px",
+                          width: "90px",
+                        }}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ marginBottom: "3px" }}></td>
+                  </tr>
+                </table>
+                
+              </div>
+            );
+          })}
+          
         </div>
       </Resizable>
     </Fragment>
