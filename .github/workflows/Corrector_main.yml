@@ -1,14 +1,14 @@
-name: Correccion de ip para subida en main
-on:
-  push:
-    branches:
-      - main
+name: My Workflow
+on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Script
-      run: sh ip_fix.sh
+      - uses: actions/checkout@v2
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "Soy"
+          replace: "world"
+          include: "**p.jsx" # Will match all README.md files in any nested directory
