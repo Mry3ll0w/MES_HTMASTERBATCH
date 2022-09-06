@@ -68,6 +68,19 @@ export default function RegistroPlanta() {
         return "Noche"
     }
 
+    /**
+     * Devuelve el tipo de produccion según el numero
+     * @param {int} s
+     * @return String 
+     */
+    function asigna_tipo_produccion(s){
+      if(s == 2)
+        return "Producción | Producción dentro de un turno"
+      else if(s == 3)
+        return "Ensacado | Ensacado durante un turno"
+      else
+        return "Ajuste | SCADA:Incremental"
+    }
     
     //console.log(DatosPlanta)
     const columns = [
@@ -510,7 +523,14 @@ export default function RegistroPlanta() {
                 <br />
                 <Accordion>
                   <AccordionSummary>
-                    <Typography>
+                    <Typography
+                      sx={{
+                        background: "#1876D2",
+                        color: "white",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    >
                       Turno de {asigna_turno(e.TurnoID)} del día :{" "}
                       {format_date(e.FechaHoraReg)} registrada a las{" "}
                       {format_hour(e.FechaHoraReg)}
@@ -519,6 +539,15 @@ export default function RegistroPlanta() {
                   <AccordionDetails>
                     <div style={{ marginLeft: "2px" }}>
                       <table>
+                        <tr>
+                          <td>
+                            <TextField
+                              value={asigna_tipo_produccion(e.ObjetoID)}
+                              label="Tipo de Producción"
+                              InputLabelProps={{ shrink: true }}
+                            />
+                          </td>
+                        </tr>
                         <tr>
                           <p style={{ fontSize: "30px" }}>
                             Turno de {asigna_turno(e.TurnoID)}
