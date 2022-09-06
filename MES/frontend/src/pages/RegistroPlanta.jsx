@@ -38,7 +38,8 @@ export default function RegistroPlanta() {
     const [DatosRegPlantaComun, setDatosRegPlantaComun] = useState([]);
     const [DatosPlanta, setDatosPlanta] = useState([]);
     const [SelLista, setSelLista] = useState([]);
-    //Funcion encargada de actualizar los datos existentes, tras la respuesta del POST
+    const [DispTI, setDispTI] = useState("")
+    const [DispTF, setDispTF] = useState("")
     
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
@@ -50,11 +51,18 @@ export default function RegistroPlanta() {
     },[])
 
     /**
-     * @brief Actualiza los datos que se han seleccionado en la tabla
+     * @brief Funcion para pasar de int a cadena en turno
      * @param none
      * @return none
      */
-    
+    function asigna_turno(e){
+      if(e == 1)
+        return "Mañana"
+      else if(e == 2)
+        return "Tarde"
+      else
+        return "Noche"
+    }
 
     //console.log(DatosPlanta)
     const columns = [
@@ -160,6 +168,11 @@ export default function RegistroPlanta() {
                 setFechaFin(DatosRegPlantaComun.FechaFin);
                 setObservaciones(DatosRegPlantaComun.Observacion);
                 setOF(DatosRegPlantaComun.OrdenFabricacionID);
+                setTurnoFin(DatosRegPlantaComun.TurnoFinID);
+                setTurnoInicio(DatosRegPlantaComun.TurnoInicioID)
+                setDispTI(asigna_turno(TurnoInicio))
+                setDispTF(asigna_turno(TurnoFin))
+
               });
           }}
         />
@@ -188,13 +201,15 @@ export default function RegistroPlanta() {
           <table>
             <td>
               <Autocomplete
+                value={DispTI}
                 options={["Mañana", "Tarde", "Noche"]}
-                //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
+                isOptionEqualToValue = {(option, value) => option == value}
                 renderInput={(e) => (
                   <TextField
                     {...e}
-                    value={TurnoInicio}
+                    value={DispTI}
                     onChange={(e) => {
+                      setDispTI(e.target.value);
                       var str = String(e.target.value);
                       if (str.includes("M")) {
                         setTurnoInicio(1);
@@ -205,10 +220,10 @@ export default function RegistroPlanta() {
                       }
                     }}
                     sx={{ width: "150px" }}
-                    label="Turno Fin"
+                    label="Turno Inicio"
                   ></TextField>
                 )}
-                onChange={(e, v) => setTOf(v.Codigo)}
+                onChange={(e, v) => setDispTI(v)}
                 sx={{ marginLeft: 2, marginTop: 2, width: "150px" }}
               />
             </td>
