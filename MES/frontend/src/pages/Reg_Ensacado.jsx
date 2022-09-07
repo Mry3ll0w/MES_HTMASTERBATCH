@@ -352,7 +352,7 @@ export default function RegEnsacado({LoggedUser}) {
               mturno(i.Turno);
               mprod(i.Producto);
               console.log(M_Producto);
-              mObser(i.Observaciones)
+              mObser(i.Observaciones);
               return 0;
             });
           }}
@@ -386,7 +386,7 @@ export default function RegEnsacado({LoggedUser}) {
                     {...e}
                     value={M_Turno}
                     onChange={(e) => mturno(e.target.value)}
-                    sx={{ width: "100", m: "3px", p: "3px", minWidth: 100 }}
+                    sx={{ width: "100", m: "3px", p: "3px", minWidth: 200 }}
                     label="Turno"
                   ></TextField>
                 )}
@@ -501,9 +501,13 @@ export default function RegEnsacado({LoggedUser}) {
               error={Ant_Error}
               inputRef={AntRef}
             />
-            <br />
-            <h2 style={{marginLeft : "10px"}}><Typography> Observaciones/Comentarios </Typography></h2>
-            <TextareaAutosize value={M_Observaciones} onChange ={e => mObser(e.target.value)} style={{marginLeft : "10px", width : "500px", height : "100px"}}/>
+            
+            <TextField
+              value={M_Observaciones}
+              onChange={(e) => mObser(e.target.value)}
+              label="Observaciones/Comentarios"
+              sx={{ m: "3px", p: "3px", width : "600px" }}
+            />
             <br />
             <Button
               sx={{ m: "10px" }}
@@ -519,15 +523,15 @@ export default function RegEnsacado({LoggedUser}) {
             >
               Elimina el ensacado seleccionado
             </Button>
+            <Button
+              sx={{ m: "10px" }}
+              onClick={UpdateEnsacado}
+              variant="contained"
+            >
+              Corrige/Modifica el Ensacado
+            </Button>
           </Paper>
 
-          <Button
-            sx={{ m: "10px" }}
-            onClick={UpdateEnsacado}
-            variant="contained"
-          >
-            Corrige/Modifica el Ensacado
-          </Button>
           <p>
             *Nota : En caso de equivocación en la inserción del ensacado
             seleccione el erroneo en la lista anterior y corrijalo
