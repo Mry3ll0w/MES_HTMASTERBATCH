@@ -251,6 +251,7 @@ app.post('/RegPlanta',(request,res)=>{
             *
         from tbRegPlanta
         WHERE OrdenFabricacionID = '${request.body.OF}'
+        
         `
         var resultado_planta = await get_query(query);
         
@@ -261,8 +262,36 @@ app.post('/RegPlanta',(request,res)=>{
         `
         var resultado_comun = await get_query(q_comun)
 
+        //UNA VEZ OBTENIDO LOS ELEMENTOS DE REGPLANTACOMUN => SACAMOS LA OF PARA CALCULO DE RESUMEN
+        console.log(resultado_comun.query[0].OrdenFabricacionID)
+        var q_resultado_resumen = `
+        use MES;
+        select 
+            Sum(COALESCE(ArrS1,0)) - Sum(COALESCE(RetS1,0)) as S1,
+            Sum(COALESCE(ArrBB1,0)) - SUM(COALESCE(RetBB1,0)) as BB1,
+            SUM(COALESCE(ArrBB2, 0)) - Sum(COALESCE(RetBB2,0)) as BB2,
+            SUM(COALESCE(ARRSG1,0)) - SUM(COALESCE(RetSG1,0)) as SG1,
+            SUM(COALESCE(ARRSP2,0)) - SUM(ISNULL(RetSP2,0)) as SP2,
+            SUM(ISNULL(ARRSP3,0)) - SUM(ISNULL(RetSP3,0)) AS SP3,
+            SUM(ISNULL(ArrBB3,0)) - SUM(ISNULL(RetBB3,0)) AS BB3,
+            SUM(ISNULL(ArrBB4,0)) - SUM(ISNULL(RetBB4,0)) AS BB4,
+            SUM(ISNULL(ArrBB5,0)) - SUM(ISNULL(RetBB5,0)) AS BB5,
+            SUM(ISNULL(ArrLIQ,0)) - SUM(ISNULL(RetLIQ,0)) AS LIQ,
+            SUM(ISNULL(ArrL2,0)) -SUM(ISNULL(RETL2,0)) AS L2,
+            SUM(ISNULL(ArrL3,0)) - SUM(ISNULL(RetL3,0)) AS L3
+
+        from 
+            tbRegPlanta
+        where 
+            OrdenFabricacionID = '${resultado_comun.query[0].OrdenFabricacionID}'
+        `
+        var resultado_resumen = await get_query(q_resultado_resumen)
+        console.log(resultado_resumen.query[0])
+
+        //Calculamos la 
+
         //console.log(resultado_planta.query)
-        res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query})
+        res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query, Resumen: resultado_resumen.query[0]})
     }
     f();
     

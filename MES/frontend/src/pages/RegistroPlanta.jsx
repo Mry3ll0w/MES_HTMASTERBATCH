@@ -11,7 +11,16 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from "date-fns/locale";
 
 export default function RegistroPlanta() {
-
+    var ResumenTurnos = {
+      Produccion: 0,
+      Rechazo: 0,
+      Ensacado: 0,
+      RechazoTA: 0,
+      Seleccion: 0,
+      Sel_Ens: 0,
+      Desperdicio: 0,
+      Plasta: 0,
+    };
     //UseStates para controlar los datos del formulario
     const [TipoOf,setTOf]= useState('');
     const [HoraInicio,SetHoraInicio] = useState('')
@@ -34,6 +43,7 @@ export default function RegistroPlanta() {
     const [RState, setRState] = useState({ width: '80%', height: '630px' });//Estilo Dinamico
     //Variables para guardar los datos de los turnos (el valor final es numerico y el mostrado es string)
     const [DatosRegPlanta, setDatosRegPlanta] = useState([]);
+    const [DatosResumen, setDatosResumentRegPlanta] = useState([])
     const [DatosRegPlantaComun, setDatosRegPlantaComun] = useState([]);
     const [DatosPlanta, setDatosPlanta] = useState([]);
     const [SelLista, setSelLista] = useState([]);
@@ -41,27 +51,7 @@ export default function RegistroPlanta() {
     const [DispTF, setDispTF] = useState("")
     const [DispPermisos, setDispPermisos] = useState("")
     const [DispTEns, setDispTEns] = useState("")
-    //Variables para mostrar el resumen
-    const [SumProduccion, setSumProduccion] = useState(0)
-    const [SumRechazo, setSumRechazo] = useState(0)
-    const [SumEnsacado, setSumEnsacado] = useState(0)
-    const [SumRechazoTA, setSumRechazoTA] = useState(0)
-    const [SumSeleccion, setSumSeleccion] = useState(0)
-    const [SumDesperdicio, setSumDesperdicio] = useState(0)
-    const[SumSelEns, setSumSelEns] = useState(0)
-    const [SumPlasta, setSumPlasta] = useState(0)
-    const [SumS1, setSumS1] = useState(0);
-    const [SumBB1, setSumBB1] = useState(0);
-    const [SumBB2, setSumBB2] = useState(0);
-    const [SumSG1, setSumSG1] = useState(0);
-    const [SumSP2, setSumSP2] = useState(0);
-    const [SumSP3, setSumSP3] = useState(0);
-    const [SumBB3, setSumBB3] = useState(0);
-    const [SumBB4, setSumBB4] = useState(0);
-    const [SumBB5, setSumBB5] = useState(0);
-    const [SumLIQ, setSumLIQ] = useState(0);
-    const [SumL2, setSumL2] = useState(0);
-    const [SumL3, setSumL3] = useState(0);
+    const [ResTurno, setResTurno] = useState(ResumenTurnos);
     
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
@@ -138,7 +128,7 @@ export default function RegistroPlanta() {
     function format_hour(d){
       if (d !== null){
         var t = String(d)
-        console.log(t)
+        
         var [fecha, hora_completa] =  t.split('T')
         var str = String(hora_completa)
         
@@ -176,6 +166,13 @@ export default function RegistroPlanta() {
         return "Aprobado | Registro aprobado por Dpto."
       else
           return "Bloqueado | Registro Desechado"
+    }
+
+    /**
+     * Se encarga de realizar el calculo de la parte superior del resumen
+     */
+    function calcula_resumen_superior(){
+      //Buscamos 
     }
     
     DatosPlanta.map((i,n)=>{
@@ -224,9 +221,9 @@ export default function RegistroPlanta() {
                 //console.log(r.data.DatosRegPlantaComun[0])
                 setDatosRegPlanta(r.data.DatosRegPlanta);
                 setDatosRegPlantaComun(r.data.DatosRegPlantaComun[0]);
-
+                setDatosResumentRegPlanta(r.data.Resumen);
                 //Metemos los datos del registro de Planta Comun
-                console.log(DatosRegPlantaComun);
+                //console.log(DatosRegPlantaComun);
                 SetHoraInicio(
                   format_hour(DatosRegPlantaComun.FechaHoraRegInicio)
                 );
@@ -253,13 +250,10 @@ export default function RegistroPlanta() {
                 setEstadoEnsacado(DatosRegPlantaComun.EnsacadoEstadoID);
                 setPermiso(DatosRegPlantaComun.EstadoID);
                 setDispPermisos(asignar_permisos(Permiso));
-
-                //Hacemos las sumas para el resumen
-                DatosRegPlanta.map((i) => {
-                  setSumProduccion(SumProduccion + i.Produccion);
-                  setSumRechazo(SumRechazo + i.RechazoTA);
-                });
               });
+            
+              //Consulta para obtener los datos de resumen
+
           }}
         />
       </div>
@@ -583,7 +577,7 @@ export default function RegistroPlanta() {
             </tr>
           </table>
           {DatosRegPlanta.map((e) => {
-            console.log(e);
+            
             return (
               <Fragment>
                 <br />
@@ -1104,8 +1098,113 @@ export default function RegistroPlanta() {
                   />
                 </td>
               </tr>
+              <tr>
+                <td>
+                  <TextField
+                    label="S1"
+                    value={DatosResumen.S1}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    value={DatosResumen.BB1}
+                    label="BB1"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="BB2"
+                    value={DatosResumen.BB2}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="SG1"
+                    value={DatosResumen.SG1}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="SP2"
+                    value={DatosResumen.SP2}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="SP3"
+                    value={DatosResumen.SP3}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <TextField
+                    label="BB3"
+                    value={DatosResumen.BB3}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="BB4"
+                    value={DatosResumen.BB4}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="BB5"
+                    value={DatosResumen.BB5}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="LIQ"
+                    value={DatosResumen.LIQ}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  
+                  <TextField
+                    label="L2"
+                    value={DatosResumen.L2}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+
+                </td>
+                <td>
+
+                  <TextField
+                    label="L3"
+                    value={DatosResumen.L3}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+
+                </td>
+              </tr>
             </table>
-            <table>{/**Guardar S1, bb1 ,... */}</table>
+            <table>{/**Guardar S1, bb1 ,... */}
+            </table>
           </AccordionDetails>
         </Accordion>
       </Resizable>
