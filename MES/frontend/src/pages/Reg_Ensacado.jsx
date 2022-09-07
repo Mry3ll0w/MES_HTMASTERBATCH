@@ -290,26 +290,24 @@ export default function RegEnsacado({LoggedUser}) {
   //Borra el/los ensacados que son seleccionados en el menu
   function DeleteEnsacados() {
     var err;
-    Selected.map((i) => {
-      
-      var[d,m,year]=i.Fecha.split('/');
-      var ft=`${year}-${m}-${d}`
-      axios
-        .post("http://192.168.0.118:4001/DelEns", {
-          Fecha: ft,
-          Turno: i.Turno,
-          Palet: i.Palet,
-        })
-        .catch((e) => {
-          err = e;
-        });
-    });
+    console.log(M_Fecha)
+    axios
+      .post("http://192.168.0.118:4001/DelEns", {
+        Fecha: M_Fecha,
+        Turno: M_Turno,
+        Palet: M_Palet,
+      })
+      .catch((e) => {
+        err = e;
+      });
+    
     if (err) {
       alert("Fallo en la eliminacion");
     } else {
       alert("Eliminacion correcta");
       window.location.reload(false);
     }
+    
   }
   //Probando workflows
   return (
