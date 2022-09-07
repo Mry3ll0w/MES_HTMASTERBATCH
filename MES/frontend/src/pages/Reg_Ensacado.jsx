@@ -72,16 +72,23 @@ export default function RegEnsacado({LoggedUser}) {
   const RestoRef = useRef(null)
   const AntRef = useRef(null)
 
+  const [ArrProd, setArrProd] = useState([])
 
   //Obtenemos el resultado del get
   useEffect(() => {
+    var temp = Array()
     axios
       .get("http://192.168.0.118:4001/RegEnsacado")
       .then((response) => {
         SetProductos(response.data.Productos);
         SetEnsacados(response.data.Ensacados);
+        response.data.Productos.map(i => {
+          return temp =[...temp, i.ProductoID]
+        })
+        setArrProd(temp)
       })
       .catch((error) => console.log(error));
+      
   }, []);
 
   //Columnas
@@ -244,7 +251,7 @@ export default function RegEnsacado({LoggedUser}) {
       alert("El Resto no puede ser no numerico");
     } else rerror(false);
 
-
+    
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
       console.log({
@@ -284,6 +291,7 @@ export default function RegEnsacado({LoggedUser}) {
   function DeleteEnsacados() {
     var err;
     Selected.map((i) => {
+      
       var[d,m,year]=i.Fecha.split('/');
       var ft=`${year}-${m}-${d}`
       axios
@@ -319,7 +327,7 @@ export default function RegEnsacado({LoggedUser}) {
           rows={rows}
           columns={columns}
           pageSize={20}
-          checkboxSelection
+          //checkboxSelection
           rowsPerPageOptions={[10]}
           onSelectionModelChange={(r) => {
             const selectedIDs = new Set(r);
@@ -340,10 +348,11 @@ export default function RegEnsacado({LoggedUser}) {
               mresto(i.Resto);
               mant(i.Ant);
               setOldPalet(i.Palet);
-              mturno(i.Turno)
+              mturno(i.Turno);
+              mprod(i.Producto);
+              console.log(M_Producto);
               return 0;
             });
-            SetSelected(selectedRowData);
           }}
         />
       </div>
@@ -385,7 +394,9 @@ export default function RegEnsacado({LoggedUser}) {
 
             <FormControl>
               <Autocomplete
-                options={Productos}
+                value={M_Producto}
+                isOptionEqualToValue={(option, value) => option == value}
+                options={ArrProd}
                 inputRef={ProdRef}
                 inputProps={{
                   onKeyPress: (event) => {
@@ -396,7 +407,6 @@ export default function RegEnsacado({LoggedUser}) {
                     }
                   },
                 }}
-                getOptionLabel={(o) => o.ProductoID}
                 renderInput={(e) => (
                   <TextField
                     {...e}
@@ -502,7 +512,7 @@ export default function RegEnsacado({LoggedUser}) {
               onClick={DeleteEnsacados}
               variant="contained"
             >
-              Elimina el/los ensacado seleccionados
+              Elimina el ensacado seleccionado
             </Button>
           </Paper>
 
