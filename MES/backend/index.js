@@ -75,7 +75,7 @@ app.get('/RegEnsacado', (request, res) => {
 app.post('/UpdateEnsacado', (request, res) =>{
     console.log(request.body);
     async function q (){
-        var q_ins = await get_query(`Update MES.dbo.tbRegEnsacado SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE Palet = '${request.body.PaletOriginal}';`)
+        var q_ins = await get_query(`Update MES.dbo.tbRegEnsacado SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`)
         console.log(q_ins);
     }
     q();
@@ -96,7 +96,7 @@ app.post('/DelEns', (request, res) =>{
     console.log(request.body);
     const E = request.body;
     async function q(){
-        var q_ins = await get_query(`DELETE FROM MES.dbo.tbRegEnsacado WHERE Fecha='${E.Fecha}' AND Palet='${E.Palet}' AND Turno='${E.Turno}';`)
+        var q_ins = await get_query(`DELETE FROM MES.dbo.tbRegEnsacado WHERE ID = ${E.ID};`)
         console.log(q_ins);
     }
     q();

@@ -49,6 +49,7 @@ export default function RegEnsacado({LoggedUser}) {
   const [M_Resto, mresto] = useState(0);
   const [M_Ant, mant] = useState(0);
   const [M_Observaciones, mObser] = useState("");
+  const [M_ID, mID] = useState(0)
   //Manejadores de errores
   const [Err_palet, err_palet] = useState(false);
   const [F_error, ferr] = useState(false);
@@ -64,7 +65,7 @@ export default function RegEnsacado({LoggedUser}) {
   const [Ensacados, SetEnsacados] = useState([]);
   const [Selected, SetSelected] = useState([]);
   const [OldPalet, setOldPalet] = useState(""); //Sirve para guardar el estado anterior
-
+  
   //Cambio de campos cuando presionamos intro
   const TurnoRef = useRef(null)
   const ProdRef = useRef(null)
@@ -104,7 +105,8 @@ export default function RegEnsacado({LoggedUser}) {
     { field: "Resto", headerName: "Resto (KG)", width: "110" },
     { field: "Ant", headerName: "Anterior (KG)", width: "100" },
     { field: "Iniciales", headerName: "Imputado por", width: "100" },
-    { field: "Observaciones", headerName: "Observaciones", width : "500" }
+    { field: "Observaciones", headerName: "Observaciones", width : "500" },
+    { field: "ID", headerName : "ID", width : "30"}
   ];
 
   //Construimos las filas
@@ -124,7 +126,8 @@ export default function RegEnsacado({LoggedUser}) {
         Peso_Saco: i.Peso_Saco,
         Ant: i.Ant,
         Iniciales : i.Iniciales,
-        Observaciones : i.Observaciones
+        Observaciones : i.Observaciones,
+        ID: i.ID
       },
     ]);
   });
@@ -191,7 +194,8 @@ export default function RegEnsacado({LoggedUser}) {
           Resto: M_Resto,
           Ant: M_Ant,
           PaletOriginal: OldPalet,
-          Observaciones : M_Observaciones
+          Observaciones : M_Observaciones,
+          ID : M_ID
         })
         .then(() => {
           alert("Insercion realizada");
@@ -299,6 +303,7 @@ export default function RegEnsacado({LoggedUser}) {
         Fecha: M_Fecha,
         Turno: M_Turno,
         Palet: M_Palet,
+        ID : M_ID
       })
       .catch((e) => {
         err = e;
@@ -353,6 +358,7 @@ export default function RegEnsacado({LoggedUser}) {
               mprod(i.Producto);
               console.log(M_Producto);
               mObser(i.Observaciones);
+              mID(i.ID)
               return 0;
             });
           }}
