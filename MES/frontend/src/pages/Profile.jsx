@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, useRef } from 'react'
-import { Navigate, useNavigate} from 'react-router-dom'
+import { useNavigate} from 'react-router-dom'
 import { Box } from '@mui/system';
 import axios from 'axios';
 import { Button, TextField } from '@mui/material';
@@ -15,8 +15,7 @@ export default function Profile() {
 
     //Para los focus
     const RefNewPass= useRef(null);
-    const RefChangePass = useRef(null);
-
+    
     useEffect(() => {
         axios.get(`http://192.168.0.118:4001/Profile/${sessionStorage.getItem('codigo')}`).
         then(response => {

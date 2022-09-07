@@ -62,7 +62,7 @@ app.get('/RegEnsacado', (request, res) => {
 
     async function query(){
 
-        let q_ensacados= await get_query("select * from MES.dbo.tbRegEnsacado order by Palet desc");
+        let q_ensacados= await get_query("select * from MES.dbo.tbRegEnsacado order by Fecha asc");
         let q_prods = await get_query(fs.readFileSync('Q_Lista_productos.sql').toString());
         if (q_ensacados.ok && q_prods.ok) res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
         else res.send("Fallo al hacer la query");
@@ -75,7 +75,7 @@ app.get('/RegEnsacado', (request, res) => {
 app.post('/UpdateEnsacado', (request, res) =>{
     console.log(request.body);
     async function q (){
-        var q_ins = await get_query(`Update MES.dbo.tbRegEnsacado SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant} WHERE Palet = '${request.body.PaletOriginal}';`)
+        var q_ins = await get_query(`Update MES.dbo.tbRegEnsacado SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`)
         console.log(q_ins);
     }
     q();
@@ -85,8 +85,8 @@ app.post('/RegistraEnsacado', (request, res) =>{
     console.log(request.body);
     const E = request.body;
     async function q (){
-        var q_ins = await get_query(`INSERT INTO MES.dbo.tbRegEnsacado (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales) 
-        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}');`)
+        var q_ins = await get_query(`INSERT INTO MES.dbo.tbRegEnsacado (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones) 
+        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}');`)
         console.log(q_ins);
     }
     q();
@@ -96,7 +96,7 @@ app.post('/DelEns', (request, res) =>{
     console.log(request.body);
     const E = request.body;
     async function q(){
-        var q_ins = await get_query(`DELETE FROM MES.dbo.tbRegEnsacado WHERE Fecha='${E.Fecha}' AND Palet='${E.Palet}' AND Turno='${E.Turno}';`)
+        var q_ins = await get_query(`DELETE FROM MES.dbo.tbRegEnsacado WHERE ID = ${E.ID};`)
         console.log(q_ins);
     }
     q();
@@ -251,6 +251,7 @@ app.post('/RegPlanta',(request,res)=>{
             *
         from tbRegPlanta
         WHERE OrdenFabricacionID = '${request.body.OF}'
+        
         `
         var resultado_planta = await get_query(query);
         
@@ -261,8 +262,36 @@ app.post('/RegPlanta',(request,res)=>{
         `
         var resultado_comun = await get_query(q_comun)
 
+        //UNA VEZ OBTENIDO LOS ELEMENTOS DE REGPLANTACOMUN => SACAMOS LA OF PARA CALCULO DE RESUMEN
+        console.log(resultado_comun.query[0].OrdenFabricacionID)
+        var q_resultado_resumen = `
+        use MES;
+        select 
+            Sum(COALESCE(ArrS1,0)) - Sum(COALESCE(RetS1,0)) as S1,
+            Sum(COALESCE(ArrBB1,0)) - SUM(COALESCE(RetBB1,0)) as BB1,
+            SUM(COALESCE(ArrBB2, 0)) - Sum(COALESCE(RetBB2,0)) as BB2,
+            SUM(COALESCE(ARRSG1,0)) - SUM(COALESCE(RetSG1,0)) as SG1,
+            SUM(COALESCE(ARRSP2,0)) - SUM(ISNULL(RetSP2,0)) as SP2,
+            SUM(ISNULL(ARRSP3,0)) - SUM(ISNULL(RetSP3,0)) AS SP3,
+            SUM(ISNULL(ArrBB3,0)) - SUM(ISNULL(RetBB3,0)) AS BB3,
+            SUM(ISNULL(ArrBB4,0)) - SUM(ISNULL(RetBB4,0)) AS BB4,
+            SUM(ISNULL(ArrBB5,0)) - SUM(ISNULL(RetBB5,0)) AS BB5,
+            SUM(ISNULL(ArrLIQ,0)) - SUM(ISNULL(RetLIQ,0)) AS LIQ,
+            SUM(ISNULL(ArrL2,0)) -SUM(ISNULL(RETL2,0)) AS L2,
+            SUM(ISNULL(ArrL3,0)) - SUM(ISNULL(RetL3,0)) AS L3
+
+        from 
+            tbRegPlanta
+        where 
+            OrdenFabricacionID = '${resultado_comun.query[0].OrdenFabricacionID}'
+        `
+        var resultado_resumen = await get_query(q_resultado_resumen)
+        console.log(resultado_resumen.query[0])
+
+        //Calculamos la 
+
         //console.log(resultado_planta.query)
-        res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query})
+        res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query, Resumen: resultado_resumen.query[0]})
     }
     f();
     

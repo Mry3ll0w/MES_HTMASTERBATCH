@@ -9,6 +9,8 @@ import {
   FormControl,
   InputLabel,
   Autocomplete,
+  TextareaAutosize,
+  Typography,
 } from "@mui/material";
 import { DataGrid, esES} from '@mui/x-data-grid';
 
@@ -46,7 +48,8 @@ export default function RegEnsacado({LoggedUser}) {
   const [M_Cantidad, mcant] = useState(0);
   const [M_Resto, mresto] = useState(0);
   const [M_Ant, mant] = useState(0);
-
+  const [M_Observaciones, mObser] = useState("");
+  const [M_ID, mID] = useState(0)
   //Manejadores de errores
   const [Err_palet, err_palet] = useState(false);
   const [F_error, ferr] = useState(false);
@@ -62,7 +65,7 @@ export default function RegEnsacado({LoggedUser}) {
   const [Ensacados, SetEnsacados] = useState([]);
   const [Selected, SetSelected] = useState([]);
   const [OldPalet, setOldPalet] = useState(""); //Sirve para guardar el estado anterior
-
+  
   //Cambio de campos cuando presionamos intro
   const TurnoRef = useRef(null)
   const ProdRef = useRef(null)
@@ -72,16 +75,23 @@ export default function RegEnsacado({LoggedUser}) {
   const RestoRef = useRef(null)
   const AntRef = useRef(null)
 
+  const [ArrProd, setArrProd] = useState([])
 
   //Obtenemos el resultado del get
   useEffect(() => {
+    var temp = Array()
     axios
       .get("http://192.168.0.118:4001/RegEnsacado")
       .then((response) => {
         SetProductos(response.data.Productos);
         SetEnsacados(response.data.Ensacados);
+        response.data.Productos.map(i => {
+          return temp =[...temp, i.ProductoID]
+        })
+        setArrProd(temp)
       })
       .catch((error) => console.log(error));
+      
   }, []);
 
   //Columnas
@@ -90,11 +100,13 @@ export default function RegEnsacado({LoggedUser}) {
     { field: "Turno", headerName: "Turno", width: "90" },
     { field: "Producto", headerName: "Producto", width: "150" },
     { field: "Palet", headerName: "NºLote-NºPalet", width: "150" },
+    { field: "Peso_Saco", headerName: "Peso Saco (KG)", width: "130" },
     { field: "Cantidad", headerName: "Cantidad(KG)", width: "120" },
     { field: "Resto", headerName: "Resto (KG)", width: "110" },
-    { field: "Peso_Saco", headerName: "Peso Saco (KG)", width: "130" },
     { field: "Ant", headerName: "Anterior (KG)", width: "100" },
-    { field: "Iniciales", headerName: "Imputado por", width: "100" }
+    { field: "Iniciales", headerName: "Imputado por", width: "100" },
+    { field: "Observaciones", headerName: "Observaciones", width : "500" },
+    { field: "ID", headerName : "ID", width : "30"}
   ];
 
   //Construimos las filas
@@ -113,7 +125,9 @@ export default function RegEnsacado({LoggedUser}) {
         Resto: i.Resto,
         Peso_Saco: i.Peso_Saco,
         Ant: i.Ant,
-        Iniciales : i.Iniciales
+        Iniciales : i.Iniciales,
+        Observaciones : i.Observaciones,
+        ID: i.ID
       },
     ]);
   });
@@ -180,6 +194,8 @@ export default function RegEnsacado({LoggedUser}) {
           Resto: M_Resto,
           Ant: M_Ant,
           PaletOriginal: OldPalet,
+          Observaciones : M_Observaciones,
+          ID : M_ID
         })
         .then(() => {
           alert("Insercion realizada");
@@ -242,7 +258,7 @@ export default function RegEnsacado({LoggedUser}) {
       alert("El Resto no puede ser no numerico");
     } else rerror(false);
 
-
+    
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
       console.log({
@@ -265,7 +281,8 @@ export default function RegEnsacado({LoggedUser}) {
           Cantidad: M_Cantidad,
           Resto: M_Resto,
           Ant: M_Ant,
-          iniciales : sessionStorage.getItem('iniciales')
+          iniciales : sessionStorage.getItem('iniciales'),
+          Observaciones : M_Observaciones
         })
         .then(() => {
           alert("Insercion realizada");
@@ -280,43 +297,43 @@ export default function RegEnsacado({LoggedUser}) {
   //Borra el/los ensacados que son seleccionados en el menu
   function DeleteEnsacados() {
     var err;
-    Selected.map((i) => {
-      var[d,m,year]=i.Fecha.split('/');
-      var ft=`${year}-${m}-${d}`
-      axios
-        .post("http://192.168.0.118:4001/DelEns", {
-          Fecha: ft,
-          Turno: i.Turno,
-          Palet: i.Palet,
-        })
-        .catch((e) => {
-          err = e;
-        });
-    });
+    console.log(M_Fecha)
+    axios
+      .post("http://192.168.0.118:4001/DelEns", {
+        Fecha: M_Fecha,
+        Turno: M_Turno,
+        Palet: M_Palet,
+        ID : M_ID
+      })
+      .catch((e) => {
+        err = e;
+      });
+    
     if (err) {
       alert("Fallo en la eliminacion");
     } else {
       alert("Eliminacion correcta");
       window.location.reload(false);
     }
+    
   }
   //Probando workflows
   return (
     <Fragment>
       <h1>Bienvenido al panel de Inserción/Modificación de los ensacados.</h1>
       <p>
-        Se muestran los ultimos ensacados, ordenados por fecha, en caso de querer modificar
-        seleccione UN ÚNICO ensacado.<br></br>
-        Si desea eliminar uno o varios seleccione todos aquellos que deseas cambiar, tras esto
-        pulse el boton de eliminación.
+        Se muestran los ultimos ensacados, ordenados por fecha, en caso de
+        querer modificar seleccione UN ÚNICO ensacado.<br></br>
+        Si desea eliminar uno o varios seleccione todos aquellos que deseas
+        cambiar, tras esto pulse el boton de eliminación.
       </p>
-      <div style={{ height: 300, width: "100%" }}>
+      <div style={{ height: 700, width: "100%" }}>
         <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText} 
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={rows}
           columns={columns}
-          pageSize={100}
-          checkboxSelection
+          pageSize={20}
+          //checkboxSelection
           rowsPerPageOptions={[10]}
           onSelectionModelChange={(r) => {
             const selectedIDs = new Set(r);
@@ -326,11 +343,10 @@ export default function RegEnsacado({LoggedUser}) {
             console.log(selectedRowData);
             //Creacion Ensacado
             selectedRowData.map((i) => {
-              var[d,m,year]=i.Fecha.split('/');
+              var [d, m, year] = i.Fecha.split("/");
               var tDate = new Date(`${year}-${m}-${d}`);
               //console.log(i.Fecha)
               tDate = dateFormat(tDate, "yyyy-mm-dd");
-              console.log(tDate);
               mfecha(tDate);
               mpalet(i.Palet);
               mpsaco(i.Peso_Saco);
@@ -338,9 +354,13 @@ export default function RegEnsacado({LoggedUser}) {
               mresto(i.Resto);
               mant(i.Ant);
               setOldPalet(i.Palet);
+              mturno(i.Turno);
+              mprod(i.Producto);
+              console.log(M_Producto);
+              mObser(i.Observaciones);
+              mID(i.ID)
               return 0;
             });
-            SetSelected(selectedRowData);
           }}
         />
       </div>
@@ -349,62 +369,59 @@ export default function RegEnsacado({LoggedUser}) {
           <Paper>
             <h2>Inserta el nuevo ensacado</h2>
 
-            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es} >
-                <MobileDatePicker
-                    label="Fecha"
-                    inputFormat="dd/MM/yyyy"
-                    value={M_Fecha}
-                    onChange={e => mfecha(e)}
-                    renderInput={(params) => 
-                      <TextField 
-                        sx={{m:'3px', p :'3px'}} {...params} 
-                        
-                    />}
-                    error={F_error}
-                  />
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
+              <MobileDatePicker
+                label="Fecha"
+                inputFormat="dd/MM/yyyy"
+                value={M_Fecha}
+                onChange={(e) => mfecha(e)}
+                renderInput={(params) => (
+                  <TextField sx={{ m: "3px", p: "3px" }} {...params} />
+                )}
+                error={F_error}
+              />
             </LocalizationProvider>
-            
 
             <FormControl>
-              {/* Para darle formato mas limpio a los Select*/}
-              <InputLabel>Turnos</InputLabel>
-              <Select
-                sx={{ width: "100", m: "3px", p: "3px", minWidth: 100 }}
-                defaultValue=""
-                label="Turno"
-                onChange={(e) => mturno(e.target.value)}
-                required
-                inputRef={TurnoRef}
-                error={T_error}
-              >
-                <MenuItem value={"Mañana"}>Mañana</MenuItem>
-                <MenuItem value={"Tarde"}>Tarde</MenuItem>
-                <MenuItem value={"Noche"}>Noche</MenuItem>
-              </Select>
+              <Autocomplete
+                value={M_Turno}
+                isOptionEqualToValue={(option, value) => option == value}
+                options={["Mañana", "Tarde", "Noche"]}
+                renderInput={(e) => (
+                  <TextField
+                    {...e}
+                    value={M_Turno}
+                    onChange={(e) => mturno(e.target.value)}
+                    sx={{ width: "100", m: "3px", p: "3px", minWidth: 200 }}
+                    label="Turno"
+                  ></TextField>
+                )}
+                onChange={(e, v) => mturno(v)}
+              />
             </FormControl>
 
             <FormControl>
               <Autocomplete
-                options={Productos}
+                value={M_Producto}
+                isOptionEqualToValue={(option, value) => option == value}
+                options={ArrProd}
                 inputRef={ProdRef}
-                inputProps = {{
-                  onKeyPress: event => {
+                inputProps={{
+                  onKeyPress: (event) => {
                     const { key } = event;
                     console.log(key);
                     if (key === "Enter") {
                       PaletRef.current.focus();
                     }
-                  }
+                  },
                 }}
-                getOptionLabel={(o) => o.ProductoID}
                 renderInput={(e) => (
                   <TextField
                     {...e}
                     value={M_Producto}
                     onChange={(e) => mprod(e.target.value)}
-                    sx={{ p: "3px", m: "3px", width: "250px"}}
+                    sx={{ p: "3px", m: "3px", marginLeft: 2, width: "250px" }}
                     label="Productos"
-                    
                   ></TextField>
                 )}
                 onChange={(e, v) => mprod(v.ProductoID)}
@@ -415,14 +432,14 @@ export default function RegEnsacado({LoggedUser}) {
             <TextField
               value={M_Palet}
               inputRef={PaletRef}
-              inputProps = {{
-                onKeyPress: event => {
+              inputProps={{
+                onKeyPress: (event) => {
                   const { key } = event;
                   console.log(key);
                   if (key === "Enter") {
                     PesoSacoRef.current.focus();
                   }
-                }
+                },
               }}
               onChange={(e) => mpalet(e.target.value)}
               label="NºLote-NºPalet"
@@ -435,16 +452,15 @@ export default function RegEnsacado({LoggedUser}) {
               label="Peso Saco(kg)"
               sx={{ m: "3px", p: "3px" }}
               inputRef={PesoSacoRef}
-              inputProps = {{
-                onKeyPress: event => {
+              inputProps={{
+                onKeyPress: (event) => {
                   const { key } = event;
                   console.log(key);
                   if (key === "Enter") {
                     CantRef.current.focus();
                   }
-                }
+                },
               }}
-              
             />
             <p></p>
             <TextField
@@ -454,14 +470,14 @@ export default function RegEnsacado({LoggedUser}) {
               sx={{ m: "3px", p: "3px" }}
               error={Cant_Error}
               inputRef={CantRef}
-              inputProps = {{
-                onKeyPress: event => {
+              inputProps={{
+                onKeyPress: (event) => {
                   const { key } = event;
                   console.log(key);
                   if (key === "Enter") {
                     RestoRef.current.focus();
                   }
-                }
+                },
               }}
             />
 
@@ -472,18 +488,16 @@ export default function RegEnsacado({LoggedUser}) {
               sx={{ m: "3px", p: "3px" }}
               error={Resto_Error}
               inputRef={RestoRef}
-              inputProps = {{
-                onKeyPress: event => {
+              inputProps={{
+                onKeyPress: (event) => {
                   const { key } = event;
                   console.log(key);
                   if (key === "Enter") {
                     AntRef.current.focus();
                   }
-                }
+                },
               }}
             />
-
-            
 
             <TextField
               value={M_Ant}
@@ -493,7 +507,14 @@ export default function RegEnsacado({LoggedUser}) {
               error={Ant_Error}
               inputRef={AntRef}
             />
-
+            
+            <TextField
+              value={M_Observaciones}
+              onChange={(e) => mObser(e.target.value)}
+              label="Observaciones/Comentarios"
+              sx={{ m: "3px", p: "3px", width : "600px" }}
+            />
+            <br />
             <Button
               sx={{ m: "10px" }}
               onClick={InsertaEnsacado}
@@ -506,17 +527,17 @@ export default function RegEnsacado({LoggedUser}) {
               onClick={DeleteEnsacados}
               variant="contained"
             >
-              Elimina el/los ensacado seleccionados
+              Elimina el ensacado seleccionado
+            </Button>
+            <Button
+              sx={{ m: "10px" }}
+              onClick={UpdateEnsacado}
+              variant="contained"
+            >
+              Corrige/Modifica el Ensacado
             </Button>
           </Paper>
 
-          <Button
-            sx={{ m: "10px" }}
-            onClick={UpdateEnsacado}
-            variant="contained"
-          >
-            Corrige/Modifica el Ensacado
-          </Button>
           <p>
             *Nota : En caso de equivocación en la inserción del ensacado
             seleccione el erroneo en la lista anterior y corrijalo
