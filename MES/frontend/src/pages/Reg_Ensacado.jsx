@@ -9,6 +9,8 @@ import {
   FormControl,
   InputLabel,
   Autocomplete,
+  TextareaAutosize,
+  Typography,
 } from "@mui/material";
 import { DataGrid, esES} from '@mui/x-data-grid';
 
@@ -189,6 +191,7 @@ export default function RegEnsacado({LoggedUser}) {
           Resto: M_Resto,
           Ant: M_Ant,
           PaletOriginal: OldPalet,
+          Observaciones : M_Observaciones
         })
         .then(() => {
           alert("Insercion realizada");
@@ -349,6 +352,7 @@ export default function RegEnsacado({LoggedUser}) {
               mturno(i.Turno);
               mprod(i.Producto);
               console.log(M_Producto);
+              mObser(i.Observaciones)
               return 0;
             });
           }}
@@ -497,7 +501,10 @@ export default function RegEnsacado({LoggedUser}) {
               error={Ant_Error}
               inputRef={AntRef}
             />
-
+            <br />
+            <h2 style={{marginLeft : "10px"}}><Typography> Observaciones/Comentarios </Typography></h2>
+            <TextareaAutosize value={M_Observaciones} onChange ={e => mObser(e.target.value)} style={{marginLeft : "10px", width : "500px", height : "100px"}}/>
+            <br />
             <Button
               sx={{ m: "10px" }}
               onClick={InsertaEnsacado}
