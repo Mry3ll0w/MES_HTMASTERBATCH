@@ -2,9 +2,9 @@
     "configurations": [
         {
             "type": "pwa-chrome",
-            "name": "localhost:3000",
+            "name": "192.168.0.118:3000",
             "request": "launch",
-            "url": "localhost:300"
+            "url": "192.168.0.118:300"
         }
     ]
 }

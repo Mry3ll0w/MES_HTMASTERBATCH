@@ -56,7 +56,7 @@ export default function RegistroPlanta() {
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
         //alert("Bienvenido al Registro de Planta, seleccione con DOBLE click el elemento de la lista que desea tratar")
-        axios.get('http://localhost:4001/RegPlanta')
+        axios.get('http://192.168.0.118:4001/RegPlanta')
         .catch(error=>console.log(error))
         .then(response=>{
             setDatosPlanta(response.data.Datos)
@@ -211,7 +211,7 @@ export default function RegistroPlanta() {
             );
             //Seleccion del ensacado, filtramos por OF y TurnoID (1,2,5)
             axios
-              .post("http://localhost:4001/RegPlanta", {
+              .post("http://192.168.0.118:4001/RegPlanta", {
                 OF: selectedRowData[0].OF,
               })
               .catch((error) => console.log(error))

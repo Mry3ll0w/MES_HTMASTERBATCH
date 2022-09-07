@@ -19,7 +19,7 @@ export function Header () {
   //Navegabilidad de los botones
   const navigate = useNavigate();
   const [On_Login, setOnLogin] = useState(()=> {
-    if(window.location.href === 'http://localhost:3000/Login'){
+    if(window.location.href === 'http://192.168.0.118:3000/Login'){
       return true;
     }
     else{
