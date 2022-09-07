@@ -46,7 +46,7 @@ export default function RegEnsacado({LoggedUser}) {
   const [M_Cantidad, mcant] = useState(0);
   const [M_Resto, mresto] = useState(0);
   const [M_Ant, mant] = useState(0);
-
+  const [M_Observaciones, mObser] = useState("");
   //Manejadores de errores
   const [Err_palet, err_palet] = useState(false);
   const [F_error, ferr] = useState(false);
@@ -90,11 +90,12 @@ export default function RegEnsacado({LoggedUser}) {
     { field: "Turno", headerName: "Turno", width: "90" },
     { field: "Producto", headerName: "Producto", width: "150" },
     { field: "Palet", headerName: "NºLote-NºPalet", width: "150" },
+    { field: "Peso_Saco", headerName: "Peso Saco (KG)", width: "130" },
     { field: "Cantidad", headerName: "Cantidad(KG)", width: "120" },
     { field: "Resto", headerName: "Resto (KG)", width: "110" },
-    { field: "Peso_Saco", headerName: "Peso Saco (KG)", width: "130" },
     { field: "Ant", headerName: "Anterior (KG)", width: "100" },
-    { field: "Iniciales", headerName: "Imputado por", width: "100" }
+    { field: "Iniciales", headerName: "Imputado por", width: "100" },
+    { field: "Observaciones", headerName: "Observaciones", width : "500" }
   ];
 
   //Construimos las filas
@@ -113,7 +114,8 @@ export default function RegEnsacado({LoggedUser}) {
         Resto: i.Resto,
         Peso_Saco: i.Peso_Saco,
         Ant: i.Ant,
-        Iniciales : i.Iniciales
+        Iniciales : i.Iniciales,
+        Observaciones : i.Observaciones
       },
     ]);
   });
@@ -265,7 +267,8 @@ export default function RegEnsacado({LoggedUser}) {
           Cantidad: M_Cantidad,
           Resto: M_Resto,
           Ant: M_Ant,
-          iniciales : sessionStorage.getItem('iniciales')
+          iniciales : sessionStorage.getItem('iniciales'),
+          Observaciones : M_Observaciones
         })
         .then(() => {
           alert("Insercion realizada");
@@ -305,17 +308,17 @@ export default function RegEnsacado({LoggedUser}) {
     <Fragment>
       <h1>Bienvenido al panel de Inserción/Modificación de los ensacados.</h1>
       <p>
-        Se muestran los ultimos ensacados, ordenados por fecha, en caso de querer modificar
-        seleccione UN ÚNICO ensacado.<br></br>
-        Si desea eliminar uno o varios seleccione todos aquellos que deseas cambiar, tras esto
-        pulse el boton de eliminación.
+        Se muestran los ultimos ensacados, ordenados por fecha, en caso de
+        querer modificar seleccione UN ÚNICO ensacado.<br></br>
+        Si desea eliminar uno o varios seleccione todos aquellos que deseas
+        cambiar, tras esto pulse el boton de eliminación.
       </p>
-      <div style={{ height: 300, width: "100%" }}>
+      <div style={{ height: 700, width: "100%" }}>
         <DataGrid
-          localeText={esES.components.MuiDataGrid.defaultProps.localeText} 
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={rows}
           columns={columns}
-          pageSize={100}
+          pageSize={20}
           checkboxSelection
           rowsPerPageOptions={[10]}
           onSelectionModelChange={(r) => {
@@ -326,11 +329,10 @@ export default function RegEnsacado({LoggedUser}) {
             console.log(selectedRowData);
             //Creacion Ensacado
             selectedRowData.map((i) => {
-              var[d,m,year]=i.Fecha.split('/');
+              var [d, m, year] = i.Fecha.split("/");
               var tDate = new Date(`${year}-${m}-${d}`);
               //console.log(i.Fecha)
               tDate = dateFormat(tDate, "yyyy-mm-dd");
-              console.log(tDate);
               mfecha(tDate);
               mpalet(i.Palet);
               mpsaco(i.Peso_Saco);
@@ -338,6 +340,7 @@ export default function RegEnsacado({LoggedUser}) {
               mresto(i.Resto);
               mant(i.Ant);
               setOldPalet(i.Palet);
+              mturno(i.Turno)
               return 0;
             });
             SetSelected(selectedRowData);
@@ -349,52 +352,49 @@ export default function RegEnsacado({LoggedUser}) {
           <Paper>
             <h2>Inserta el nuevo ensacado</h2>
 
-            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es} >
-                <MobileDatePicker
-                    label="Fecha"
-                    inputFormat="dd/MM/yyyy"
-                    value={M_Fecha}
-                    onChange={e => mfecha(e)}
-                    renderInput={(params) => 
-                      <TextField 
-                        sx={{m:'3px', p :'3px'}} {...params} 
-                        
-                    />}
-                    error={F_error}
-                  />
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
+              <MobileDatePicker
+                label="Fecha"
+                inputFormat="dd/MM/yyyy"
+                value={M_Fecha}
+                onChange={(e) => mfecha(e)}
+                renderInput={(params) => (
+                  <TextField sx={{ m: "3px", p: "3px" }} {...params} />
+                )}
+                error={F_error}
+              />
             </LocalizationProvider>
-            
 
             <FormControl>
-              {/* Para darle formato mas limpio a los Select*/}
-              <InputLabel>Turnos</InputLabel>
-              <Select
-                sx={{ width: "100", m: "3px", p: "3px", minWidth: 100 }}
-                defaultValue=""
-                label="Turno"
-                onChange={(e) => mturno(e.target.value)}
-                required
-                inputRef={TurnoRef}
-                error={T_error}
-              >
-                <MenuItem value={"Mañana"}>Mañana</MenuItem>
-                <MenuItem value={"Tarde"}>Tarde</MenuItem>
-                <MenuItem value={"Noche"}>Noche</MenuItem>
-              </Select>
+              <Autocomplete
+                value={M_Turno}
+                isOptionEqualToValue={(option, value) => option == value}
+                options={["Mañana", "Tarde", "Noche"]}
+                renderInput={(e) => (
+                  <TextField
+                    {...e}
+                    value={M_Turno}
+                    onChange={(e) => mturno(e.target.value)}
+                    sx={{ width: "100", m: "3px", p: "3px", minWidth: 100 }}
+                    label="Turno"
+                  ></TextField>
+                )}
+                onChange={(e, v) => mturno(v)}
+              />
             </FormControl>
 
             <FormControl>
               <Autocomplete
                 options={Productos}
                 inputRef={ProdRef}
-                inputProps = {{
-                  onKeyPress: event => {
+                inputProps={{
+                  onKeyPress: (event) => {
                     const { key } = event;
                     console.log(key);
                     if (key === "Enter") {
                       PaletRef.current.focus();
                     }
-                  }
+                  },
                 }}
                 getOptionLabel={(o) => o.ProductoID}
                 renderInput={(e) => (
@@ -402,9 +402,8 @@ export default function RegEnsacado({LoggedUser}) {
                     {...e}
                     value={M_Producto}
                     onChange={(e) => mprod(e.target.value)}
-                    sx={{ p: "3px", m: "3px", width: "250px"}}
+                    sx={{ p: "3px", m: "3px", marginLeft: 2, width: "250px" }}
                     label="Productos"
-                    
                   ></TextField>
                 )}
                 onChange={(e, v) => mprod(v.ProductoID)}
@@ -415,14 +414,14 @@ export default function RegEnsacado({LoggedUser}) {
             <TextField
               value={M_Palet}
               inputRef={PaletRef}
-              inputProps = {{
-                onKeyPress: event => {
+              inputProps={{
+                onKeyPress: (event) => {
                   const { key } = event;
                   console.log(key);
                   if (key === "Enter") {
                     PesoSacoRef.current.focus();
                   }
-                }
+                },
               }}
               onChange={(e) => mpalet(e.target.value)}
               label="NºLote-NºPalet"
@@ -435,16 +434,15 @@ export default function RegEnsacado({LoggedUser}) {
               label="Peso Saco(kg)"
               sx={{ m: "3px", p: "3px" }}
               inputRef={PesoSacoRef}
-              inputProps = {{
-                onKeyPress: event => {
+              inputProps={{
+                onKeyPress: (event) => {
                   const { key } = event;
                   console.log(key);
                   if (key === "Enter") {
                     CantRef.current.focus();
                   }
-                }
+                },
               }}
-              
             />
             <p></p>
             <TextField
@@ -454,14 +452,14 @@ export default function RegEnsacado({LoggedUser}) {
               sx={{ m: "3px", p: "3px" }}
               error={Cant_Error}
               inputRef={CantRef}
-              inputProps = {{
-                onKeyPress: event => {
+              inputProps={{
+                onKeyPress: (event) => {
                   const { key } = event;
                   console.log(key);
                   if (key === "Enter") {
                     RestoRef.current.focus();
                   }
-                }
+                },
               }}
             />
 
@@ -472,18 +470,16 @@ export default function RegEnsacado({LoggedUser}) {
               sx={{ m: "3px", p: "3px" }}
               error={Resto_Error}
               inputRef={RestoRef}
-              inputProps = {{
-                onKeyPress: event => {
+              inputProps={{
+                onKeyPress: (event) => {
                   const { key } = event;
                   console.log(key);
                   if (key === "Enter") {
                     AntRef.current.focus();
                   }
-                }
+                },
               }}
             />
-
-            
 
             <TextField
               value={M_Ant}

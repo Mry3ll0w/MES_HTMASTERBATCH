@@ -41,8 +41,27 @@ export default function RegistroPlanta() {
     const [DispTF, setDispTF] = useState("")
     const [DispPermisos, setDispPermisos] = useState("")
     const [DispTEns, setDispTEns] = useState("")
-    
-
+    //Variables para mostrar el resumen
+    const [SumProduccion, setSumProduccion] = useState(0)
+    const [SumRechazo, setSumRechazo] = useState(0)
+    const [SumEnsacado, setSumEnsacado] = useState(0)
+    const [SumRechazoTA, setSumRechazoTA] = useState(0)
+    const [SumSeleccion, setSumSeleccion] = useState(0)
+    const [SumDesperdicio, setSumDesperdicio] = useState(0)
+    const[SumSelEns, setSumSelEns] = useState(0)
+    const [SumPlasta, setSumPlasta] = useState(0)
+    const [SumS1, setSumS1] = useState(0);
+    const [SumBB1, setSumBB1] = useState(0);
+    const [SumBB2, setSumBB2] = useState(0);
+    const [SumSG1, setSumSG1] = useState(0);
+    const [SumSP2, setSumSP2] = useState(0);
+    const [SumSP3, setSumSP3] = useState(0);
+    const [SumBB3, setSumBB3] = useState(0);
+    const [SumBB4, setSumBB4] = useState(0);
+    const [SumBB5, setSumBB5] = useState(0);
+    const [SumLIQ, setSumLIQ] = useState(0);
+    const [SumL2, setSumL2] = useState(0);
+    const [SumL3, setSumL3] = useState(0);
     
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
@@ -234,6 +253,12 @@ export default function RegistroPlanta() {
                 setEstadoEnsacado(DatosRegPlantaComun.EnsacadoEstadoID);
                 setPermiso(DatosRegPlantaComun.EstadoID);
                 setDispPermisos(asignar_permisos(Permiso));
+
+                //Hacemos las sumas para el resumen
+                DatosRegPlanta.map((i) => {
+                  setSumProduccion(SumProduccion + i.Produccion);
+                  setSumRechazo(SumRechazo + i.RechazoTA);
+                });
               });
           }}
         />
@@ -258,9 +283,7 @@ export default function RegistroPlanta() {
             label="Orden de Fabricación"
             inputProps={{ style: { textAlign: "center" } }}
           />
-          <div>
-            
-          </div>
+          <div></div>
         </div>
 
         <div>
@@ -358,7 +381,7 @@ export default function RegistroPlanta() {
             </td>
 
             {/**Fin de la primera linea  */}
-                    
+
             <tr>
               <td>
                 <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
@@ -572,6 +595,7 @@ export default function RegistroPlanta() {
                         color: "white",
                         width: "100%",
                         height: "100%",
+                        fontSize: "25px",
                       }}
                     >
                       Turno de {asigna_turno(e.TurnoID)} del día :{" "}
@@ -989,10 +1013,101 @@ export default function RegistroPlanta() {
                     </div>
                   </AccordionDetails>
                 </Accordion>
+                <br />
               </Fragment>
             );
           })}
         </div>
+        <br />
+        <Accordion>
+          <AccordionSummary>
+            <Typography
+              sx={{
+                background: "#1876D2",
+                color: "white",
+                width: "100%",
+                height: "100%",
+                fontSize: "25px",
+              }}
+            >
+              Resumen
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <table>
+              {/**Para guardar los superiores */}
+              <th>
+                <Typography
+                  sx={{ fontSize: "20px", backgroundColor: "#D6DCE5" }}
+                >
+                  TOTALES
+                </Typography>
+              </th>
+              <tr>
+                <td>
+                  <TextField
+                    label="Producción"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="Rechazo"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="Ensacado"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="RechazoTA"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <TextField
+                    label="Selección"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="Desperdicio"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="Sel-Ens"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+                <td>
+                  <TextField
+                    label="Plasta"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "100px", margin: 1 }}
+                  />
+                </td>
+              </tr>
+            </table>
+            <table>{/**Guardar S1, bb1 ,... */}</table>
+          </AccordionDetails>
+        </Accordion>
       </Resizable>
     </Fragment>
   );

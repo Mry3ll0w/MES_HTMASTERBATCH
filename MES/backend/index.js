@@ -62,7 +62,7 @@ app.get('/RegEnsacado', (request, res) => {
 
     async function query(){
 
-        let q_ensacados= await get_query("select * from MES.dbo.tbRegEnsacado order by Palet desc");
+        let q_ensacados= await get_query("select * from MES.dbo.tbRegEnsacado order by Fecha asc");
         let q_prods = await get_query(fs.readFileSync('Q_Lista_productos.sql').toString());
         if (q_ensacados.ok && q_prods.ok) res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
         else res.send("Fallo al hacer la query");
@@ -75,7 +75,7 @@ app.get('/RegEnsacado', (request, res) => {
 app.post('/UpdateEnsacado', (request, res) =>{
     console.log(request.body);
     async function q (){
-        var q_ins = await get_query(`Update MES.dbo.tbRegEnsacado SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant} WHERE Palet = '${request.body.PaletOriginal}';`)
+        var q_ins = await get_query(`Update MES.dbo.tbRegEnsacado SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE Palet = '${request.body.PaletOriginal}';`)
         console.log(q_ins);
     }
     q();
@@ -85,8 +85,8 @@ app.post('/RegistraEnsacado', (request, res) =>{
     console.log(request.body);
     const E = request.body;
     async function q (){
-        var q_ins = await get_query(`INSERT INTO MES.dbo.tbRegEnsacado (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales) 
-        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}');`)
+        var q_ins = await get_query(`INSERT INTO MES.dbo.tbRegEnsacado (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones) 
+        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}');`)
         console.log(q_ins);
     }
     q();
