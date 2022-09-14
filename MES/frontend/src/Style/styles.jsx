@@ -75,7 +75,7 @@ export const styles = {
         float:'left',
         //background:'Red',
         width:'19%',
-        height:'630px',
+        height:'850px',
         resize: 'horizontal',
         overflow: 'auto'
     },
@@ -85,7 +85,7 @@ export const styles = {
         //background:'blue',
         borderStyle: 'dotted',
         borderColor: '#1876D2',
-        height:'500px',
+        height:'850px',
         display : 'inline-block',
         overflow : 'auto'
     },

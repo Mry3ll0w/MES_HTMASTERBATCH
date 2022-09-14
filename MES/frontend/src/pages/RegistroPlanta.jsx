@@ -1,6 +1,6 @@
 import React,{useState,useEffect, Fragment} from 'react'
 import axios from 'axios'
-import { TextField,Button, Autocomplete, TextareaAutosize, Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material'
+import { TextField,Button, Autocomplete, TextareaAutosize, Accordion, AccordionDetails, AccordionSummary, Typography, Pagination, PaginationItem } from '@mui/material'
 import { styles } from '../Style/styles';
 import { DataGrid,GridToolbar, esES} from '@mui/x-data-grid';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
@@ -49,6 +49,9 @@ export default function RegistroPlanta() {
       Desperdicio: 0,
       Plasta: 0,
     };
+    //UseState para controlar las paginaciones
+    const [PaginaActual, setPagina] = useState(1);
+    
     //UseStates para controlar los datos del formulario
     const [TipoOf,setTOf]= useState('');
     const [HoraInicio,SetHoraInicio] = useState('')
@@ -68,9 +71,9 @@ export default function RegistroPlanta() {
     const [TurnoFin,setTurnoFin]= useState('');
     const [TurnoInicio,setTurnoInicio] = useState('');
     const [OF,setOF] = useState("");
-    const [RState, setRState] = useState({ width: '80%', height: '630px' });//Estilo Dinamico
+    const [RState, setRState] = useState({ width: '80%', height: '850px' });//Estilo Dinamico
     //Variables para guardar los datos de los turnos (el valor final es numerico y el mostrado es string)
-    const [DatosRegPlanta, setDatosRegPlanta] = useState([]);
+    const [DatosRegPlanta, setDatosRegPlanta] = useState([{ID : 0}]);
     const [DatosResumen, setDatosResumentRegPlanta] = useState([])
     const [DatosRegPlantaComun, setDatosRegPlantaComun] = useState([]);
     const [DatosPlanta, setDatosPlanta] = useState([]);
@@ -172,8 +175,438 @@ export default function RegistroPlanta() {
     /**
      * Se encarga de realizar el calculo de la parte superior del resumen
      */
-    function calcula_resumen_superior(){
-      //Buscamos 
+    function DisplayReg(e){
+      
+        
+          return (
+            <Fragment>
+              <br />
+              <Accordion>
+                <AccordionSummary>
+                  <Typography
+                    sx={{
+                      background: "#1876D2",
+                      color: "white",
+                      width: "100%",
+                      height: "100%",
+                      fontSize: "25px",
+                    }}
+                  >
+                    Resumen por turnos
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div style={{ marginLeft: "2px" }}>
+                    <table>
+                      <tr>
+                        <td>
+                          <TextField
+                            value={asigna_tipo_produccion(e.ObjetoID)}
+                            label="Tipo de Producción"
+                            InputLabelProps={{ shrink: true }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <p style={{ fontSize: "30px" }}>
+                          Turno de {asigna_turno(e.TurnoID)}
+                        </p>
+                      </tr>
+
+                      <tr>
+                        <td></td>
+                        <th style={{ backgroundColor: "#DFE5ED" }}>SCADA</th>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            value={e.Produccion}
+                            label="Producción"
+                            sx={{
+                              margin: "1px",
+                              width: "150px",
+                              backgroundColor: "#DFE5ED",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="Selección"
+                            value={e.Seleccion}
+                            sx={{
+                              margin: "1px",
+                              width: "150px",
+                              backgroundColor: "#DFE5ED",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="Rechazo"
+                            value={e.Rechazo}
+                            sx={{
+                              margin: "1px",
+                              width: "150px",
+                              backgroundColor: "#DFE5ED",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="Desperdicio"
+                            value={e.Desperdicio}
+                            sx={{
+                              margin: "1px",
+                              width: "150px",
+                              backgroundColor: "#DFE5ED",
+                            }}
+                          />
+                        </td>
+                      </tr>
+
+                      <tr style={{ margin: 2 }}>
+                        <td></td>
+                        <th style={{ backgroundColor: "#E6EDD7" }}>
+                          Por Turno
+                        </th>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="Ensacado"
+                            value={e.Ensacado}
+                            sx={{
+                              margin: "1px",
+                              width: "150px",
+                              backgroundColor: "#E6EDD7",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="Rechazo TA"
+                            value={e.RechazoTA}
+                            sx={{
+                              margin: "1px",
+                              width: "150px",
+                              backgroundColor: "#E6EDD7",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="Plasta"
+                            value={e.Plasta}
+                            sx={{
+                              margin: "1px",
+                              width: "150px",
+                              backgroundColor: "#E6EDD7",
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    </table>
+
+                    <br></br>
+                    <p style={{ fontSize: "20px", marginLeft: "2px" }}>Arr.</p>
+                    <table>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="S1"
+                            value={e.ArrS1}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="BB1"
+                            value={e.ArrBB1}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            label="BB2"
+                            InputLabelProps={{ shrink: true }}
+                            value={e.ArrBB2}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="SG1"
+                            value={e.ArrSG1}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="SP2"
+                            value={e.ArrSP2}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="SP3"
+                            value={e.ArrSP3}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="BB3"
+                            value={e.ArrBB3}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            value={e.ArrBB4}
+                            label="BB4"
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="BB5"
+                            value={e.ArrBB5}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="LIQ"
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="L2"
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="L3"
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style={{ marginBottom: "3px" }}></td>
+                      </tr>
+                    </table>
+
+                    <p style={{ fontSize: "20px", marginLeft: "2px" }}>Ret.</p>
+                    <table>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="S1"
+                            value={e.RetS1}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="BB1"
+                            value={e.RetBB1}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="BB2"
+                            value={e.RetBB2}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="SG1"
+                            value={e.RetSG1}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="SP2"
+                            value={e.RetSP2}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="SP3"
+                            value={e.RetSP3}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="BB3"
+                            value={e.RetBB3}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="BB4"
+                            value={e.RetBB4}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="BB5"
+                            value={e.RetBB5}
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="LIQ"
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="L2"
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            InputLabelProps={{ shrink: true }}
+                            label="L3"
+                            sx={{
+                              margin: "1px",
+                              width: "90px",
+                            }}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style={{ marginBottom: "3px" }}></td>
+                      </tr>
+                    </table>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
+
+              <br />
+            </Fragment>
+          );
+        
+      
     }
     
     DatosPlanta.map((i,n)=>{
@@ -222,7 +655,7 @@ export default function RegistroPlanta() {
                 setDatosRegPlanta(r.data.DatosRegPlanta);
                 setDatosRegPlantaComun(r.data.DatosRegPlantaComun[0]);
                 setDatosResumentRegPlanta(r.data.Resumen);
-                setResTurno(r.data.ResumenTotal)
+                setResTurno(r.data.ResumenTotal);
                 //console.table(ResTurno)
                 //Metemos los datos del registro de Planta Comun
                 SetHoraInicio(
@@ -251,24 +684,10 @@ export default function RegistroPlanta() {
                 setEstadoEnsacado(DatosRegPlantaComun.EnsacadoEstadoID);
                 setPermiso(DatosRegPlantaComun.EstadoID);
                 setDispPermisos(asignar_permisos(Permiso));
-                
-                //Calculo total del resumen del turno
-                var t_res_turno = ResumenTurnos;
-                r.data.ResumenTotal.map((i) => {
-                  t_res_turno.Desperdicio = i.Desperdicio;
-                  t_res_turno.Ensacado = i.Ensacado;
-                  t_res_turno.Plasta = i.Plasta;
-                  t_res_turno.Rechazo = i.Rechazo;
-                  t_res_turno.RechazoTA = i.RechazoTA;
-                  t_res_turno.Sel_Ens = i.Sel_Ens;
-                  t_res_turno.Seleccion = i.Seleccion;
-                });
-
+                setPagina(1);
                 setResTurno(r.data.ResumenTotal);
-
+                
               });
-            
-
           }}
         />
       </div>
@@ -591,441 +1010,16 @@ export default function RegistroPlanta() {
               </td>
             </tr>
           </table>
-          {DatosRegPlanta.map((e) => {
-            
-            return (
-              <Fragment>
-                <br />
-                <Accordion>
-                  <AccordionSummary>
-                    <Typography
-                      sx={{
-                        background: "#1876D2",
-                        color: "white",
-                        width: "100%",
-                        height: "100%",
-                        fontSize: "25px",
-                      }}
-                    >
-                      Turno de {asigna_turno(e.TurnoID)} del día :{" "}
-                      {format_date(e.FechaHoraReg)} registrada a las{" "}
-                      {format_hour(e.FechaHoraReg)}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <div style={{ marginLeft: "2px" }}>
-                      <table>
-                        <tr>
-                          <td>
-                            <TextField
-                              value={asigna_tipo_produccion(e.ObjetoID)}
-                              label="Tipo de Producción"
-                              InputLabelProps={{ shrink: true }}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <p style={{ fontSize: "30px" }}>
-                            Turno de {asigna_turno(e.TurnoID)}
-                          </p>
-                        </tr>
-
-                        <tr>
-                          <td></td>
-                          <th style={{ backgroundColor: "#DFE5ED" }}>SCADA</th>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              value={e.Produccion}
-                              label="Producción"
-                              sx={{
-                                margin: "1px",
-                                width: "150px",
-                                backgroundColor: "#DFE5ED",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="Selección"
-                              value={e.Seleccion}
-                              sx={{
-                                margin: "1px",
-                                width: "150px",
-                                backgroundColor: "#DFE5ED",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="Rechazo"
-                              value={e.Rechazo}
-                              sx={{
-                                margin: "1px",
-                                width: "150px",
-                                backgroundColor: "#DFE5ED",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="Desperdicio"
-                              value={e.Desperdicio}
-                              sx={{
-                                margin: "1px",
-                                width: "150px",
-                                backgroundColor: "#DFE5ED",
-                              }}
-                            />
-                          </td>
-                        </tr>
-
-                        <tr style={{ margin: 2 }}>
-                          <td></td>
-                          <th style={{ backgroundColor: "#E6EDD7" }}>
-                            Por Turno
-                          </th>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="Ensacado"
-                              value={e.Ensacado}
-                              sx={{
-                                margin: "1px",
-                                width: "150px",
-                                backgroundColor: "#E6EDD7",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="Rechazo TA"
-                              value={e.RechazoTA}
-                              sx={{
-                                margin: "1px",
-                                width: "150px",
-                                backgroundColor: "#E6EDD7",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="Plasta"
-                              value={e.Plasta}
-                              sx={{
-                                margin: "1px",
-                                width: "150px",
-                                backgroundColor: "#E6EDD7",
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      </table>
-
-                      <br></br>
-                      <p style={{ fontSize: "20px", marginLeft: "2px" }}>
-                        Arr.
-                      </p>
-                      <table>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="S1"
-                              value={e.ArrS1}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="BB1"
-                              value={e.ArrBB1}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              label="BB2"
-                              InputLabelProps={{ shrink: true }}
-                              value={e.ArrBB2}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="SG1"
-                              value={e.ArrSG1}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="SP2"
-                              value={e.ArrSP2}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="SP3"
-                              value={e.ArrSP3}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="BB3"
-                              value={e.ArrBB3}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              value={e.ArrBB4}
-                              label="BB4"
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="BB5"
-                              value={e.ArrBB5}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="LIQ"
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="L2"
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="L3"
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ marginBottom: "3px" }}></td>
-                        </tr>
-                      </table>
-
-                      <p style={{ fontSize: "20px", marginLeft: "2px" }}>
-                        Ret.
-                      </p>
-                      <table>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="S1"
-                              value={e.RetS1}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="BB1"
-                              value={e.RetBB1}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="BB2"
-                              value={e.RetBB2}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="SG1"
-                              value={e.RetSG1}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="SP2"
-                              value={e.RetSP2}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="SP3"
-                              value={e.RetSP3}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="BB3"
-                              value={e.RetBB3}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="BB4"
-                              value={e.RetBB4}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="BB5"
-                              value={e.RetBB5}
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="LIQ"
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="L2"
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <TextField
-                              InputLabelProps={{ shrink: true }}
-                              label="L3"
-                              sx={{
-                                margin: "1px",
-                                width: "90px",
-                              }}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style={{ marginBottom: "3px" }}></td>
-                        </tr>
-                      </table>
-                    </div>
-                  </AccordionDetails>
-                </Accordion>
-                <br />
-              </Fragment>
-            );
-          })}
+          {DisplayReg(DatosRegPlanta[PaginaActual - 1])}
+          <Pagination
+            count={DatosRegPlanta.length}
+            onChange={(e, p) => {
+              setPagina(p);
+              console.log("Pagina: "+ p)
+              
+              console.table(DatosRegPlanta[PaginaActual-1])
+            }}
+          ></Pagination>
         </div>
         <br />
         <Accordion>
@@ -1205,29 +1199,24 @@ export default function RegistroPlanta() {
                   />
                 </td>
                 <td>
-                  
                   <TextField
                     label="L2"
                     value={DatosResumen.L2}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
-
                 </td>
                 <td>
-
                   <TextField
                     label="L3"
                     value={DatosResumen.L3}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
-
                 </td>
               </tr>
             </table>
-            <table>{/**Guardar S1, bb1 ,... */}
-            </table>
+            <table>{/**Guardar S1, bb1 ,... */}</table>
           </AccordionDetails>
         </Accordion>
       </Resizable>
