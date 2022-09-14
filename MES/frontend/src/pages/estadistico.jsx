@@ -11,7 +11,8 @@ import { styles } from '../Style/styles';
 import { es } from 'date-fns/locale';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { addMinutes } from 'date-fns/esm';
+import { format_date_guion } from './grafica_estadistico';
+import { DateTime } from 'luxon';
 import { useNavigate } from 'react-router-dom';
 
 export default function GraficaEstadistico() {
@@ -250,14 +251,14 @@ export default function GraficaEstadistico() {
             selectedIDs.has(row.id)
             );
             selectedRowData.map( i=> {
-            var t = new Date(i.Fecha_Fin);
-            //Limite inferior
-            t = dateFormat(addMinutes(t,-5))
-            //console.log(dateFormat(t,'yyyy-mm-dd HH:MM:ss'))
-            setSuperior(dateFormat(t,'yyyy-mm-dd HH:MM:ss'))
-            var tm = new Date(i.Fecha_Inicio);
-            tm = addMinutes(tm,+5)
-            setInferior(dateFormat(tm,'yyyy-mm-dd HH:MM:ss'))
+            var t_date = format_date_guion(i.Fecha_Inicio);
+            var t = DateTime.fromISO(t_date.luxon);
+
+            setInferior(t.plus({ minutes: 5 }).toString());
+            t = DateTime.fromISO(format_date_guion(i.Fecha_Fin).luxon);
+
+            setSuperior(t.plus({ minutes: -5 }).toString());
+              
             
             })
           }}
