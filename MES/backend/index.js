@@ -129,6 +129,10 @@ app.post('/calcEstadistico',(request,res)=>{
     var q_cal;
     var l_inf = request.body.Lim_Inf
     var l_sup = request.body.Lim_Sup
+
+    console.log(`Limite INFERIOR: ${l_inf}`)
+    console.log(`Limite Sup: ${l_sup}`)
+    console.table(request.body)
     
     if(request.body.Tendencia == '19'){
         query =`
@@ -179,11 +183,11 @@ app.post('/calcEstadistico',(request,res)=>{
     }
     
     async function q(){
-        //console.log(query)
-
+        
         var datos_calculados= await get_query(query);
         var media_min_max = await get_query(q_cal)
-        //console.log(media_min_max.query)
+        console.log(media_min_max.query)
+        
         res.send({Datos_Calculados : datos_calculados.query, Resultado: media_min_max.query })
     }
     q();

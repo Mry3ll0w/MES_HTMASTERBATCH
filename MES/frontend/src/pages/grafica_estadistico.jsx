@@ -17,6 +17,9 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {DateTime} from 'luxon'
+
+
 //Grafica 
 import {
     Chart as ChartJS,
@@ -30,6 +33,33 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { useNavigate } from 'react-router-dom';
+
+/**
+ * Prepara una fecha con formato de SQL a js para enviarlo 
+ * @param String: d
+ * @return y : 0, mm : 0, dd: 0, time: '00:00'
+ */
+export function format_date_guion(d){
+
+  var r = {y : 0, mm : 0, dd: 0, hours : '00', minutes : '00', seconds: '00' , luxon : ''}
+  if(d !== null){
+
+    var [fecha, hora] = d.split(' ')
+    var [y, m, d] = fecha.split('-')
+    var [horas, minutos, segundos] = hora.split(':')
+
+    r.y = y;
+    r.mm = m;
+    r.dd = d;
+    r.hours = horas;
+    r.minutes = minutos;
+    r.seconds = segundos;
+    r.luxon = `${fecha}T${hora}`
+  }
+
+  return r;
+}
+
 
 ChartJS.register(
     CategoryScale,
@@ -69,7 +99,7 @@ export function corrector_fecha(f){
 }
 
 
-export default function BasicDateTimePicker() {
+export default function GraficaEstadistico() {
 
     const navigate = useNavigate();
     
@@ -325,14 +355,14 @@ export default function BasicDateTimePicker() {
                       selectedIDs.has(row.id)
                       );
                       selectedRowData.map( i=> {
-                      var t = new Date(i.Fecha_Fin);
-                      //Limite inferior
-                      t = dateFormat(addMinutes(t,-5))
-                      //console.log(dateFormat(t,'yyyy-mm-dd HH:MM:ss'))
-                      setSuperior(dateFormat(t,'yyyy-mm-dd HH:MM:ss'))
-                      var tm = new Date(i.Fecha_Inicio);
-                      tm = addMinutes(tm,+5)
-                      setInferior(dateFormat(tm,'yyyy-mm-dd HH:MM:ss'))
+                      var t_date= format_date_guion(i.Fecha_Inicio)
+                      var t = DateTime.fromISO(t_date.luxon)
+    
+                      setInferior(t.plus({minutes : 5}).toString())
+                      t = DateTime.fromISO(format_date_guion(i.Fecha_Fin).luxon)
+                      
+                      setSuperior(t.plus({minutes : -5}).toString())
+
                   })
                 }}
               />

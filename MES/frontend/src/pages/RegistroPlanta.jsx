@@ -10,6 +10,34 @@ import { DesktopDatePicker,LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from "date-fns/locale";
 
+    //Recibe una cadena
+    export function format_date(d){
+      if(d !== null){
+        var date = String(d)
+        var [Fecha_completa, hora_completa] = date.split(':')
+        var [Fecha_completa_corregida, basuraF] = Fecha_completa.split('T')
+        var[year, month, day] = Fecha_completa_corregida.split('-')
+        return `${day}/${month}/${year}`;
+      }
+      else
+        return '';
+    }
+
+    export function format_hour(d){
+      if (d !== null){
+        var t = String(d)
+        
+        var [fecha, hora_completa] =  t.split('T')
+        var str = String(hora_completa)
+        
+        var [horas, minutos, segundos] = str.split(':')
+        
+        return `${horas}:${minutos}`;
+      }
+      else
+        return d;
+    }
+
 export default function RegistroPlanta() {
     var ResumenTurnos = {
       Produccion: 0,
@@ -112,33 +140,6 @@ export default function RegistroPlanta() {
         ,
     ];
 
-    //Recibe una cadena
-    function format_date(d){
-      if(d !== null){
-        var date = String(d)
-        var [Fecha_completa, hora_completa] = date.split(':')
-        var [Fecha_completa_corregida, basuraF] = Fecha_completa.split('T')
-        var[year, month, day] = Fecha_completa_corregida.split('-')
-        return `${day}/${month}/${year}`;
-      }
-      else
-        return '';
-    }
-
-    function format_hour(d){
-      if (d !== null){
-        var t = String(d)
-        
-        var [fecha, hora_completa] =  t.split('T')
-        var str = String(hora_completa)
-        
-        var [horas, minutos, segundos] = str.split(':')
-        
-        return `${horas}:${minutos}`;
-      }
-      else
-        return d;
-    }
 
     /**
      * Devuelve el estado en el que se encuentra la producción
