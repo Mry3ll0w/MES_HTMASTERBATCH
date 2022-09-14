@@ -51,7 +51,7 @@ export default function RegistroPlanta() {
     const [DispTF, setDispTF] = useState("")
     const [DispPermisos, setDispPermisos] = useState("")
     const [DispTEns, setDispTEns] = useState("")
-    const [ResTurno, setResTurno] = useState(ResumenTurnos);
+    const [ResTurno, setResTurno] = useState([]);
     
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
@@ -218,12 +218,12 @@ export default function RegistroPlanta() {
               .then((r) => {
                 //Correcion formato de Hora recibida
                 console.log(r.data);
-                //console.log(r.data.DatosRegPlantaComun[0])
                 setDatosRegPlanta(r.data.DatosRegPlanta);
                 setDatosRegPlantaComun(r.data.DatosRegPlantaComun[0]);
                 setDatosResumentRegPlanta(r.data.Resumen);
+                setResTurno(r.data.ResumenTotal)
+                //console.table(ResTurno)
                 //Metemos los datos del registro de Planta Comun
-                //console.log(DatosRegPlantaComun);
                 SetHoraInicio(
                   format_hour(DatosRegPlantaComun.FechaHoraRegInicio)
                 );
@@ -250,9 +250,23 @@ export default function RegistroPlanta() {
                 setEstadoEnsacado(DatosRegPlantaComun.EnsacadoEstadoID);
                 setPermiso(DatosRegPlantaComun.EstadoID);
                 setDispPermisos(asignar_permisos(Permiso));
+                
+                //Calculo total del resumen del turno
+                var t_res_turno = ResumenTurnos;
+                r.data.ResumenTotal.map((i) => {
+                  t_res_turno.Desperdicio = i.Desperdicio;
+                  t_res_turno.Ensacado = i.Ensacado;
+                  t_res_turno.Plasta = i.Plasta;
+                  t_res_turno.Rechazo = i.Rechazo;
+                  t_res_turno.RechazoTA = i.RechazoTA;
+                  t_res_turno.Sel_Ens = i.Sel_Ens;
+                  t_res_turno.Seleccion = i.Seleccion;
+                });
+
+                setResTurno(r.data.ResumenTotal);
+
               });
             
-              //Consulta para obtener los datos de resumen
 
           }}
         />
@@ -1041,6 +1055,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="Producción"
+                    value={ResTurno.Produccion}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
@@ -1048,6 +1063,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="Rechazo"
+                    value={ResTurno.Rechazo}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
@@ -1055,6 +1071,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="Ensacado"
+                    value={ResTurno.Ensacado}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
@@ -1062,6 +1079,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="RechazoTA"
+                    value={ResTurno.RechazoTA}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
@@ -1072,6 +1090,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="Selección"
+                    value={ResTurno.Seleccion}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
@@ -1079,6 +1098,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="Desperdicio"
+                    value={ResTurno.Desperdicio}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
@@ -1086,6 +1106,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="Sel-Ens"
+                    value={ResTurno.Sel_Ens}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
@@ -1093,6 +1114,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="Plasta"
+                    value={ResTurno.Plasta}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
