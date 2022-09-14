@@ -8,6 +8,7 @@ const async = require('async');
 const fs = require('fs');//Lectura de archivos para leer sql queries
 
 var bcrypt = require('bcryptjs');
+const { get } = require('http');
 app.listen('4001',() => {console.log('listening in 4001')});
 //usando bodyparser
 app.use(bodyParser.urlencoded({extended:true}));
@@ -288,10 +289,135 @@ app.post('/RegPlanta',(request,res)=>{
         var resultado_resumen = await get_query(q_resultado_resumen)
         console.log(resultado_resumen.query[0])
 
-        //Calculamos la 
+        //Calculamos los datos del resumen
+        var query_resumen_total = `use MES;
 
+        DECLARE @S_Ensacado FLOAT;
+        SET @S_Ensacado = ISNULL((
+            SELECT SUM(ENSACADO) as Ensacado
+            FROM tbRegPlanta
+            WHERE OrdenFabricacionID = '${request.body.OF}'
+            and ObjetoID <> 12 
+        ),0);
+        
+        DECLARE @V_Plasta FLOAT;
+        SET @V_Plasta = ISNULL(
+            (
+                SELECT top 1
+            Plasta
+            from
+                tbRegPlanta
+            where 
+                    OrdenFabricacionID = '${request.body.OF}'
+            
+                )
+        ,0);
+            
+            
+        /*
+        Para hacer mas limpia la consulta y poder corregir el caso de no tener valor en la consulta, hago las consultas a parte
+            
+        */
+        DECLARE @A_PRODUCCION FLOAT;
+        SET @A_PRODUCCION = ISNULL( (select
+            Produccion
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${request.body.OF}'
+            and
+            ObjetoID = 12),0);
+        
+        DECLARE @A_SELECCION FLOAT;
+        SET @A_SELECCION = ISNULL((select
+            Seleccion
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${request.body.OF}'
+            and
+            ObjetoID = 12) ,0);
+        
+        DECLARE @A_RECHAZO FLOAT;
+        SET @A_RECHAZO = ISNULL((select
+            Rechazo
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${request.body.OF}'
+            and
+            ObjetoID = 12) ,0);
+        
+        DECLARE @A_ENSACADO FLOAT;
+        SET @A_ENSACADO = ISNULL( (
+            select
+            Ensacado
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${request.body.OF}'
+            and
+            ObjetoID = 12
+        ),0);
+        
+        DECLARE @A_RECHAZOTA FLOAT;
+        SET @A_RECHAZOTA = ISNULL( (select
+            RechazoTA
+        from
+            tbRegPlanta
+        where 
+            OrdenFabricacionID = '${request.body.OF}'
+            and
+            ObjetoID = 12),0);
+        
+        DECLARE @A_DESPERDICIO FLOAT;
+        SET @A_DESPERDICIO = ISNULL((select
+            Desperdicio
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${request.body.OF}'
+            and
+            ObjetoID = 12),0);
+        
+        DECLARE @ENSACADO_DEF FLOAT;
+        SET @ENSACADO_DEF = @S_Ensacado + @A_ENSACADO;
+        
+        SELECT
+            COALESCE(ISNULL(t1.Produccion,0) + ISNULL(@A_PRODUCCION,0),0) as Produccion,
+            ISNULL(t1.Seleccion,0) + ISNULL(@A_SELECCION,0) as Seleccion,
+            ISNULL(t1.Rechazo,0) + ISNULL(@A_RECHAZO,0) as Rechazo,
+            @ENSACADO_DEF as Ensacado,
+            ISNULL(t1.RechazoTA,0) + ISNULL(@A_RECHAZOTA,0) as RechazoTA,
+            ISNULL(t1.Desperdicio,0) + ISNULL(@A_DESPERDICIO,0) as Desperdicio,
+            ISNULL(@V_Plasta,0) as Plasta,
+            (ISNULL(t1.Seleccion,0) + ISNULL(@A_SELECCION,0) - @ENSACADO_DEF) as Sel_Ens
+        
+        from
+            (
+                select top 1
+                Produccion ,
+                Seleccion ,
+                Rechazo ,
+            
+                RechazoTA,
+                Desperdicio,
+                Plasta
+            from
+                tbRegPlanta as O
+            where 
+                    OrdenFabricacionID = '${request.body.OF}'
+                and
+                ObjetoID = 2
+            order by FechaHoraReg desc
+            )t1
+            
+        ;
+`
+        var resultado_query_resumen_total = await get_query(query_resumen_total)
+        //console.log(resultado_query_resumen_total.query[0])
         //console.log(resultado_planta.query)
-        res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query, Resumen: resultado_resumen.query[0]})
+        res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query, Resumen: resultado_resumen.query[0], ResumenTotal : resultado_query_resumen_total.query[0]})
     }
     f();
     
