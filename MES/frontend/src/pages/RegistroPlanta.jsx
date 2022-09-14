@@ -50,8 +50,8 @@ export default function RegistroPlanta() {
       Plasta: 0,
     };
     //UseState para controlar las paginaciones
-    const [PaginaActual, setPagina] = useState(1);
-    
+    const [PaginaActualTurno, SetPaginaTurno] = useState(1);
+    const [PaginaActualResumen, SetPaginaResumen] = useState(1);
     //UseStates para controlar los datos del formulario
     const [TipoOf,setTOf]= useState('');
     const [HoraInicio,SetHoraInicio] = useState('')
@@ -71,7 +71,7 @@ export default function RegistroPlanta() {
     const [TurnoFin,setTurnoFin]= useState('');
     const [TurnoInicio,setTurnoInicio] = useState('');
     const [OF,setOF] = useState("");
-    const [RState, setRState] = useState({ width: '80%', height: '850px' });//Estilo Dinamico
+    const [RState, setRState] = useState({ width: '80%', height: '800px' });//Estilo Dinamico
     //Variables para guardar los datos de los turnos (el valor final es numerico y el mostrado es string)
     const [DatosRegPlanta, setDatosRegPlanta] = useState([{ID : 0}]);
     const [DatosResumen, setDatosResumentRegPlanta] = useState([])
@@ -181,21 +181,7 @@ export default function RegistroPlanta() {
           return (
             <Fragment>
               <br />
-              <Accordion>
-                <AccordionSummary>
-                  <Typography
-                    sx={{
-                      background: "#1876D2",
-                      color: "white",
-                      width: "100%",
-                      height: "100%",
-                      fontSize: "25px",
-                    }}
-                  >
-                    Resumen por turnos
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
+              
                   <div style={{ marginLeft: "2px" }}>
                     <table>
                       <tr>
@@ -204,6 +190,7 @@ export default function RegistroPlanta() {
                             value={asigna_tipo_produccion(e.ObjetoID)}
                             label="Tipo de Producción"
                             InputLabelProps={{ shrink: true }}
+                            sx={{width : '400px'}}
                           />
                         </td>
                       </tr>
@@ -599,9 +586,6 @@ export default function RegistroPlanta() {
                       </tr>
                     </table>
                   </div>
-                </AccordionDetails>
-              </Accordion>
-
               <br />
             </Fragment>
           );
@@ -609,6 +593,202 @@ export default function RegistroPlanta() {
       
     }
     
+    function DispResumen(ResTurno, DatosResumen, P){
+      if(P === 1){
+        return (
+          <table>
+            {/**Para guardar los superiores */}
+            <th>
+              <Typography sx={{ fontSize: "20px", backgroundColor: "#D6DCE5" }}>
+                TOTALES
+              </Typography>
+            </th>
+            <tr>
+              <td>
+                <TextField
+                  label="Producción"
+                  value={ResTurno.Produccion}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="Rechazo"
+                  value={ResTurno.Rechazo}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="Ensacado"
+                  value={ResTurno.Ensacado}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="RechazoTA"
+                  value={ResTurno.RechazoTA}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <TextField
+                  label="Selección"
+                  value={ResTurno.Seleccion}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="Desperdicio"
+                  value={ResTurno.Desperdicio}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="Sel-Ens"
+                  value={ResTurno.Sel_Ens}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="Plasta"
+                  value={ResTurno.Plasta}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <TextField
+                  label="S1"
+                  value={DatosResumen.S1}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  value={DatosResumen.BB1}
+                  label="BB1"
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="BB2"
+                  value={DatosResumen.BB2}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="SG1"
+                  value={DatosResumen.SG1}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="SP2"
+                  value={DatosResumen.SP2}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="SP3"
+                  value={DatosResumen.SP3}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <TextField
+                  label="BB3"
+                  value={DatosResumen.BB3}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="BB4"
+                  value={DatosResumen.BB4}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="BB5"
+                  value={DatosResumen.BB5}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="LIQ"
+                  value={DatosResumen.LIQ}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="L2"
+                  value={DatosResumen.L2}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+              <td>
+                <TextField
+                  label="L3"
+                  value={DatosResumen.L3}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ width: "100px", margin: 1 }}
+                />
+              </td>
+            </tr>
+          </table>
+        );
+      }
+      else if(P === 2){
+        return (
+          <Fragment>
+            <table>
+              
+            </table>
+          </Fragment>
+        )
+      }
+      else{
+        return(<h1>Cosnumo</h1>)
+      }
+    }
+
     DatosPlanta.map((i,n)=>{
             i.id = n++;
             i.FechaHoraRegInicio = format_date(i.FechaHoraRegInicio);
@@ -684,9 +864,8 @@ export default function RegistroPlanta() {
                 setEstadoEnsacado(DatosRegPlantaComun.EnsacadoEstadoID);
                 setPermiso(DatosRegPlantaComun.EstadoID);
                 setDispPermisos(asignar_permisos(Permiso));
-                setPagina(1);
+                SetPaginaTurno(1);
                 setResTurno(r.data.ResumenTotal);
-                
               });
           }}
         />
@@ -1010,16 +1189,33 @@ export default function RegistroPlanta() {
               </td>
             </tr>
           </table>
-          {DisplayReg(DatosRegPlanta[PaginaActual - 1])}
-          <Pagination
-            count={DatosRegPlanta.length}
-            onChange={(e, p) => {
-              setPagina(p);
-              console.log("Pagina: "+ p)
-              
-              console.table(DatosRegPlanta[PaginaActual-1])
-            }}
-          ></Pagination>
+          <Accordion>
+            <AccordionSummary>
+              <Typography
+                sx={{
+                  background: "#1876D2",
+                  color: "white",
+                  width: "100%",
+                  height: "100%",
+                  fontSize: "25px",
+                }}
+              >
+                Resumen por turnos
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {DisplayReg(DatosRegPlanta[PaginaActualTurno - 1])}
+              <Pagination
+                count={DatosRegPlanta.length}
+                onChange={(e, p) => {
+                  SetPaginaTurno(p);
+                  console.log("Pagina: " + p);
+
+                  console.table(DatosRegPlanta[PaginaActualTurno - 1]);
+                }}
+              ></Pagination>
+            </AccordionDetails>
+          </Accordion>
         </div>
         <br />
         <Accordion>
@@ -1033,190 +1229,18 @@ export default function RegistroPlanta() {
                 fontSize: "25px",
               }}
             >
-              Resumen
+              Resumen, Formulas Scada, Consumo 
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <table>
-              {/**Para guardar los superiores */}
-              <th>
-                <Typography
-                  sx={{ fontSize: "20px", backgroundColor: "#D6DCE5" }}
-                >
-                  TOTALES
-                </Typography>
-              </th>
-              <tr>
-                <td>
-                  <TextField
-                    label="Producción"
-                    value={ResTurno.Produccion}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="Rechazo"
-                    value={ResTurno.Rechazo}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="Ensacado"
-                    value={ResTurno.Ensacado}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="RechazoTA"
-                    value={ResTurno.RechazoTA}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-              </tr>
 
-              <tr>
-                <td>
-                  <TextField
-                    label="Selección"
-                    value={ResTurno.Seleccion}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="Desperdicio"
-                    value={ResTurno.Desperdicio}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="Sel-Ens"
-                    value={ResTurno.Sel_Ens}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="Plasta"
-                    value={ResTurno.Plasta}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <TextField
-                    label="S1"
-                    value={DatosResumen.S1}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    value={DatosResumen.BB1}
-                    label="BB1"
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="BB2"
-                    value={DatosResumen.BB2}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="SG1"
-                    value={DatosResumen.SG1}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="SP2"
-                    value={DatosResumen.SP2}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="SP3"
-                    value={DatosResumen.SP3}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <TextField
-                    label="BB3"
-                    value={DatosResumen.BB3}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="BB4"
-                    value={DatosResumen.BB4}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="BB5"
-                    value={DatosResumen.BB5}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="LIQ"
-                    value={DatosResumen.LIQ}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="L2"
-                    value={DatosResumen.L2}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-                <td>
-                  <TextField
-                    label="L3"
-                    value={DatosResumen.L3}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ width: "100px", margin: 1 }}
-                  />
-                </td>
-              </tr>
-            </table>
-            <table>{/**Guardar S1, bb1 ,... */}</table>
+            {DispResumen(ResTurno, DatosResumen, PaginaActualResumen)}
+            <Pagination 
+            count={3}
+            onChange = {(e, p) => {
+              SetPaginaResumen(p)
+            }}
+            />
           </AccordionDetails>
         </Accordion>
       </Resizable>

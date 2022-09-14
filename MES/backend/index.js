@@ -25,6 +25,48 @@ const config = {
     }
 }
 
+const config_ecisa = {
+    user: 'report',
+    password: process.env.htm_ecisa_auth,
+    server: 'ECIESA\WINCC',
+    database: 'master',
+    options: {
+        trustServerCertificate: true //Hace falta para que podamos acceder al servidor
+    }
+}
+
+//Se que es redundante tener 2 funciones exactamente iguales, pero quiero distinguirlas de cara al uso con 
+//cada uno de los servidores
+
+async function connectECIESA() {
+    const pool = new sql.ConnectionPool(config_ecisa);
+
+    try {
+        await pool.connect();
+        return pool;
+    }
+    catch(err) {
+        console.log('Database connection failed!', err);
+        return err;
+    }
+}
+
+async function get_query_ECIESA(q) {
+    const DB = await connectECIESA();
+
+    try {
+        const result = await DB.request()
+            .query(q);
+        
+        return { query: result.recordset, ok : true};
+    }
+    catch (err) {
+        console.log(`Error querying database, used query ${q}`, err);
+    }
+        DB.close();
+}
+
+//QUERYS PARA MES
 async function connectDB() {
     const pool = new sql.ConnectionPool(config);
 
@@ -39,6 +81,7 @@ async function connectDB() {
         return err;
     }
 }
+
 
 async function get_query(q) {
     const DB = await connectDB();
@@ -130,9 +173,7 @@ app.post('/calcEstadistico',(request,res)=>{
     var l_inf = request.body.Lim_Inf
     var l_sup = request.body.Lim_Sup
 
-    console.log(`Limite INFERIOR: ${l_inf}`)
-    console.log(`Limite Sup: ${l_sup}`)
-    console.table(request.body)
+    
     
     if(request.body.Tendencia == '19'){
         query =`
