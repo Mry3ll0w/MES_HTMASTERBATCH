@@ -11,6 +11,8 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from "date-fns/locale";
 
 import '../App.css'
+import DropDownMenu from '../Components/DropDownMenu';
+import { useNavigate } from 'react-router-dom';
 
     //Recibe una cadena
     export function format_date(d){
@@ -173,13 +175,69 @@ export default function RegistroPlanta() {
       else
           return "Bloqueado | Registro Desechado"
     }
+    const navigate = useNavigate();
+    
+    const nav_trazabilidad = () =>{
+      if(EstadoEnsacado != 1){
+        alert('El ensacado esta pendiente, la trazabilidad no esta disponible')
+      }
+      else
+        navigate("/RegistroPlanta/Trazabilidad");
+    }
+
+    const nav_rechazos_desperdicios =() =>{
+      if (EstadoEnsacado != 1) {
+        alert("El ensacado esta pendiente, la trazabilidad no esta disponible");
+      }
+      else
+        navigate('/reg_planta_Rechazos_Desperdicios')
+    }
+
+    const nav_control_humedad = () =>{
+      navigate('/reg_planta_ControlHumedad')
+    }
+
+    const nav_n_granos = () => {
+      navigate('/reg_planta_n_gramos')
+    }
+
+    const Menu_Operaciones = [
+      {
+        element: (
+          <Button onClick={nav_trazabilidad} variant="contained">
+            Trazabilidad
+          </Button>
+        ),
+      },
+      {
+        element: (
+          <Button onClick={nav_rechazos_desperdicios} variant="contained">
+            Gestión de Rechazos/Desperdicios
+          </Button>
+        ),
+      },
+      {
+        element: (
+          <Button onClick={nav_n_granos} variant="contained">
+            Control de NºGranos
+          </Button>
+        ),
+      },
+      {
+        element: (
+          <Button onClick={nav_control_humedad} variant="contained">
+            Control de Humedad
+          </Button>
+        ),
+      },
+    ];
 
     /**
      * Se encarga de realizar el calculo de la parte superior del resumen
      */
     function DisplayReg(e){
-      
         
+        try{
           return (
             <Fragment>
               <br />
@@ -595,7 +653,12 @@ export default function RegistroPlanta() {
               <br />
             </Fragment>
           );
-        
+        }
+        catch{
+          alert("No hay datos en el registro de planta");
+          window.location.reload(false)
+        }
+          
       
     }
     
@@ -905,6 +968,7 @@ export default function RegistroPlanta() {
                 setDispPermisos(asignar_permisos(Permiso));
                 SetPaginaTurno(1);
                 setResTurno(r.data.ResumenTotal);
+                sessionStorage.setItem('OF', DatosRegPlantaComun.OrdenFabricacionID)
               });
           }}
         />
@@ -921,15 +985,16 @@ export default function RegistroPlanta() {
         }}
       >
         <div style={styles.centered_div}>
+          <br />
           <TextField
             InputLabelProps={{ shrink: true }}
-            sx={{ margin: 2, width: "400px" }}
+            sx={{ margin: 3, width: "400px" }}
             value={OF || ""}
             disabled={true}
             label="Orden de Fabricación"
             inputProps={{ style: { textAlign: "center" } }}
           />
-          <div></div>
+          <DropDownMenu elements={Menu_Operaciones} label={"Operaciones"}/>
         </div>
 
         <div>

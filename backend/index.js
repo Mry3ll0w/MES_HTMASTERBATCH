@@ -9,6 +9,7 @@ const fs = require('fs');//Lectura de archivos para leer sql queries
 
 var bcrypt = require('bcryptjs');
 const { get } = require('http');
+const { Console } = require('console');
 app.listen('4001',() => {console.log('listening in 4001')});
 //usando bodyparser
 app.use(bodyParser.urlencoded({extended:true}));
@@ -28,7 +29,7 @@ const config = {
 const config_ecisa = {
     user: 'report',
     password: process.env.htm_ecisa_auth,
-    server: "ECIESA\\WINCC",
+    server: `ECIESA\\WINCC`,
     database: 'master',
     options: {
         trustServerCertificate: true //Hace falta para que podamos acceder al servidor
@@ -289,6 +290,9 @@ app.get('/RegPlanta',(request,res)=>{
     f();
 });
 
+/**
+----------------------------------------REGISTRO DE PLANTA -----------------------------------------
+*/
 app.post('/RegPlanta',(request,res)=>{
     console.log(request.body)
     async function f ()  {
@@ -308,9 +312,9 @@ app.post('/RegPlanta',(request,res)=>{
             WHERE OrdenFabricacionID = '${request.body.OF}'
         `
         var resultado_comun = await get_query(q_comun)
-
+        
         //UNA VEZ OBTENIDO LOS ELEMENTOS DE REGPLANTACOMUN => SACAMOS LA OF PARA CALCULO DE RESUMEN
-        console.log(resultado_comun.query[0].OrdenFabricacionID)
+        
         var q_resultado_resumen = `
         use MES;
         select 
@@ -330,7 +334,7 @@ app.post('/RegPlanta',(request,res)=>{
         from 
             tbRegPlanta
         where 
-            OrdenFabricacionID = '${resultado_comun.query[0].OrdenFabricacionID}'
+            OrdenFabricacionID = '${request.body.OF}'
         `
         var resultado_resumen = await get_query(q_resultado_resumen)
         console.log(resultado_resumen.query[0])
@@ -482,7 +486,25 @@ app.post('/RegPlanta',(request,res)=>{
     
 })
 
-app.get('/RegPlanta', (request, res) => {
+app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
     
+    async function f (){
 
+        var OF = request.params.OF;
+        var q_get_trace_data = `
+        use MES;
+        SELECT
+            Fecha, Turno, Producto,
+            Palet, Cantidad, Resto, [OF]
+        from TablaAuxiliar4
+        where
+            [OF] = '${OF}'
+        ;
+        ` 
+        var res_trace_data = await get_query(q_get_trace_data);
+        res.send({
+            Trazabilidad : res_trace_data.query
+        })
+    }
+    f()
 })

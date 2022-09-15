@@ -12,6 +12,7 @@ import Footer from './Components/Footer';
 import { useEffect } from 'react';
 import Grafica_Estadistico from './pages/grafica_estadistico';
 import Profile from './pages/Profile';
+import TrazabilidadRegPlanta from './Components/Trazabilidad';
 
 //Imagenes
 import Personal from './pages/AdminUsers';
@@ -27,23 +28,25 @@ export function App() {
     <Router>
       <Header />
       <div style={styles.home_div}>
-      <Routes>
-          <Route path ="/" element={<LoginForm />} />
-          <Route path = "/home" element={<Home />} />
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/estadistico' element ={<Estadistico />} />
-          <Route path='*' element={<ErrorPage />} />
-          <Route path='/ejparam/:username' element = {<EjParam />} />
-          <Route path='/RegEnsacado' element={<RegEnsacado />} />
-          <Route path='/GraficaEstadistico' element={<Grafica_Estadistico />} />
-          <Route path='/Login' element={<LoginForm />} />
-          <Route path='/Personal' element={<Personal />} />
-          <Route path='/RegistroPlanta' element={<RegistroPlanta />} />
-      </Routes>
-      
+        <Routes>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/estadistico" element={<Estadistico />} />
+          <Route path="*" element={<ErrorPage />} />
+          <Route path="/ejparam/:username" element={<EjParam />} />
+          <Route path="/RegEnsacado" element={<RegEnsacado />} />
+          <Route path="/GraficaEstadistico" element={<Grafica_Estadistico />} />
+          <Route path="/Login" element={<LoginForm />} />
+          <Route path="/Personal" element={<Personal />} />
+          <Route path="/RegistroPlanta" element={<RegistroPlanta />} />
+          <Route path='/RegistroPlanta/Trazabilidad' element={<TrazabilidadRegPlanta />} />
+          
+        </Routes>
       </div>
       <Footer />
-    </Router>);
+    </Router>
+  );
 }
 
 export default App;
