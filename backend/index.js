@@ -28,7 +28,7 @@ const config = {
 const config_ecisa = {
     user: 'report',
     password: process.env.htm_ecisa_auth,
-    server: 'ECIESA\WINCC',
+    server: "ECIESA\\WINCC",
     database: 'master',
     options: {
         trustServerCertificate: true //Hace falta para que podamos acceder al servidor
@@ -40,12 +40,13 @@ const config_ecisa = {
 
 async function connectECIESA() {
     const pool = new sql.ConnectionPool(config_ecisa);
-
+    
     try {
         await pool.connect();
         return pool;
     }
     catch(err) {
+        console.table("NOMBRE SERVIDOR: "+ config_ecisa.server)
         console.log('Database connection failed!', err);
         return err;
     }
@@ -458,7 +459,20 @@ app.post('/RegPlanta',(request,res)=>{
             )t1
             
         ;
-`
+        `
+        var q_eciesa_derecha = `
+        use HTM;
+        SELECT 
+        Componente, Lote, Linea, Ubicacion, 
+        Sum(Cantidad) AS CantidadTotal
+        FROM Tabla_PESADAS
+        WHERE
+            OrdenFabricacion = '${request.body.OF}'
+        GROUP BY OrdenFabricacion, Componente, Lote, Linea, Ubicacion;
+
+        `
+        //var resultado_eciesa_derecha = await get_query_ECIESA(q_eciesa_derecha) 
+        //console.table(resultado_eciesa_derecha.query)  
         var resultado_query_resumen_total = await get_query(query_resumen_total)
         //console.log(resultado_query_resumen_total.query[0])
         //console.log(resultado_planta.query)

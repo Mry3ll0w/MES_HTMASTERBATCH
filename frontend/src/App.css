@@ -1,12 +1,29 @@
-formControl {
-  minwidth : 100
+
+.LeftFloatingDiv {
+      float: left;
+      width : auto;
+      height: auto;
+      overflow:auto;
+      
 }
-tfield_update {
-      m:'3px';
-      p:'3px';
+
+.RightFloatingDiv {
+      float : right;
+      width: auto;
+      height: auto;
+      overflow: auto;
 }
-dotted_box  {
-      p:2;
-      m:'3px';
-      border:'1px dotted blue';
+
+/* PARA LAS TABLAS Mas Simples*/
+.tbodyC {
+      font-size: large;
+      background-color: #D6DCE5;
+}
+
+.thCustom {
+      border: 1px solid #1876D2;
+      background-color: #D6DCE5;
+      font-size: large;
+      width: 100px;
+      height: 40px;
 }
