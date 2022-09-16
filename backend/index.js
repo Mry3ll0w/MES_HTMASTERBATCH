@@ -475,11 +475,16 @@ app.post('/RegPlanta',(request,res)=>{
         GROUP BY OrdenFabricacion, Componente, Lote, Linea, Ubicacion;
 
         `
-        //var resultado_eciesa_derecha = await get_query_ECIESA(q_eciesa_derecha) 
-        //console.table(resultado_eciesa_derecha.query)  
+        /*
+        try{
+            var resultado_eciesa_derecha = await get_query_ECIESA(q_eciesa_derecha) 
+            console.table(resultado_eciesa_derecha.query)  
+        }
+        catch{
+            console.debug("FALLA LA CONSULTA DE ECIESA")
+        }
+        */
         var resultado_query_resumen_total = await get_query(query_resumen_total)
-        //console.log(resultado_query_resumen_total.query[0])
-        //console.log(resultado_planta.query)
         res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query, Resumen: resultado_resumen.query[0], ResumenTotal : resultado_query_resumen_total.query[0]})
     }
     f();
@@ -489,7 +494,7 @@ app.post('/RegPlanta',(request,res)=>{
 app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
     
     async function f (){
-
+        
         var OF = request.params.OF;
         var q_get_trace_data = `
         use MES;
@@ -501,10 +506,41 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
             [OF] = '${OF}'
         ;
         ` 
-        var res_trace_data = await get_query(q_get_trace_data);
-        res.send({
-            Trazabilidad : res_trace_data.query
-        })
+        try{
+            var res_trace_data = await get_query(q_get_trace_data);
+            res.send({
+                Trazabilidad : res_trace_data.query
+            })
+        }
+        catch{
+            console.log("Falla la lectura de la trazabilidad")
+        }
+        
     }
     f()
+})
+
+
+app.get('/AdmUsers', (request, reply) => {
+    async function f(){
+        var q_usuarios = `
+        use WEB_API_TABLES;
+        SELECT 
+            ID, Codigo,
+            Apellidos,
+            TratamientoID,
+            Alias,
+            CargoID
+        FROM 
+            tbEmpleados
+        WHERE
+            ContratoEstadoID = 1
+        ;`
+
+        let res_usuarios = await get_query(q_usuarios);
+        console.log(res_usuarios.query)
+        reply.send({Usuarios : res_usuarios.query})
+    }
+
+    f();
 })
