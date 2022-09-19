@@ -26,7 +26,7 @@ export default function Personal() {
       .catch((error) => console.log(error))
       .then((response) => {
         try{
-          //console.log(response.data.Usuarios);
+          console.log(response.data.Usuarios);
           setUsuarios(response.data.Usuarios)
           
         }
@@ -38,35 +38,57 @@ export default function Personal() {
 
   return (
     <Fragment>
-      
-        <Typography fontSize={"20px"} textAlign={'center'}>Gestion de Usuarios del MES</Typography>
-        <Accordion>
-          <AccordionSummary><Typography fontSize={'16px'} textAlign={'center'}>Edicion de los usuarios existentes</Typography></AccordionSummary>
-          <AccordionDetails>
-            <div className="wrap_div">
-              <table>
-                  <tbody>
-                    <tr>
-                      <th><Typography fontSize={'20px'} textAlign={'center'}> Código</Typography></th>
-                      <th><Typography fontSize={'20px'} textAlign={'center'}> Apellidos</Typography></th>
-                      <th><Typography fontSize={'20px'} textAlign={'center'}> Nombre</Typography></th>
-                    </tr>
-                    {
-                      Usuarios.map(i => {
-                        return (
-                          <tr>
-                            
-                          </tr>
-                        )
-                    })
-                  }
-                  </tbody>
-                </table>
-              
-            </div>
-          </AccordionDetails>
-        </Accordion>
-      
+      <Typography fontSize={"20px"} textAlign={"center"}>
+        Gestion de Usuarios del MES
+      </Typography>
+      <Accordion>
+        <AccordionSummary>
+          <Typography fontSize={"16px"} textAlign={"center"}>
+            Edicion de los usuarios existentes
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className="wrap_div">
+            <table>
+              <tbody>
+                <tr>
+                  <th>
+                    <Typography fontSize={"20px"} textAlign={"center"}>
+                      {" "}
+                      Código
+                    </Typography>
+                  </th>
+                  <th>
+                    <Typography fontSize={"20px"} textAlign={"center"}>
+                      {" "}
+                      Apellidos
+                    </Typography>
+                  </th>
+                  <th>
+                    <Typography fontSize={"20px"} textAlign={"center"}>
+                      {" "}
+                      Nombre
+                    </Typography>
+                  </th>
+                  <th>
+                    <Typography fontSize={"20px"} textAlign={"center"}>
+                      Tratamiento
+                    </Typography>
+                  </th>
+                  <th>
+                    <Typography fontSize={"20px"} textAlign={"center"}>
+                    Cargo
+                    </Typography>
+                  </th>
+                </tr>
+                {Usuarios.map((i) => {
+                  return <tr></tr>;
+                })}
+              </tbody>
+            </table>
+          </div>
+        </AccordionDetails>
+      </Accordion>
     </Fragment>
   );
 }

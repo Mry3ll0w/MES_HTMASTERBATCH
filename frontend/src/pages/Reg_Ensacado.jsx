@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid, esES} from '@mui/x-data-grid';
-
+import { corrector_fecha } from "./grafica_estadistico";
 import React, { Fragment,useRef } from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -207,6 +207,8 @@ export default function RegEnsacado({LoggedUser}) {
     }
   }
 
+  
+
   function InsertaEnsacado() {
     var ok = true;
     //Comprobamos que se cumplan los elementos dados
@@ -277,12 +279,12 @@ export default function RegEnsacado({LoggedUser}) {
           Turno: M_Turno,
           Producto: M_Producto,
           Palet: M_Palet,
-          Peso_Saco: M_Peso_Saco,
-          Cantidad: M_Cantidad,
-          Resto: M_Resto,
-          Ant: M_Ant,
+          Peso_Saco: M_Peso_Saco ? null : 0,
+          Cantidad: M_Cantidad ? null : 0,
+          Resto: M_Resto ? null : 0,
+          Ant: M_Ant ? null : 0,
           iniciales : sessionStorage.getItem('iniciales'),
-          Observaciones : M_Observaciones
+          Observaciones : M_Observaciones ? null : ' '
         })
         .then(() => {
           alert("Insercion realizada");
