@@ -53,7 +53,7 @@ async function connectECIESA() {
     }
 }
 
-async function get_query_ECIESA(q) {
+async function query_ECIESA(q) {
     const DB = await connectECIESA();
 
     try {
@@ -85,7 +85,7 @@ async function connectDB() {
 }
 
 
-async function get_query(q) {
+async function MES_query(q) {
     const DB = await connectDB();
 
     try {
@@ -108,8 +108,8 @@ app.get('/RegEnsacado', (request, res) => {
 
     async function query(){
 
-        let q_ensacados= await get_query("select * from MES.dbo.TablaAuxiliar4 order by Fecha desc");
-        let q_prods = await get_query(fs.readFileSync('Q_Lista_productos.sql').toString());
+        let q_ensacados= await MES_query("select * from MES.dbo.TablaAuxiliar4 order by Fecha desc");
+        let q_prods = await MES_query(fs.readFileSync('Q_Lista_productos.sql').toString());
         if (q_ensacados.ok && q_prods.ok) res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
         else res.send("Fallo al hacer la query");
         //console.log(q_ensacados)
@@ -121,7 +121,7 @@ app.get('/RegEnsacado', (request, res) => {
 app.post('/UpdateEnsacado', (request, res) =>{
     console.log(request.body);
     async function q (){
-        var q_ins = await get_query(`Update MES.dbo.TablaAuxiliar4 SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`)
+        var q_ins = await MES_query(`Update MES.dbo.TablaAuxiliar4 SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`)
         console.log(q_ins);
     }
     q();
@@ -131,7 +131,7 @@ app.post('/RegistraEnsacado', (request, res) =>{
     console.log(request.body);
     const E = request.body;
     async function q (){
-        var q_ins = await get_query(`INSERT INTO MES.dbo.TablaAuxiliar4 (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones) 
+        var q_ins = await MES_query(`INSERT INTO MES.dbo.TablaAuxiliar4 (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones) 
         VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}');`)
         console.log(q_ins);
     }
@@ -142,7 +142,7 @@ app.post('/DelEns', (request, res) =>{
     console.log(request.body);
     const E = request.body;
     async function q(){
-        var q_ins = await get_query(`DELETE FROM MES.dbo.TablaAuxiliar4 WHERE ID = ${E.ID};`)
+        var q_ins = await MES_query(`DELETE FROM MES.dbo.TablaAuxiliar4 WHERE ID = ${E.ID};`)
         console.log(q_ins);
     }
     q();
@@ -155,12 +155,12 @@ app.get('/dataEstadistico',(request, res)=>{
 
         //Lista de Productos
         var sql_q = fs.readFileSync('Q_Lista_productos.sql').toString();
-        let q_prods = await get_query(sql_q);
+        let q_prods = await MES_query(sql_q);
         
         //Lista de Tendencias
-        var sql_tendecias= await get_query(fs.readFileSync('Q_Get_TotalTendencias.sql').toString());
+        var sql_tendecias= await MES_query(fs.readFileSync('Q_Get_TotalTendencias.sql').toString());
         //Lista de OFS
-        var q_OFS = await get_query(fs.readFileSync('OF_PROD_Fechas.sql').toString());
+        var q_OFS = await MES_query(fs.readFileSync('OF_PROD_Fechas.sql').toString());
 
         //console.log(q_ensacados)
         res.send({Productos : q_prods.query, Tendencias : sql_tendecias.query, OFS : q_OFS.query})
@@ -227,8 +227,8 @@ app.post('/calcEstadistico',(request,res)=>{
     
     async function q(){
         
-        var datos_calculados= await get_query(query);
-        var media_min_max = await get_query(q_cal)
+        var datos_calculados= await MES_query(query);
+        var media_min_max = await MES_query(q_cal)
         console.log(media_min_max.query)
         
         res.send({Datos_Calculados : datos_calculados.query, Resultado: media_min_max.query })
@@ -245,7 +245,7 @@ app.get('/Login', (request,res)=>{
     
     async function f (){
         var query = 'select Codigo,Pwd_Hashed,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;'
-        var resultado = await get_query(query);
+        var resultado = await MES_query(query);
         //console.log(resultado)
         res.send({user : resultado.query})
     }
@@ -259,7 +259,7 @@ app.get('/Profile/:user',(request,res)=>{
     var user = request.params.user;
     async function f(){
         var query = `select * from WEB_API_TABLES.dbo.tbEmpleados where Codigo = '${user}';`
-        var resultado = await get_query(query);
+        var resultado = await MES_query(query);
         console.log(resultado.query)
         res.send({user : resultado.query})
     }
@@ -271,7 +271,7 @@ app.post('/Profile',(request,res)=>{
     var Pwd_Hashed = request.body.NewPass;
     async function f(){
         var query = `update WEB_API_TABLES.dbo.tbEmpleados set Pwd_Hashed = '${Pwd_Hashed}' where Codigo = '${Codigo}';`
-        var resultado = await get_query(query);
+        var resultado = await MES_query(query);
         console.log(resultado)
         //res.send({user : resultado.query})
     }
@@ -283,7 +283,7 @@ app.post('/Profile',(request,res)=>{
 app.get('/RegPlanta',(request,res)=>{
     async function f(){
         
-        var resultado = await get_query(fs.readFileSync('OF_UNIDAS.sql').toString());
+        var resultado = await MES_query(fs.readFileSync('OF_UNIDAS.sql').toString());
         //console.log(resultado)
         res.send({Datos : resultado.query})
     }
@@ -304,14 +304,14 @@ app.post('/RegPlanta',(request,res)=>{
         WHERE OrdenFabricacionID = '${request.body.OF}'
         
         `
-        var resultado_planta = await get_query(query);
+        var resultado_planta = await MES_query(query);
         
         var q_comun = `
             use MES;
             Select * from tbRegPlantaComun
             WHERE OrdenFabricacionID = '${request.body.OF}'
         `
-        var resultado_comun = await get_query(q_comun)
+        var resultado_comun = await MES_query(q_comun)
         
         //UNA VEZ OBTENIDO LOS ELEMENTOS DE REGPLANTACOMUN => SACAMOS LA OF PARA CALCULO DE RESUMEN
         
@@ -336,7 +336,7 @@ app.post('/RegPlanta',(request,res)=>{
         where 
             OrdenFabricacionID = '${request.body.OF}'
         `
-        var resultado_resumen = await get_query(q_resultado_resumen)
+        var resultado_resumen = await MES_query(q_resultado_resumen)
         console.log(resultado_resumen.query[0])
 
         //Calculamos los datos del resumen
@@ -477,14 +477,14 @@ app.post('/RegPlanta',(request,res)=>{
         `
         /*
         try{
-            var resultado_eciesa_derecha = await get_query_ECIESA(q_eciesa_derecha) 
+            var resultado_eciesa_derecha = await MES_query_ECIESA(q_eciesa_derecha) 
             console.table(resultado_eciesa_derecha.query)  
         }
         catch{
             console.debug("FALLA LA CONSULTA DE ECIESA")
         }
         */
-        var resultado_query_resumen_total = await get_query(query_resumen_total)
+        var resultado_query_resumen_total = await MES_query(query_resumen_total)
         res.send({DatosRegPlanta : resultado_planta.query , DatosRegPlantaComun : resultado_comun.query, Resumen: resultado_resumen.query[0], ResumenTotal : resultado_query_resumen_total.query[0]})
     }
     f();
@@ -507,7 +507,7 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
         ;
         ` 
         try{
-            var res_trace_data = await get_query(q_get_trace_data);
+            var res_trace_data = await MES_query(q_get_trace_data);
             res.send({
                 Trazabilidad : res_trace_data.query
             })
@@ -539,13 +539,57 @@ app.get('/AdmUsers', (request, reply) => {
             Codigo <> 'E###'
         ;`
 
-        let res_usuarios = await get_query(q_usuarios);
-        reply.send({Usuarios : res_usuarios.query})
+        let res_usuarios = await MES_query(q_usuarios);
+        
+        var q_last_code = `
+        use WEB_API_TABLES;
+        SELECT top 1
+             Codigo
+            
+        FROM 
+            tbEmpleados
+        WHERE
+            ID <> '2062' /*Esa ID corresponde a un temporal*/
+        order by ID desc;
+        `
+        let res_last_code = await MES_query(q_last_code)
+        var str_cod = String(res_last_code.query[0].Codigo)
+        var [trash,numero] = str_cod.split('E')
+        
+        reply.send({Usuarios : res_usuarios.query, NextCode: `E${parseInt(numero)+1}`})
     }
 
     f();
 })
 
-app.post('/AdmUsers', (request, reply) => {
-    console.table(request.body.Usuario)
+app.post('/UpdateAdmUsers', (request, reply) => {
+    
+})
+
+app.post('/NewAdmUsers', (request, reply)=>{
+    console.log(request.body)
+    async function f() {
+        //Tratamos el alias
+        var [ap1,ap2] = request.body.Apellidos.split(' ');
+        var alias = request.body.Nombre[0] + ap1[0]+ap2[0]
+        console.log(`ALIAS :${alias}`)
+        var q_insercion = `
+        use WEB_API_TABLES;
+        INSERT INTO tbEmpleados (Codigo,Apellidos,Nombre,TratamientoID,CargoID,ContratoEstadoID)
+        VALUES('${request.body.Codigo}', '${request.body.Apellidos}','${request.body.Nombre}',
+        ${request.body.TratamientoID}, ${request.body.CargoID}, ${request.body.ContratoEstadoID}
+        )
+        ` 
+        let res_insercion = await MES_query(q_insercion);
+
+    }
+f()
+
+});
+
+app.post('/EraseAdmUsers', (request, reply) => {
+    async function f(){
+        var erase = await MES_query(`USE WEB_API_TABLES; DELETE FROM tbEmpleados WHERE ID = ${request.body.ID}`)
+    }
+f();
 })
