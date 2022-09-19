@@ -528,19 +528,24 @@ app.get('/AdmUsers', (request, reply) => {
         SELECT 
             ID, Codigo,
             Apellidos,
+            Nombre,
             TratamientoID,
             Alias,
-            CargoID
+            CargoID,
+            ContratoEstadoID
         FROM 
             tbEmpleados
-        WHERE
-            ContratoEstadoID = 1
+        Where
+            Codigo <> 'E###'
         ;`
 
         let res_usuarios = await get_query(q_usuarios);
-        console.log(res_usuarios.query)
         reply.send({Usuarios : res_usuarios.query})
     }
 
     f();
+})
+
+app.post('/AdmUsers', (request, reply) => {
+    console.table(request.body.Usuario)
 })

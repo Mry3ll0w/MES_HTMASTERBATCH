@@ -58,8 +58,8 @@ export default function LoginForm() {
             
             
             const Sel_user = Usuarios.filter(i => i.Codigo === User);
-            console.log(Pass)
-            console.log(Sel_user[0].Pwd_Hashed)
+            //console.log(Pass)
+            //console.log(Sel_user[0].Pwd_Hashed)
             var verified = bcrypt.compareSync(Pass,Sel_user[0].Pwd_Hashed)
             
             if(verified){

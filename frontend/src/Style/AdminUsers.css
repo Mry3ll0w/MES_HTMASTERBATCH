@@ -12,7 +12,7 @@
 
 }
 
-th{
+.th_ADM{
     background-color: gray;
     border: 1px solid black;
     min-width: 150px;
@@ -20,5 +20,17 @@ th{
     margin-top: 5px;
 }
 
+.td_ADM{
+    border: 1px solid black;
+    text-align: center;
+}
 
+.Boton{
+    background-color: aquamarine;
+}
 
+input{
+    font-size: large;
+    background-color: #B6D0E1;
+    border: 1px dotted black;
+}
