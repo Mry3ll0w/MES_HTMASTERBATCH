@@ -1,0 +1,45 @@
+.tdT {
+    background-color: #D9F0FF;
+    width: auto;
+    border: solid 1px black;
+}
+
+.spacedSpanT{
+    margin-left: 20px;
+    margin-right: 40px;
+}
+.solidBorderSpanT{
+    padding: 5px;
+}
+.centerBoxT{
+
+    float:left;
+    background-color: #D9F0FF;
+    border: dotted 2px #1876D2;
+    margin-bottom: 30px;
+    margin-left: 10%;
+}
+
+.divTablaT{
+    margin-left: 10%;
+    margin-right: 15%;
+    height: auto;
+    width: auto;
+}
+
+.thT {
+    background-color: grey;
+    border: 1px solid black;
+    min-width: 150px;
+    width: auto;
+    margin-top: 5px;
+    padding: 2px;
+}
+
+.inputT {
+    font-size: large;
+    background-color: #B6D0E1;
+    border: 1px dotted black;
+    width: auto;
+    text-align: center;
+}

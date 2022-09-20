@@ -491,34 +491,7 @@ app.post('/RegPlanta',(request,res)=>{
     
 })
 
-app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
-    
-    async function f (){
-        
-        var OF = request.params.OF;
-        var q_get_trace_data = `
-        use MES;
-        SELECT
-            Fecha, Turno, Producto,
-            Palet, Cantidad, Resto, [OF]
-        from TablaAuxiliar4
-        where
-            [OF] = '${OF}'
-        ;
-        ` 
-        try{
-            var res_trace_data = await MES_query(q_get_trace_data);
-            res.send({
-                Trazabilidad : res_trace_data.query
-            })
-        }
-        catch{
-            console.log("Falla la lectura de la trazabilidad")
-        }
-        
-    }
-    f()
-})
+
 
 
 app.get('/AdmUsers', (request, reply) => {
@@ -609,4 +582,173 @@ app.post('/EraseAdmUsers', (request, reply) => {
         var erase = await MES_query(`USE WEB_API_TABLES; DELETE FROM tbEmpleados WHERE ID = ${request.body.ID}`)
     }
 f();
+})
+
+
+app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
+    
+    async function f (){
+        
+        var OF = request.params.OF;
+        var q_get_trace_data = `
+        use MES;
+        SELECT
+            Fecha, Turno, Producto,ID,
+            Palet, Cantidad, Resto, [OF]
+        from TablaAuxiliar4
+        where
+            [OF] = '${OF}'
+        ;
+        ` 
+        var q_resultado_resumen = `
+        use MES;
+
+        DECLARE @S_Ensacado FLOAT;
+        SET @S_Ensacado = ISNULL((
+            SELECT SUM(ENSACADO) as Ensacado
+            FROM tbRegPlanta
+            WHERE OrdenFabricacionID = '${OF}'
+            and ObjetoID <> 12 
+        ),0);
+        
+        DECLARE @V_Plasta FLOAT;
+        SET @V_Plasta = ISNULL(
+            (
+                SELECT top 1
+            Plasta
+            from
+                tbRegPlanta
+            where 
+                    OrdenFabricacionID = '${OF}'
+            
+                )
+        ,0);
+            
+            
+        /*
+        Para hacer mas limpia la consulta y poder corregir el caso de no tener valor en la consulta, hago las consultas a parte
+            
+        */
+        DECLARE @A_PRODUCCION FLOAT;
+        SET @A_PRODUCCION = ISNULL( (select
+            Produccion
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${OF}'
+            and
+            ObjetoID = 12),0);
+        
+        DECLARE @A_SELECCION FLOAT;
+        SET @A_SELECCION = ISNULL((select
+            Seleccion
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${OF}'
+            and
+            ObjetoID = 12) ,0);
+        
+        DECLARE @A_RECHAZO FLOAT;
+        SET @A_RECHAZO = ISNULL((select
+            Rechazo
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${OF}'
+            and
+            ObjetoID = 12) ,0);
+        
+        DECLARE @A_ENSACADO FLOAT;
+        SET @A_ENSACADO = ISNULL( (
+            select
+            Ensacado
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${OF}'
+            and
+            ObjetoID = 12
+        ),0);
+        
+        DECLARE @A_RECHAZOTA FLOAT;
+        SET @A_RECHAZOTA = ISNULL( (select
+            RechazoTA
+        from
+            tbRegPlanta
+        where 
+            OrdenFabricacionID = '${OF}'
+            and
+            ObjetoID = 12),0);
+        
+        DECLARE @A_DESPERDICIO FLOAT;
+        SET @A_DESPERDICIO = ISNULL((select
+            Desperdicio
+        from
+            tbRegPlanta
+        where 
+                OrdenFabricacionID = '${OF}'
+            and
+            ObjetoID = 12),0);
+        
+        DECLARE @ENSACADO_DEF FLOAT;
+        SET @ENSACADO_DEF = @S_Ensacado + @A_ENSACADO;
+        
+        SELECT
+            COALESCE(ISNULL(t1.Produccion,0) + ISNULL(@A_PRODUCCION,0),0) as Produccion,
+            ISNULL(t1.Seleccion,0) + ISNULL(@A_SELECCION,0) as Seleccion,
+            ISNULL(t1.Rechazo,0) + ISNULL(@A_RECHAZO,0) as Rechazo,
+            @ENSACADO_DEF as Ensacado,
+            ISNULL(t1.RechazoTA,0) + ISNULL(@A_RECHAZOTA,0) as RechazoTA,
+            ISNULL(t1.Desperdicio,0) + ISNULL(@A_DESPERDICIO,0) as Desperdicio,
+            ISNULL(@V_Plasta,0) as Plasta,
+            (ISNULL(t1.Seleccion,0) + ISNULL(@A_SELECCION,0) - @ENSACADO_DEF) as Sel_Ens
+        
+        from
+            (
+                select top 1
+                Produccion ,
+                Seleccion ,
+                Rechazo ,
+            
+                RechazoTA,
+                Desperdicio,
+                Plasta
+            from
+                tbRegPlanta as O
+            where 
+                    OrdenFabricacionID = '${OF}'
+                and
+                ObjetoID = 2
+            order by FechaHoraReg desc
+            )t1
+            
+        ;
+        `
+        var q_fechas = `
+        use MES;
+        SELECT 
+            FechaInicio, FechaFin,ProductoID
+        from 
+            tbRegPlantaComun
+        WHERE
+            OrdenFabricacionID = '${OF}'
+        `
+        try{
+
+            var resultado_resumen = await MES_query(q_resultado_resumen)
+            var resultado_fechas = await MES_query(q_fechas);
+            var res_trace_data = await MES_query(q_get_trace_data);
+            res.send({
+                Trazabilidad : res_trace_data.query,
+                DatosResumen : resultado_resumen.query,
+                Fechas: resultado_fechas.query[0]
+            })
+        }
+        catch{
+            console.log("Falla la lectura de la trazabilidad")
+        }
+        
+    }
+    f()
 })
