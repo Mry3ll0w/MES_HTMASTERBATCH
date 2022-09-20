@@ -563,7 +563,24 @@ app.get('/AdmUsers', (request, reply) => {
 })
 
 app.post('/UpdateAdmUsers', (request, reply) => {
-    
+    console.log(request.body.Usuario)
+    async function f(){
+        const User = request.body.Usuario
+        var q_update_user = `
+        use WEB_API_TABLES;
+        UPDATE
+        tbEmpleados
+            SET 
+                Codigo = '${User.Codigo}', Nombre = '${User.Nombre}',
+                Apellidos = '${User.Apellidos}', TratamientoID = ${User.TratamientoID},
+                Alias = '${User.Alias}', CargoID = ${User.CargoID}, ContratoEstadoID = ${User.ContratoEstadoID}
+        WHERE
+            ID = ${User.ID}
+        `
+        var res_Update = await MES_query(q_update_user);
+        
+    }
+f();
 })
 
 app.post('/NewAdmUsers', (request, reply)=>{
