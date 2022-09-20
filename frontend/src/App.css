@@ -1,0 +1,29 @@
+
+.LeftFloatingDiv {
+      float: left;
+      width : auto;
+      height: auto;
+      overflow:auto;
+      
+}
+
+.RightFloatingDiv {
+      float : right;
+      width: auto;
+      height: auto;
+      overflow: auto;
+}
+
+/* PARA LAS TABLAS Mas Simples*/
+.tbodyC {
+      font-size: large;
+      background-color: #D6DCE5;
+}
+
+.thCustom {
+      border: 1px solid #1876D2;
+      background-color: #D6DCE5;
+      font-size: large;
+      width: 100px;
+      height: 40px;
+}
