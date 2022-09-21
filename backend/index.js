@@ -728,7 +728,7 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
         var q_fechas = `
         use MES;
         SELECT 
-            FechaInicio, FechaFin,ProductoID
+            FechaInicio, FechaFin,ProductoID,Observaciones
         from 
             tbRegPlantaComun
         WHERE
@@ -741,7 +741,7 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
             var res_trace_data = await MES_query(q_get_trace_data);
             res.send({
                 Trazabilidad : res_trace_data.query,
-                DatosResumen : resultado_resumen.query,
+                DatosResumen : resultado_resumen.query[0],
                 Fechas: resultado_fechas.query[0]
             })
         }
@@ -751,4 +751,22 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
         
     }
     f()
+})
+
+app.post('/RegistroPlanta/UpdateTrazabilidad', (request, reply) => {
+    async function f(){
+        const T = request.body.Trazabilidad;
+        var q_update = `
+            use MES;
+                Update TablaAuxiliar4
+                    SET 
+                        Cantidad = ${T.Cantidad},
+                        Resto = '${T.Resto}'
+                where
+                    ID = ${T.ID}
+        `
+        await MES_query(q_update);
+
+    }
+f();
 })

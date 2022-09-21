@@ -11,6 +11,12 @@
 .solidBorderSpanT{
     padding: 5px;
 }
+.solidBSpanT{
+    border: 1px solid black;
+    padding: 5px;
+    min-width: 100px;
+
+}
 .centerBoxT{
 
     float:left;
@@ -25,6 +31,16 @@
     margin-right: 15%;
     height: auto;
     width: auto;
+}
+
+.divTablaAzulT{
+    margin-left: 10%;
+    margin-right: 13%;
+    height: auto;
+    width: auto;
+    background-color: #D9F0FF;
+    border: 2px dotted #1876D2;
+    text-align: center;
 }
 
 .thT {

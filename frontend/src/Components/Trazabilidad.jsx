@@ -13,6 +13,8 @@ export default function TrazabilidadRegPlanta() {
   const [DatosTrazabilidad, setDatosT] = useState([]);
   const [DatosResumen, SetDatosResumen]=useState([]);
   const [Fechas,setFechas]= useState([])
+ 
+  const [TotalEnsacado,SetTotalEnsacado] = useState(0);
   //GET 
   useEffect(
     () => {
@@ -26,7 +28,14 @@ export default function TrazabilidadRegPlanta() {
           SetDatosResumen(response.data.DatosResumen)
           setDatosT(response.data.Trazabilidad);
           setFechas(response.data.Fechas)
+          var t = 0.00
+          DatosTrazabilidad.map(i => {
+            t += i.Cantidad
+          })
+          SetTotalEnsacado(t);
         });
+       
+        
     },
     []
   ) 
@@ -41,13 +50,25 @@ export default function TrazabilidadRegPlanta() {
       var [f, resto] = full_date.split('T')
       var [year, month, day] = f.split('-')
       return `${day}/${month}/${year}`
-      console.table(DatosTrazabilidad)
+      
     }
     else{
       return 'dd/mm/yyyy'
     }
   }
 
+  /**
+   * Gestiona la actualizacion de un unico elemento de la trazabilidad
+   * @param {Trazabilidad} t 
+   */
+  function UpdateTrazabilidad(t){
+    axios.post("http://192.168.0.118:4001/RegistroPlanta/UpdateTrazabilidad", {Trazabilidad: t}).catch( e => console.table(e))
+    
+  }
+
+ 
+  
+  //Main body
   return (
     <Fragment>
       <form>
@@ -56,7 +77,7 @@ export default function TrazabilidadRegPlanta() {
           <div className="spacedDivT">
             <Typography fontSize={"18px"}>
               <span className="spacedSpanT">
-                OF{" "}
+                OF
                 <span className="solidBorderSpanT">
                   {sessionStorage.getItem("OF")}
                 </span>
@@ -158,7 +179,7 @@ export default function TrazabilidadRegPlanta() {
                         <Typography fontSize={"18px"} textAlign={"center"}>
                           <input
                             className="inputT"
-                            value={i.Resto | ''}
+                            value={i.Resto}
                             onChange={(e) => {
                               setDatosT(
                                 DatosTrazabilidad.map((j) =>
@@ -171,15 +192,120 @@ export default function TrazabilidadRegPlanta() {
                           />
                         </Typography>
                       </td>
-                      <td>
-                        <button>Modificar</button>
+                      <td key={n++}>
+                        <Button
+                          variant="outlined"
+                          onClick={() => {
+                            UpdateTrazabilidad(i);
+                          }}
+                        >
+                          Modificar
+                        </Button>
                       </td>
                     </tr>
                   </Fragment>
                 );
               })}
+              <tr></tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <Typography fontSize={"18px"}>
+                    Total Ensacado {TotalEnsacado}
+                  </Typography>
+                </td>
+              </tr>
             </tbody>
           </table>
+        </div>
+        <br />
+        <br />
+        <div className="divTablaAzulT">
+          <br />
+
+          <Typography fontSize={"18px"}>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <span className="spacedSpanT">
+                      SCADA{" "}
+                      <span className="solidBSpanT">
+                        {DatosResumen.Produccion}
+                      </span>
+                    </span>
+                  </td>
+                  <td>
+                    <span className="spacedSpanT">
+                      Seleccion{" "}
+                      <span className="solidBSpanT">
+                        {DatosResumen.Seleccion}
+                      </span>
+                    </span>
+                  </td>
+                  <td>
+                    <span className="spacedSpanT">
+                      Rechazo{" "}
+                      <span className="solidBSpanT">
+                        {DatosResumen.Rechazo}
+                      </span>
+                    </span>
+                  </td>
+                  <td>
+                    <span className="spacedSpanT">
+                      Desperdicio{" "}
+                      <span className="solidBSpanT">
+                        {DatosResumen.Produccion}
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+                
+                <br />
+                <tr>
+                  <td>
+                    <span className="spacedSpanT">
+                      NAV{" "}
+                      <span className="solidBSpanT">
+                        {DatosResumen.Ensacado +
+                          DatosResumen.Rechazo +
+                          DatosResumen.Plasta}
+                      </span>
+                    </span>
+                  </td>
+                  <td>
+                    <span className="spacedSpanT">
+                      Ensacado{" "}
+                      <span className="solidBSpanT">
+                        {DatosResumen.Produccion}
+                      </span>
+                    </span>
+                  </td>
+                  <td>
+                    <span className="spacedSpanT">
+                      Rechazo{" "}
+                      <span className="solidBSpanT">
+                        {DatosResumen.Rechazo}
+                      </span>
+                    </span>
+                  </td>
+                  <td>
+                    <span className="spacedSpanT">
+                      Plasta{" "}
+                      <span className="solidBSpanT">
+                        {DatosResumen.Plasta}
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </Typography>
+          <br />
         </div>
       </form>
     </Fragment>
