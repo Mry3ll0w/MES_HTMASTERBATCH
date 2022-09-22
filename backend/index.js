@@ -503,13 +503,13 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
         from 
             vwRegPlantaResumen
         WHERE
-            OrdenFabricacionID = '${OF}';
+            OrdenFabricacion = '${OF}';
         ;
         `
         var q_fechas = `
         use MES;
         SELECT 
-            FechaInicio, FechaFin,ProductoID,ObsAdit as Observaciones
+            FechaInicio, FechaFin,ProductoID,Observacion as Observaciones
         from 
             tbRegPlantaComun
         WHERE
