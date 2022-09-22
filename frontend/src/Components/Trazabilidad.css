@@ -1,0 +1,104 @@
+.tdT {
+    background-color: #D9F0FF;
+    width: auto;
+    border: solid 1px black;
+}
+
+.spacedSpanT{
+    margin-left: 20px;
+    margin-right: 40px;
+}
+.solidBorderSpanT{
+    padding: 5px;
+}
+.solidBSpanT{
+    border: 1px solid black;
+    padding: 5px;
+    min-width: 100px;
+
+}
+.centerBoxT{
+
+    float:left;
+    background-color: #D9F0FF;
+    border: dotted 2px #1876D2;
+    margin-bottom: 30px;
+    
+}
+
+.divTablaT{
+    
+    margin-right: 15%;
+    height: auto;
+    width: auto;
+}
+
+.divTablaAzulT{
+    
+    margin-right: 13%;
+    height: auto;
+    width: 100%;
+    background-color: #D9F0FF;
+    border: 2px dotted #1876D2;
+    text-align: center;
+    display: block;
+    overflow: auto;
+    @media print {
+        @page {
+            size: A4;
+            margin: 10mm;
+            border-radius: 0;
+            margin-top: 400px;
+        }
+        .pagebreak {
+            page-break-before: always;
+        }
+    
+        }
+}
+
+.thT {
+    background-color: grey;
+    border: 1px solid black;
+    min-width: 150px;
+    width: auto;
+    margin-top: 5px;
+    padding: 2px;
+}
+
+.inputT {
+    font-size: large;
+    background-color: #B6D0E1;
+    border: 1px dotted black;
+    width: auto;
+    text-align: center;
+}
+
+
+.ComentarioT{
+    font-size: 16px;
+    min-width: 800px;
+    min-height: 200px;
+    margin-bottom: 15px;
+    @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+                border-radius: 0;
+                    margin-top: 100mm;
+            }
+            
+        }
+}
+
+.TextoT{
+    font-size: large;
+    min-width: 800px;
+    min-height: 200px;
+    margin-bottom: 15px;
+}
+
+.newPage {
+    margin-top: 5%;
+    page-break-before: always
+}

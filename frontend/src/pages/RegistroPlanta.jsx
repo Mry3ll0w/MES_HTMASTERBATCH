@@ -43,16 +43,7 @@ import { useNavigate } from 'react-router-dom';
     }
 
 export default function RegistroPlanta() {
-    var ResumenTurnos = {
-      Produccion: 0,
-      Rechazo: 0,
-      Ensacado: 0,
-      RechazoTA: 0,
-      Seleccion: 0,
-      Sel_Ens: 0,
-      Desperdicio: 0,
-      Plasta: 0,
-    };
+    
     //UseState para controlar las paginaciones
     const [PaginaActualTurno, SetPaginaTurno] = useState(1);
     const [PaginaActualResumen, SetPaginaResumen] = useState(1);
@@ -87,10 +78,11 @@ export default function RegistroPlanta() {
     const [DispPermisos, setDispPermisos] = useState("")
     const [DispTEns, setDispTEns] = useState("")
     const [ResTurno, setResTurno] = useState([]);
-    
+    const [EnviadoPor,SetEnviadoPor] = useState('')
+    const [Seleccion_Ensacado, SetSeleccion_Ensacado] = useState(0)
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
-        //alert("Bienvenido al Registro de Planta, seleccione con DOBLE click el elemento de la lista que desea tratar")
+        alert("Bienvenido al Registro de Planta, seleccione con TRES click el elemento de la lista que desea tratar")
         axios.get('http://192.168.0.118:4001/RegPlanta')
         .catch(error=>console.log(error))
         .then(response=>{
@@ -181,8 +173,20 @@ export default function RegistroPlanta() {
       if(EstadoEnsacado != 1){
         alert('El ensacado esta pendiente, la trazabilidad no esta disponible')
       }
-      else
+      else{
         navigate("/RegistroPlanta/Trazabilidad");
+        if(EnviadoPor !== ''){
+          axios
+            .post("http://192.168.0.118:4001/RegPlanta/Trazabilidad", {
+              OF: OF,
+              ModPor: sessionStorage.getItem("iniciales"),
+              EnvPor: EnviadoPor,
+            })
+            .catch((e) => console.log(e));
+        }
+        
+      }
+        
     }
 
     const nav_rechazos_desperdicios =() =>{
@@ -732,7 +736,7 @@ export default function RegistroPlanta() {
                 <td>
                   <TextField
                     label="Sel-Ens"
-                    value={ResTurno.Sel_Ens}
+                    value={ResTurno.SelEns}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "100px", margin: 1 }}
                   />
@@ -937,6 +941,7 @@ export default function RegistroPlanta() {
                 setDatosRegPlanta(r.data.DatosRegPlanta);
                 setDatosRegPlantaComun(r.data.DatosRegPlantaComun[0]);
                 setDatosResumentRegPlanta(r.data.Resumen);
+                SetSeleccion_Ensacado(DatosResumen.Seleccion - DatosResumen.Ensacado)
                 setResTurno(r.data.ResumenTotal);
                 //console.table(ResTurno)
                 //Metemos los datos del registro de Planta Comun
@@ -968,7 +973,10 @@ export default function RegistroPlanta() {
                 setDispPermisos(asignar_permisos(Permiso));
                 SetPaginaTurno(1);
                 setResTurno(r.data.ResumenTotal);
-                sessionStorage.setItem('OF', DatosRegPlantaComun.OrdenFabricacionID)
+                sessionStorage.setItem(
+                  "OF",
+                  DatosRegPlantaComun.OrdenFabricacionID
+                );
               });
           }}
         />
@@ -994,14 +1002,31 @@ export default function RegistroPlanta() {
             label="Orden de Fabricación"
             inputProps={{ style: { textAlign: "center" } }}
           />
-          <DropDownMenu elements={Menu_Operaciones} label={"Operaciones"}/>
+          <DropDownMenu elements={Menu_Operaciones} label={"Operaciones"} />
+          <Autocomplete
+            value={EnviadoPor}
+            options={["S1", "S2", "S1-S2",'S3','BB']}
+            isOptionEqualToValue={(option, value) => option == value}
+            renderInput={(e) => (
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                {...e}
+                value={EnviadoPor}
+                onChange={(e) => {
+                  SetEnviadoPor(e.target.value);
+                }}
+                sx={{ width: "150px" }}
+                label="Enviado Por"
+              ></TextField>
+            )}
+            onChange={(e, v) => SetEnviadoPor(v)}
+            sx={{ marginLeft: 2, marginTop: 2, width: "150px" }}
+          />
         </div>
 
         <div>
           <table>
-            <tbody>
-
-            </tbody>
+            <tbody></tbody>
             <tbody>
               <td>
                 <Autocomplete

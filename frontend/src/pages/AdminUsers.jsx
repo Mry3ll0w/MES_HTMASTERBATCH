@@ -275,13 +275,14 @@ export default function Personal() {
                               .then((response) => {
                                 try {
                                   setUsuarios(response.data.Usuarios);
+                                  
                                 } catch {
                                   console.log(
                                     "Fallo en la recepcion de datos del servidor RUTA: AdmUsers "
                                   );
                                 }
                               });
-                              window.location.reload(false)
+                              window.location.reload(false);
                           }}
                         >
                           Modificar Empleado
