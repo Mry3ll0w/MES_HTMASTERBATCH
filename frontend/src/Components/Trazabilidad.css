@@ -23,24 +23,38 @@
     background-color: #D9F0FF;
     border: dotted 2px #1876D2;
     margin-bottom: 30px;
-    margin-left: 10%;
+    
 }
 
 .divTablaT{
-    margin-left: 10%;
+    
     margin-right: 15%;
     height: auto;
     width: auto;
 }
 
 .divTablaAzulT{
-    margin-left: 10%;
+    
     margin-right: 13%;
     height: auto;
-    width: auto;
+    width: 100%;
     background-color: #D9F0FF;
     border: 2px dotted #1876D2;
     text-align: center;
+    display: block;
+    overflow: auto;
+    @media print {
+        @page {
+            size: A4;
+            margin: 10mm;
+            border-radius: 0;
+            margin-top: 400px;
+        }
+        .pagebreak {
+            page-break-before: always;
+        }
+    
+        }
 }
 
 .thT {
@@ -60,11 +74,21 @@
     text-align: center;
 }
 
+
 .ComentarioT{
     font-size: 16px;
     min-width: 800px;
     min-height: 200px;
     margin-bottom: 15px;
+    @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+                border-radius: 0;
+                    margin-top: 100mm;
+            }
+            
+        }
 }
 
 .TextoT{
@@ -74,3 +98,7 @@
     margin-bottom: 15px;
 }
 
+.newPage {
+    margin-top: 5%;
+    page-break-before: always
+}

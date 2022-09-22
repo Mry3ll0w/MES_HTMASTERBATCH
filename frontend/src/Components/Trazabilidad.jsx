@@ -2,13 +2,16 @@ import React, { Fragment } from 'react'
 import { Button, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import { DateTime } from 'luxon';
-
-import { useEffect } from 'react';
+import {ReactToPrint, useReactToPrint} from 'react-to-print'
+import { useEffect,useRef } from 'react';
 import axios from 'axios';
 import { set } from 'date-fns';
 import './Trazabilidad.css'
 export default function TrazabilidadRegPlanta() {
-  
+
+  //HOOKS GENERALES
+  const ComponentRef= useRef();
+
   //UseStates
   const [DatosTrazabilidad, setDatosT] = useState([]);
   const [DatosResumen, SetDatosResumen]=useState([]);
@@ -17,6 +20,7 @@ export default function TrazabilidadRegPlanta() {
   const [TotalEnsacado,SetTotalEnsacado] = useState(0);
   const [Comentario,SetComentario]=useState('')
   const [Resto,SetResto]=useState(0)
+  
   //GET 
   useEffect(
     () => {
@@ -69,12 +73,24 @@ export default function TrazabilidadRegPlanta() {
     
   }
 
- 
+  
+  const HandlePrint = useReactToPrint({content : () => ComponentRef.current,});
+
   
   //Main body
   return (
     <Fragment>
-      <form>
+      <Button
+        variant="contained"
+        onClick={() => {
+          HandlePrint();
+        }}
+        sx={{ margin: "10px" }}
+      >
+        Imprimir la pagina
+      </Button>
+      
+      <div ref={ComponentRef}>
         <div className="centerBoxT">
           <br />
           <div className="spacedDivT">
@@ -201,6 +217,9 @@ export default function TrazabilidadRegPlanta() {
                           onClick={() => {
                             UpdateTrazabilidad(i);
                           }}
+                          sx={{
+                            displayPrint: 'none'
+                          }}
                         >
                           Modificar
                         </Button>
@@ -227,113 +246,114 @@ export default function TrazabilidadRegPlanta() {
         </div>
         <br />
         <br />
-        <div className="divTablaAzulT">
-          <br />
+        <div className='newPage'>
+          <div className="divTablaAzulT">
+            <br />
 
-          <Typography fontSize={"18px"}>
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <span className="spacedSpanT">
-                      SCADA{" "}
-                      <span className="solidBSpanT">
-                        {DatosResumen.Produccion}
+            <Typography fontSize={"18px"}>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <span className="spacedSpanT">
+                        SCADA{" "}
+                        <span className="solidBSpanT">
+                          {DatosResumen.Produccion}
+                        </span>
                       </span>
-                    </span>
-                  </td>
-                  <td>
-                    <span className="spacedSpanT">
-                      Seleccion{" "}
-                      <span className="solidBSpanT">
-                        {DatosResumen.Seleccion}
+                    </td>
+                    <td>
+                      <span className="spacedSpanT">
+                        Seleccion{" "}
+                        <span className="solidBSpanT">
+                          {DatosResumen.Seleccion}
+                        </span>
                       </span>
-                    </span>
-                  </td>
-                  <td>
-                    <span className="spacedSpanT">
-                      Rechazo{" "}
-                      <span className="solidBSpanT">
-                        {DatosResumen.Rechazo}
+                    </td>
+                    <td>
+                      <span className="spacedSpanT">
+                        Rechazo{" "}
+                        <span className="solidBSpanT">
+                          {DatosResumen.Rechazo}
+                        </span>
                       </span>
-                    </span>
-                  </td>
-                  <td>
-                    <span className="spacedSpanT">
-                      Desperdicio{" "}
-                      <span className="solidBSpanT">
-                        {DatosResumen.Desperdicio}
+                    </td>
+                    <td>
+                      <span className="spacedSpanT">
+                        Desperdicio{" "}
+                        <span className="solidBSpanT">
+                          {DatosResumen.Desperdicio}
+                        </span>
                       </span>
-                    </span>
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
 
-                <br />
-                <tr>
-                  
-                  <td>
-                    <span className="spacedSpanT">
-                      NAV{" "}
-                      <span className="solidBSpanT">
-                        {TotalEnsacado+ Resto +
-                          DatosResumen.Rechazo +
-                          DatosResumen.Plasta}
+                  <br />
+                  <tr>
+                    <td>
+                      <span className="spacedSpanT">
+                        NAV{" "}
+                        <span className="solidBSpanT">
+                          {TotalEnsacado +
+                            Resto +
+                            DatosResumen.Rechazo +
+                            DatosResumen.Plasta}
+                        </span>
                       </span>
-                    </span>
-                  </td>
-                  <td>
-                    <span className="spacedSpanT">
-                      Ensacado{" "}
-                      <span className="solidBSpanT">
-                        {TotalEnsacado + Resto}
+                    </td>
+                    <td>
+                      <span className="spacedSpanT">
+                        Ensacado{" "}
+                        <span className="solidBSpanT">
+                          {TotalEnsacado + Resto}
+                        </span>
                       </span>
-                    </span>
-                  </td>
-                  <td>
-                    <span className="spacedSpanT">
-                      Rechazo{" "}
-                      <span className="solidBSpanT">
-                        {DatosResumen.Rechazo}
+                    </td>
+                    <td>
+                      <span className="spacedSpanT">
+                        Rechazo{" "}
+                        <span className="solidBSpanT">
+                          {DatosResumen.Rechazo}
+                        </span>
                       </span>
-                    </span>
-                  </td>
-                  <td>
-                    <span className="spacedSpanT">
-                      Plasta{" "}
-                      <span className="solidBSpanT">{DatosResumen.Plasta}</span>
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Typography>
-          <br />
+                    </td>
+                    <td>
+                      <span className="spacedSpanT">
+                        Plasta{" "}
+                        <span className="solidBSpanT">
+                          {DatosResumen.Plasta}
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </Typography>
+            <br />
+
+            <Typography fontSize={"20px"} textAlign={"center"}>
+              Comentarios:
+            </Typography>
+            <br />
+            <textarea
+              value={Comentario}
+              defaultValue={"No hay comentarios asociados"}
+              className="ComentarioT"
+            />
+            <br />
+            <Typography fontSize={"20px"} textAlign={"center"}>
+              Observaciones:
+            </Typography>
+            <br />
+            <textarea
+              value={Fechas.Observaciones}
+              defaultValue={"No hay observaciones asociadas"}
+              className="TextoT"
+            />
+            <br />
+          </div>
         </div>
-        <br />
-        <div className="divTablaAzulT">
-          <br />
-          <Typography fontSize={"20px"} textAlign={"center"}>
-            Comentarios:
-          </Typography>
-          <br />
-          <textarea
-            value={Comentario}
-            defaultValue={"No hay comentarios asociados"}
-            className="ComentarioT"
-          />
-          <br />
-          <Typography fontSize={"20px"} textAlign={"center"}>
-            Observaciones:
-          </Typography>
-          <br />
-          <textarea
-            value={Fechas.Observaciones}
-            defaultValue={"No hay observaciones asociadas"}
-            className="TextoT"
-          />
-          <br />
-        </div>
-      </form>
+      </div>
     </Fragment>
   );
 }
