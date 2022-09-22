@@ -8,7 +8,7 @@ const async = require('async');
 const fs = require('fs');//Lectura de archivos para leer sql queries
 
 var bcrypt = require('bcryptjs');
-const { get } = require('http');
+const { get, request } = require('http');
 const { Console } = require('console');
 app.listen('4001',() => {console.log('listening in 4001')});
 //usando bodyparser
@@ -226,12 +226,15 @@ app.post('/calcEstadistico',(request,res)=>{
     }
     
     async function q(){
-        
-        var datos_calculados= await MES_query(query);
-        var media_min_max = await MES_query(q_cal)
-        console.log(media_min_max.query)
-        
-        res.send({Datos_Calculados : datos_calculados.query, Resultado: media_min_max.query })
+        try{
+            var datos_calculados= await MES_query(query);
+            var media_min_max = await MES_query(q_cal)
+            console.log(media_min_max.query)
+            res.send({Datos_Calculados : datos_calculados.query, Resultado: media_min_max.query })
+        }
+        catch{
+            console.log("Error calculo en estadistico")
+        }
     }
     q();
 })
@@ -283,9 +286,17 @@ app.post('/Profile',(request,res)=>{
 app.get('/RegPlanta',(request,res)=>{
     async function f(){
         
-        var resultado = await MES_query(fs.readFileSync('OF_UNIDAS.sql').toString());
+        try{
+            
+            var resultado = await MES_query(fs.readFileSync('OF_UNIDAS.sql').toString());
+            res.send({Datos : resultado.query})
+        }
+        catch{
+            console.log('Fallo obtención de datos en Registro de Planta')
+        }
         //console.log(resultado)
-        res.send({Datos : resultado.query})
+
+        
     }
     f();
 });
@@ -340,128 +351,13 @@ app.post('/RegPlanta',(request,res)=>{
         console.log(resultado_resumen.query[0])
 
         //Calculamos los datos del resumen
-        var query_resumen_total = `use MES;
-
-        DECLARE @S_Ensacado FLOAT;
-        SET @S_Ensacado = ISNULL((
-            SELECT SUM(ENSACADO) as Ensacado
-            FROM tbRegPlanta
-            WHERE OrdenFabricacionID = '${request.body.OF}'
-            and ObjetoID <> 12 
-        ),0);
-        
-        DECLARE @V_Plasta FLOAT;
-        SET @V_Plasta = ISNULL(
-            (
-                SELECT top 1
-            Plasta
-            from
-                tbRegPlanta
-            where 
-                    OrdenFabricacionID = '${request.body.OF}'
-            
-                )
-        ,0);
-            
-            
-        /*
-        Para hacer mas limpia la consulta y poder corregir el caso de no tener valor en la consulta, hago las consultas a parte
-            
-        */
-        DECLARE @A_PRODUCCION FLOAT;
-        SET @A_PRODUCCION = ISNULL( (select
-            Produccion
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${request.body.OF}'
-            and
-            ObjetoID = 12),0);
-        
-        DECLARE @A_SELECCION FLOAT;
-        SET @A_SELECCION = ISNULL((select
-            Seleccion
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${request.body.OF}'
-            and
-            ObjetoID = 12) ,0);
-        
-        DECLARE @A_RECHAZO FLOAT;
-        SET @A_RECHAZO = ISNULL((select
-            Rechazo
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${request.body.OF}'
-            and
-            ObjetoID = 12) ,0);
-        
-        DECLARE @A_ENSACADO FLOAT;
-        SET @A_ENSACADO = ISNULL( (
-            select
-            Ensacado
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${request.body.OF}'
-            and
-            ObjetoID = 12
-        ),0);
-        
-        DECLARE @A_RECHAZOTA FLOAT;
-        SET @A_RECHAZOTA = ISNULL( (select
-            RechazoTA
-        from
-            tbRegPlanta
-        where 
-            OrdenFabricacionID = '${request.body.OF}'
-            and
-            ObjetoID = 12),0);
-        
-        DECLARE @A_DESPERDICIO FLOAT;
-        SET @A_DESPERDICIO = ISNULL((select
-            Desperdicio
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${request.body.OF}'
-            and
-            ObjetoID = 12),0);
-        
-        DECLARE @ENSACADO_DEF FLOAT;
-        SET @ENSACADO_DEF = @S_Ensacado + @A_ENSACADO;
-        
-        SELECT
-            COALESCE(ISNULL(t1.Produccion,0) + ISNULL(@A_PRODUCCION,0),0) as Produccion,
-            ISNULL(t1.Seleccion,0) + ISNULL(@A_SELECCION,0) as Seleccion,
-            ISNULL(t1.Rechazo,0) + ISNULL(@A_RECHAZO,0) as Rechazo,
-            @ENSACADO_DEF as Ensacado,
-            ISNULL(t1.RechazoTA,0) + ISNULL(@A_RECHAZOTA,0) as RechazoTA,
-            ISNULL(t1.Desperdicio,0) + ISNULL(@A_DESPERDICIO,0) as Desperdicio,
-            ISNULL(@V_Plasta,0) as Plasta,
-            (ISNULL(t1.Seleccion,0) + ISNULL(@A_SELECCION,0) - @ENSACADO_DEF) as Sel_Ens
-        
-        from
-            (
-                select top 1
-                Produccion ,
-                Seleccion ,
-                Rechazo ,
-            
-                RechazoTA,
-                Desperdicio,
-                Plasta
-            from
-                tbRegPlanta as O
-            where 
-                    OrdenFabricacionID = '${request.body.OF}'
-                and
-                ObjetoID = 2
-            order by FechaHoraReg desc
-            )t1
-            
+        var query_resumen_total = `
+        use MES;
+        Select *,
+            ISNULL(Seleccion,0) - ISNULL(Ensacado,0) As SelEns
+        from vwRegPlantaResumen
+        WHERE
+            OrdenFabricacion = '${request.body.OF}'
         ;
         `
         var q_eciesa_derecha = `
@@ -595,6 +491,7 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
         SELECT
             Fecha, Turno, Producto,ID,
             Palet, Cantidad, Resto, [OF]
+
         from TablaAuxiliar4
         where
             [OF] = '${OF}'
@@ -602,147 +499,63 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
         ` 
         var q_resultado_resumen = `
         use MES;
-
-        DECLARE @S_Ensacado FLOAT;
-        SET @S_Ensacado = ISNULL((
-            SELECT SUM(ENSACADO) as Ensacado
-            FROM tbRegPlanta
-            WHERE OrdenFabricacionID = '${OF}'
-            and ObjetoID <> 12 
-        ),0);
-        
-        DECLARE @V_Plasta FLOAT;
-        SET @V_Plasta = ISNULL(
-            (
-                SELECT top 1
-            Plasta
-            from
-                tbRegPlanta
-            where 
-                    OrdenFabricacionID = '${OF}'
-            
-                )
-        ,0);
-            
-            
-        /*
-        Para hacer mas limpia la consulta y poder corregir el caso de no tener valor en la consulta, hago las consultas a parte
-            
-        */
-        DECLARE @A_PRODUCCION FLOAT;
-        SET @A_PRODUCCION = ISNULL( (select
-            Produccion
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${OF}'
-            and
-            ObjetoID = 12),0);
-        
-        DECLARE @A_SELECCION FLOAT;
-        SET @A_SELECCION = ISNULL((select
-            Seleccion
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${OF}'
-            and
-            ObjetoID = 12) ,0);
-        
-        DECLARE @A_RECHAZO FLOAT;
-        SET @A_RECHAZO = ISNULL((select
-            Rechazo
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${OF}'
-            and
-            ObjetoID = 12) ,0);
-        
-        DECLARE @A_ENSACADO FLOAT;
-        SET @A_ENSACADO = ISNULL( (
-            select
-            Ensacado
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${OF}'
-            and
-            ObjetoID = 12
-        ),0);
-        
-        DECLARE @A_RECHAZOTA FLOAT;
-        SET @A_RECHAZOTA = ISNULL( (select
-            RechazoTA
-        from
-            tbRegPlanta
-        where 
-            OrdenFabricacionID = '${OF}'
-            and
-            ObjetoID = 12),0);
-        
-        DECLARE @A_DESPERDICIO FLOAT;
-        SET @A_DESPERDICIO = ISNULL((select
-            Desperdicio
-        from
-            tbRegPlanta
-        where 
-                OrdenFabricacionID = '${OF}'
-            and
-            ObjetoID = 12),0);
-        
-        DECLARE @ENSACADO_DEF FLOAT;
-        SET @ENSACADO_DEF = @S_Ensacado + @A_ENSACADO;
-        
-        SELECT
-            COALESCE(ISNULL(t1.Produccion,0) + ISNULL(@A_PRODUCCION,0),0) as Produccion,
-            ISNULL(t1.Seleccion,0) + ISNULL(@A_SELECCION,0) as Seleccion,
-            ISNULL(t1.Rechazo,0) + ISNULL(@A_RECHAZO,0) as Rechazo,
-            @ENSACADO_DEF as Ensacado,
-            ISNULL(t1.RechazoTA,0) + ISNULL(@A_RECHAZOTA,0) as RechazoTA,
-            ISNULL(t1.Desperdicio,0) + ISNULL(@A_DESPERDICIO,0) as Desperdicio,
-            ISNULL(@V_Plasta,0) as Plasta,
-            (ISNULL(t1.Seleccion,0) + ISNULL(@A_SELECCION,0) - @ENSACADO_DEF) as Sel_Ens
-        
-        from
-            (
-                select top 1
-                Produccion ,
-                Seleccion ,
-                Rechazo ,
-            
-                RechazoTA,
-                Desperdicio,
-                Plasta
-            from
-                tbRegPlanta as O
-            where 
-                    OrdenFabricacionID = '${OF}'
-                and
-                ObjetoID = 2
-            order by FechaHoraReg desc
-            )t1
-            
+        select *
+        from 
+            vwRegPlantaResumen
+        WHERE
+            OrdenFabricacionID = '${OF}';
         ;
         `
         var q_fechas = `
         use MES;
         SELECT 
-            FechaInicio, FechaFin,ProductoID,Observaciones
+            FechaInicio, FechaFin,ProductoID,ObsAdit as Observaciones
         from 
             tbRegPlantaComun
         WHERE
             OrdenFabricacionID = '${OF}'
+        `
+        var q_env_p = `
+        use MES;
+        Select EnPor,Comentario
+        from OFEnviado
+        WHERE
+            [OF] = '${OF}'
+        `
+        var q_total_ensacado = `
+        use MES;
+        SELECT
+            SUM(Cantidad) as TotalEnsacado
+        from TablaAuxiliar4
+        where
+            [OF] = '${OF}';
+        `
+        var q_resto = `
+        use MES;
+        SELECT
+            REPLACE(Resto,',','.') as Resto
+        from TablaAuxiliar4
+        where
+            [OF] = '${OF}'
+            and Resto <> ''
         `
         try{
 
             var resultado_resumen = await MES_query(q_resultado_resumen)
             var resultado_fechas = await MES_query(q_fechas);
             var res_trace_data = await MES_query(q_get_trace_data);
+            var res_env_p = await MES_query(q_env_p);
+            var res_total_ensacado = await MES_query(q_total_ensacado);
+            var res_resto = await MES_query(q_resto);
+
             res.send({
                 Trazabilidad : res_trace_data.query,
                 DatosResumen : resultado_resumen.query[0],
-                Fechas: resultado_fechas.query[0]
+                Fechas: resultado_fechas.query[0],
+                EnPor: res_env_p.query[0].EnPor,
+                Comentario: res_env_p.query[0].Comentario,
+                TotalEnsacado: res_total_ensacado.query[0].TotalEnsacado,
+                Resto : res_resto.query[0].Resto
             })
         }
         catch{
@@ -767,6 +580,54 @@ app.post('/RegistroPlanta/UpdateTrazabilidad', (request, reply) => {
         `
         await MES_query(q_update);
 
+    }
+f();
+})
+
+app.post('/RegPlanta/Trazabilidad', (request, reply) => {
+    console.log(request.body)
+    var OF = request.body.OF
+    var ModPr = request.body.ModPor
+    var EnvPor = request.body.EnvPor
+    async function f(){
+        try{
+            var q_update_insercion = `
+            use MES;
+            BEGIN 
+                /*En caso de que ya existe un registro se modifica*/
+                IF EXISTS(
+                    Select *
+                    from OFEnviado
+                    WHERE
+                        [OF] = '${OF}'
+                    )
+                BEGIN
+                    UPDATE OFEnviado
+                        SET [EnPor] = '${EnvPor}',
+                            [ModPor] = '${ModPr}'
+                    WHERE
+                        [OF] = '${OF}'
+                END
+                /*Si no existe, lo insertamos */
+                IF NOT EXISTS (
+                    Select *
+                    from OFEnviado
+                    WHERE
+                        [OF] = '${OF}'
+                )
+                BEGIN
+                    INSERT INTO OFEnviado ([OF],EnPor,ModPor)
+                    VALUES ('${OF}','${EnvPor}','${ModPr}')
+                END
+                
+            END
+            `
+            var res_update = await MES_query(q_update_insercion);
+        
+        }
+        catch{
+            console.log('Error post en registro de planta (Trazabilidad)')
+        }
     }
 f();
 })

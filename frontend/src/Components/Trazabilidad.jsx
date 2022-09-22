@@ -13,8 +13,10 @@ export default function TrazabilidadRegPlanta() {
   const [DatosTrazabilidad, setDatosT] = useState([]);
   const [DatosResumen, SetDatosResumen]=useState([]);
   const [Fechas,setFechas]= useState([])
- 
+  const [EnvP,SetEnvP] = useState('')
   const [TotalEnsacado,SetTotalEnsacado] = useState(0);
+  const [Comentario,SetComentario]=useState('')
+  const [Resto,SetResto]=useState(0)
   //GET 
   useEffect(
     () => {
@@ -28,11 +30,10 @@ export default function TrazabilidadRegPlanta() {
           SetDatosResumen(response.data.DatosResumen)
           setDatosT(response.data.Trazabilidad);
           setFechas(response.data.Fechas)
-          var t = 0.00
-          DatosTrazabilidad.map(i => {
-            t += i.Cantidad
-          })
-          SetTotalEnsacado(t);
+          SetEnvP(response.data.EnPor)
+          SetComentario(response.data.Comentario)
+          SetTotalEnsacado(response.data.TotalEnsacado)
+          SetResto(parseFloat(response.data.Resto))
         });
        
         
@@ -63,6 +64,8 @@ export default function TrazabilidadRegPlanta() {
    */
   function UpdateTrazabilidad(t){
     axios.post("http://192.168.0.118:4001/RegistroPlanta/UpdateTrazabilidad", {Trazabilidad: t}).catch( e => console.table(e))
+    .then(window.location.reload(false))
+    
     
   }
 
@@ -87,7 +90,7 @@ export default function TrazabilidadRegPlanta() {
                 <span className="solidBorderSpanT">{Fechas.ProductoID}</span>
               </span>
               <span className="spacedSpanT">
-                Enviado Por <span className="solidBorderSpanT">COR</span>
+                Enviado Por <span className="solidBorderSpanT">{EnvP}</span>
               </span>
               <br />
               <br />
@@ -208,12 +211,12 @@ export default function TrazabilidadRegPlanta() {
               })}
               <tr></tr>
               <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
+                <td key={1}></td>
+                <td key={2}></td>
+                <td key={3}></td>
+                <td key={4}></td>
+                <td key={5}></td>
+                <td key={6}>
                   <Typography fontSize={"18px"}>
                     Total Ensacado {TotalEnsacado}
                   </Typography>
@@ -259,19 +262,20 @@ export default function TrazabilidadRegPlanta() {
                     <span className="spacedSpanT">
                       Desperdicio{" "}
                       <span className="solidBSpanT">
-                        {DatosResumen.Produccion}
+                        {DatosResumen.Desperdicio}
                       </span>
                     </span>
                   </td>
                 </tr>
-                
+
                 <br />
                 <tr>
+                  
                   <td>
                     <span className="spacedSpanT">
                       NAV{" "}
                       <span className="solidBSpanT">
-                        {DatosResumen.Ensacado +
+                        {TotalEnsacado+ Resto +
                           DatosResumen.Rechazo +
                           DatosResumen.Plasta}
                       </span>
@@ -281,7 +285,7 @@ export default function TrazabilidadRegPlanta() {
                     <span className="spacedSpanT">
                       Ensacado{" "}
                       <span className="solidBSpanT">
-                        {DatosResumen.Produccion}
+                        {TotalEnsacado + Resto}
                       </span>
                     </span>
                   </td>
@@ -296,15 +300,37 @@ export default function TrazabilidadRegPlanta() {
                   <td>
                     <span className="spacedSpanT">
                       Plasta{" "}
-                      <span className="solidBSpanT">
-                        {DatosResumen.Plasta}
-                      </span>
+                      <span className="solidBSpanT">{DatosResumen.Plasta}</span>
                     </span>
                   </td>
                 </tr>
               </tbody>
             </table>
           </Typography>
+          <br />
+        </div>
+        <br />
+        <div className="divTablaAzulT">
+          <br />
+          <Typography fontSize={"20px"} textAlign={"center"}>
+            Comentarios:
+          </Typography>
+          <br />
+          <textarea
+            value={Comentario}
+            defaultValue={"No hay comentarios asociados"}
+            className="ComentarioT"
+          />
+          <br />
+          <Typography fontSize={"20px"} textAlign={"center"}>
+            Observaciones:
+          </Typography>
+          <br />
+          <textarea
+            value={Fechas.Observaciones}
+            defaultValue={"No hay observaciones asociadas"}
+            className="TextoT"
+          />
           <br />
         </div>
       </form>
