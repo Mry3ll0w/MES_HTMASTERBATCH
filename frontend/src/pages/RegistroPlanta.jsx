@@ -1,6 +1,6 @@
 import React,{useState,useEffect, Fragment} from 'react'
 import axios from 'axios'
-import { TextField,Button, Autocomplete, TextareaAutosize, Accordion, AccordionDetails, AccordionSummary, Typography, Pagination, PaginationItem } from '@mui/material'
+import { TextField,Button, Autocomplete, TextareaAutosize, Accordion, AccordionDetails, AccordionSummary, Typography, Pagination } from '@mui/material'
 import { styles } from '../Style/styles';
 import { DataGrid,GridToolbar, esES} from '@mui/x-data-grid';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
@@ -67,6 +67,7 @@ export default function RegistroPlanta() {
     const [TurnoInicio,setTurnoInicio] = useState('');
     const [OF,setOF] = useState("");
     const [RState, setRState] = useState({ width: '80%', height: '800px' });//Estilo Dinamico
+    
     //Variables para guardar los datos de los turnos (el valor final es numerico y el mostrado es string)
     const [DatosRegPlanta, setDatosRegPlanta] = useState([{ID : 0}]);
     const [DatosResumen, setDatosResumentRegPlanta] = useState([])
@@ -136,23 +137,10 @@ export default function RegistroPlanta() {
         { field: "of_fecha_alta", headerName: "Fecha de Alta", width: "125" },
         { field: "FechaInicio", headerName: "Fecha Inicio", width: "150" },
         { field: "FechaFin", headerName: "Fecha Fin", width: "85" },
-        ,
     ];
 
 
-    /**
-     * Devuelve el estado en el que se encuentra la producción
-     * @param {int} e 
-     * @returns String
-     */
-    function asignar_Estado(e){
-      if( e === 1)
-        return "Sin iniciar | La OF no ha sido cerrada"
-      else if(e === 2 )
-        return "Arrancada | La Producción ha comenzado"
-      else  
-        return "Finalizada | La Producción ha finalizado"
-    }
+    
   
     /**
      * Asigna el permiso, o por quien ha sido aprobado
@@ -162,7 +150,7 @@ export default function RegistroPlanta() {
     function asignar_permisos(e){
       if( e === 1)
         return "Planta | Registro agreado en Planta"
-      else if(e == 2)
+      else if(e === 2)
         return "Aprobado | Registro aprobado por Dpto."
       else
           return "Bloqueado | Registro Desechado"
@@ -170,7 +158,7 @@ export default function RegistroPlanta() {
     const navigate = useNavigate();
     
     const nav_trazabilidad = () =>{
-      if(EstadoEnsacado != 1){
+      if(EstadoEnsacado !== 1){
         alert('El ensacado esta pendiente, la trazabilidad no esta disponible')
       }
       else{
@@ -190,19 +178,19 @@ export default function RegistroPlanta() {
     }
 
     const nav_rechazos_desperdicios =() =>{
-      if (EstadoEnsacado != 1) {
+      if (EstadoEnsacado !== 1) {
         alert("El ensacado esta pendiente, la trazabilidad no esta disponible");
       }
       else
-        navigate('/reg_planta_Rechazos_Desperdicios')
+        navigate('/RegistroPlanta/GestionDesperdicio')
     }
 
     const nav_control_humedad = () =>{
-      navigate('/reg_planta_ControlHumedad')
+      navigate('/RegistroPlanta/ControlHumedad')
     }
 
     const nav_n_granos = () => {
-      navigate('/reg_planta_n_gramos')
+      navigate('/ResgistroPlanta/GestionGranos')
     }
 
     const Menu_Operaciones = [
@@ -734,7 +722,7 @@ export default function RegistroPlanta() {
                   />
                 </td>
                 <td>
-                  <TextField
+                  <TextField 
                     label="Sel-Ens"
                     value={ResTurno.SelEns}
                     InputLabelProps={{ shrink: true }}
@@ -900,7 +888,7 @@ export default function RegistroPlanta() {
             i.FechaHoraRegInicio = format_date(i.FechaHoraRegInicio);
             i.FechaFin = format_date(i.FechaFin);
             i.FechaInicio = format_date(i.FechaInicio);
-            
+            return i;
         }
     );
     
@@ -961,7 +949,7 @@ export default function RegistroPlanta() {
                 setOF(DatosRegPlantaComun.OrdenFabricacionID);
                 setTOf(DatosRegPlantaComun.TipoOFID);
                 setDispTEns(
-                  DatosRegPlantaComun.TipoOFID == 1 ? "Normal" : "Prueba"
+                  DatosRegPlantaComun.TipoOFID === 1 ? "Normal" : "Prueba"
                 );
                 setTurnoFin(DatosRegPlantaComun.TurnoFinID);
                 setTurnoInicio(DatosRegPlantaComun.TurnoInicioID);
@@ -1006,7 +994,7 @@ export default function RegistroPlanta() {
           <Autocomplete
             value={EnviadoPor}
             options={["S1", "S2", "S1-S2",'S3','BB']}
-            isOptionEqualToValue={(option, value) => option == value}
+            isOptionEqualToValue={(option, value) => option === value}
             renderInput={(e) => (
               <TextField
                 InputLabelProps={{ shrink: true }}
@@ -1032,7 +1020,7 @@ export default function RegistroPlanta() {
                 <Autocomplete
                   value={DispTI}
                   options={["Mañana", "Tarde", "Noche"]}
-                  isOptionEqualToValue={(option, value) => option == value}
+                  isOptionEqualToValue={(option, value) => option === value}
                   renderInput={(e) => (
                     <TextField
                       InputLabelProps={{ shrink: true }}
@@ -1070,7 +1058,7 @@ export default function RegistroPlanta() {
               <td>
                 <Autocomplete
                   value={DispTEns}
-                  isOptionEqualToValue={(option, value) => option == value}
+                  isOptionEqualToValue={(option, value) => option === value}
                   options={["Normal", "Prueba"]}
                   //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                   renderInput={(e) => (
@@ -1079,8 +1067,8 @@ export default function RegistroPlanta() {
                       {...e}
                       value={DispTEns}
                       onChange={(e) => {
-                        setTOf(e.target.value);
-                        setTOf(DispTEns == "Normal" ? 1 : 2);
+                        
+                        setTOf(DispTEns === "Normal" ? 1 : 2);
                       }}
                       sx={{ width: "150px" }}
                       label="Tipo de OF"
@@ -1148,7 +1136,7 @@ export default function RegistroPlanta() {
                 <td>
                   <Autocomplete
                     value={
-                      EstadoEnsacado == 1
+                      EstadoEnsacado === 1
                         ? "Finalizado | Ensacado Terminado"
                         : "Pendiente | Ensacado pendiente de terminar "
                     }
@@ -1185,7 +1173,7 @@ export default function RegistroPlanta() {
                   <Autocomplete
                     options={["Mañana", "Tarde", "Noche"]}
                     value={DispTF}
-                    isOptionEqualToValue={(option, value) => option == value}
+                    isOptionEqualToValue={(option, value) => option === value}
                     //getOptionLabel={(o) => {return `${o.Codigo}-${o.Nombre} ${o.Apellidos}`}}
                     renderInput={(e) => (
                       <TextField
@@ -1236,7 +1224,7 @@ export default function RegistroPlanta() {
                 <td>
                   <Autocomplete
                     value={DispPermisos}
-                    isOptionEqualToValue={(option, value) => option == value}
+                    isOptionEqualToValue={(option, value) => option === value}
                     options={[
                       "Planta | Registro agreado en Planta",
                       "Aprobado | Registro aprobado por Dpto.",

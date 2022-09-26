@@ -1,11 +1,10 @@
 import React, { Fragment } from 'react'
-import { Button, TextField, Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { useState } from 'react'
-import { DateTime } from 'luxon';
-import {ReactToPrint, useReactToPrint} from 'react-to-print'
+import {useReactToPrint} from 'react-to-print'
 import { useEffect,useRef } from 'react';
 import axios from 'axios';
-import { set } from 'date-fns';
+
 import './Trazabilidad.css'
 export default function TrazabilidadRegPlanta() {
 
@@ -234,7 +233,6 @@ export default function TrazabilidadRegPlanta() {
                 <td key={2}></td>
                 <td key={3}></td>
                 <td key={4}></td>
-                <td key={5}></td>
                 <td key={6}>
                   <Typography fontSize={"18px"}>
                     Total Ensacado {TotalEnsacado}

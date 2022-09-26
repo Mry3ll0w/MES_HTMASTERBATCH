@@ -631,3 +631,6 @@ app.post('/RegPlanta/Trazabilidad', (request, reply) => {
     }
 f();
 })
+app.get('/RegistroPlanta/GestionDesperdicios',(request,reply)=>{
+
+});

@@ -53,10 +53,18 @@ export default function Home() {
 
   const menu_RegistroPlanta = [
     {
-      element : <Button  onClick={nav_Ensacado} variant='contained'>Hoja de Ensacado</Button>,
+      element: (
+        <Button onClick={nav_regPlanta} variant="contained">
+          Registro Planta
+        </Button>
+      ),
     },
     {
-      element : <Button  onClick={nav_regPlanta} variant='contained'>Registro Planta</Button>,
+      element: (
+        <Button onClick={nav_Ensacado} variant="contained">
+          Hoja de Ensacado
+        </Button>
+      ),
     },
   ];
 
