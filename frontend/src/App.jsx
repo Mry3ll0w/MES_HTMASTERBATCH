@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import Grafica_Estadistico from './pages/grafica_estadistico';
 import Profile from './pages/Profile';
 import TrazabilidadRegPlanta from './Components/Trazabilidad';
-
+import GestionResiduos from './Components/GestionResiduos';
 //Imagenes
 import Personal from './pages/AdminUsers';
 let loggeduser=''
@@ -41,6 +41,7 @@ export function App() {
           <Route path="/Personal" element={<Personal />} />
           <Route path="/RegistroPlanta" element={<RegistroPlanta />} />
           <Route path='/RegistroPlanta/Trazabilidad' element={<TrazabilidadRegPlanta />} />
+          <Route path='/RegistroPlanta/GestionDesperdicio' element={<GestionResiduos />} />
           
         </Routes>
       </div>

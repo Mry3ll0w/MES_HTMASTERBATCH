@@ -279,12 +279,12 @@ export default function RegEnsacado({LoggedUser}) {
           Turno: M_Turno,
           Producto: M_Producto,
           Palet: M_Palet,
-          Peso_Saco: M_Peso_Saco ? null : 0,
-          Cantidad: M_Cantidad ? null : 0,
-          Resto: M_Resto ? null : 0,
-          Ant: M_Ant ? null : 0,
+          Peso_Saco: M_Peso_Saco  ? 0 : M_Peso_Saco,
+          Cantidad: M_Cantidad  ? 0 : M_Cantidad,
+          Resto: M_Resto ? 0 : M_Resto,
+          Ant: M_Ant  ? 0 : M_Ant,
           iniciales : sessionStorage.getItem('iniciales'),
-          Observaciones : M_Observaciones ? null : ' '
+          Observaciones : M_Observaciones ? ' ' : M_Observaciones
         })
         .then(() => {
           alert("Insercion realizada");

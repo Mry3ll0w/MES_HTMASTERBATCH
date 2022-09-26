@@ -60,7 +60,7 @@ async function query_ECIESA(q) {
         const result = await DB.request()
             .query(q);
         
-        return { query: result.recordset, ok : true};
+        return { query: result.recordset};
     }
     catch (err) {
         console.log(`Error querying database, used query ${q}`, err);
@@ -92,7 +92,7 @@ async function MES_query(q) {
         const result = await DB.request()
             .query(q);
         
-        return { query: result.recordset, ok : true};
+        return { query: result.recordset};
     }
     catch (err) {
         console.log(`Error querying database, query usada ${q}`, err);
@@ -631,3 +631,53 @@ app.post('/RegPlanta/Trazabilidad', (request, reply) => {
     }
 f();
 })
+app.get('/RegistroPlanta/GestionDesperdicios/:OF',(request,reply)=>{
+    
+    var OF = request.params.OF
+    async function f(){
+        try{
+            var q_residuo_des = `
+            use MES;
+            SELECT 
+                [OFResiduoDes].[OF],
+                [OFResiduoDes].Despercidio,
+                [OFResiduoDes].VentaR as VentaReciclaje,
+                [OFResiduoDes].Anno,
+                [OFResiduoDes].BB AS NBULTO,
+                [OFResiduoDes].Modpor
+            FROM 
+                OFResiduoDes
+            WHERE
+                [OF] = '${OF}'
+            ;`
+
+            var q_residuo_rech = `
+            Use MES;
+            SELECT
+                OFResiduoRech.[OF],
+                rechazo,
+                Pendiente,
+                VentaRe as VentaReciclaje,
+                RecUsoProd,
+                LiemTor,
+                Recupe AS RecUsoVenta,
+                BB,
+                Material,
+                Anno,
+                Modpor
+            FROM 
+                OFResiduoRech
+            WHERE
+                [OFResiduoRech].[OF] = '${OF}'
+            ;`
+
+            var res_residuo_rech = await MES_query(q_residuo_rech)
+            var res_residuo_des = await MES_query(q_residuo_des)
+            reply.send({ResiduoRech : res_residuo_rech.query[0], ResiduoDes: res_residuo_rech.query})
+        }
+        catch{
+            console.log('Error consulta datos gestion desperdicio')
+        }
+    }
+f();
+});
