@@ -1,0 +1,37 @@
+
+.tittleDivGR{
+    text-align: center;
+    margin-left: 33%;
+    margin-right: 33%;
+    margin-bottom: 3%;
+    background-color: #D9F0FF;
+    border: dotted 2px #1876D2;
+    
+}
+
+.ResiduosDes{
+    background-color: #D9F0FF;
+    border: dotted 2px #1876D2;
+    width: auto;
+    height: auto;
+    min-width: 400px;
+    min-height: 150px;
+    margin: 1.5%;
+}
+
+.thGR {
+    background-color: #BABFC8;
+    border: 1px solid black;
+    min-width: 50px;
+    width: auto;
+    margin-top: 5px;
+    padding: 2px;
+}
+
+.tdGR {
+    background-color: #D9F0FF;
+    width: auto;
+    border: solid 1px black;
+    text-align: center;
+    padding: 2px;
+}
