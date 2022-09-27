@@ -9,7 +9,9 @@ import { useState } from 'react';
 import {Drawer} from '@mui/material'
 import { styles } from '../Style/styles';
 import { useNavigate } from 'react-router-dom';
-
+import HomeProduccion from '../pages/Produccion';
+import HomeMantenimiento from '../pages/Mantenimiento';
+import HomePlanta from '../pages/Planta';
 
 export function Header () {
   
@@ -66,7 +68,7 @@ export function Header () {
             </Typography>
             <Button style={styles.buttons} onClick={() => {navigate('/profile');openmenu(false)}} variant='contained' type="password">Perfil</Button>
             <br />
-            <Button style={styles.buttons} onClick={() => {navigate('/home');openmenu(false)}} variant='contained'>Departamento de Produccion</Button>
+            <Button style={styles.buttons} onClick={() => {navigate('/home');openmenu(false)}} variant='contained'>Mi Departamento</Button>
             
           </Box>
 

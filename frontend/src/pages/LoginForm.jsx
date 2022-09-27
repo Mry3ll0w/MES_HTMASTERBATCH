@@ -70,6 +70,7 @@ export default function LoginForm() {
                 sessionStorage.setItem('logged',Sel_user[0].Nombre)
                 sessionStorage.setItem('iniciales',iniciales)//Para la visualizacion en el registro de ensacado
                 sessionStorage.setItem('codigo',Sel_user[0].Codigo)//Para la visualizacion en el registro de ensacado
+                sessionStorage.setItem('Formulario',Sel_user[0].Formulario)
                 nav_home();
             }
             else

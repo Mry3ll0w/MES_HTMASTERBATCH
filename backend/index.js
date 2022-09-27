@@ -108,10 +108,15 @@ app.get('/RegEnsacado', (request, res) => {
 
     async function query(){
 
-        let q_ensacados= await MES_query("select * from MES.dbo.TablaAuxiliar4 order by Fecha desc");
-        let q_prods = await MES_query(fs.readFileSync('Q_Lista_productos.sql').toString());
-        if (q_ensacados.ok && q_prods.ok) res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
-        else res.send("Fallo al hacer la query");
+        try{
+            let q_ensacados= await MES_query("select * from MES.dbo.TablaAuxiliar4 order by Fecha desc");
+            let q_prods = await MES_query(fs.readFileSync('Q_Lista_productos.sql').toString());
+        
+            res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
+        }
+        catch{
+            res.send("Fallo al hacer la query");
+        }
         //console.log(q_ensacados)
 
     }
@@ -247,10 +252,16 @@ app.get('/Login', (request,res)=>{
     //console.log(`pwd : ${bcrypt.hashSync('1234',salt)}`)
     
     async function f (){
-        var query = 'select Codigo,Pwd_Hashed,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;'
-        var resultado = await MES_query(query);
-        //console.log(resultado)
-        res.send({user : resultado.query})
+        try{
+            var query = 'select Formulario,Codigo,Pwd_Hashed,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;'
+            var resultado = await MES_query(query);
+            //console.log(resultado)
+            res.send({user : resultado.query})
+        }
+        catch{
+            console.log('Error de obtención de datos')
+        }
+        
     }
     
     
@@ -639,12 +650,7 @@ app.get('/RegistroPlanta/GestionDesperdicios/:OF',(request,reply)=>{
             var q_residuo_des = `
             use MES;
             SELECT 
-                [OFResiduoDes].[OF],
-                [OFResiduoDes].Despercidio,
-                [OFResiduoDes].VentaR as VentaReciclaje,
-                [OFResiduoDes].Anno,
-                [OFResiduoDes].BB AS NBULTO,
-                [OFResiduoDes].Modpor
+                *
             FROM 
                 OFResiduoDes
             WHERE
@@ -654,17 +660,7 @@ app.get('/RegistroPlanta/GestionDesperdicios/:OF',(request,reply)=>{
             var q_residuo_rech = `
             Use MES;
             SELECT
-                OFResiduoRech.[OF],
-                rechazo,
-                Pendiente,
-                VentaRe as VentaReciclaje,
-                RecUsoProd,
-                LiemTor,
-                Recupe AS RecUsoVenta,
-                BB,
-                Material,
-                Anno,
-                Modpor
+                *
             FROM 
                 OFResiduoRech
             WHERE
@@ -673,7 +669,7 @@ app.get('/RegistroPlanta/GestionDesperdicios/:OF',(request,reply)=>{
 
             var res_residuo_rech = await MES_query(q_residuo_rech)
             var res_residuo_des = await MES_query(q_residuo_des)
-            reply.send({ResiduoRech : res_residuo_rech.query[0], ResiduoDes: res_residuo_rech.query})
+            reply.send({Rech : res_residuo_rech.query[0], Des: res_residuo_des.query[0]})
         }
         catch{
             console.log('Error consulta datos gestion desperdicio')

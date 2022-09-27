@@ -4,16 +4,10 @@ import {
   Button,
   Paper,
   Box,
-  Select,
-  MenuItem,
   FormControl,
-  InputLabel,
   Autocomplete,
-  TextareaAutosize,
-  Typography,
 } from "@mui/material";
 import { DataGrid, esES} from '@mui/x-data-grid';
-import { corrector_fecha } from "./grafica_estadistico";
 import React, { Fragment,useRef } from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -63,11 +57,11 @@ export default function RegEnsacado({LoggedUser}) {
   //Constantes para trabajar con los datos
   const [Productos, SetProductos] = useState([]);
   const [Ensacados, SetEnsacados] = useState([]);
-  const [Selected, SetSelected] = useState([]);
+  
   const [OldPalet, setOldPalet] = useState(""); //Sirve para guardar el estado anterior
   
   //Cambio de campos cuando presionamos intro
-  const TurnoRef = useRef(null)
+  
   const ProdRef = useRef(null)
   const PaletRef = useRef(null)
   const PesoSacoRef = useRef(null)
@@ -79,11 +73,12 @@ export default function RegEnsacado({LoggedUser}) {
 
   //Obtenemos el resultado del get
   useEffect(() => {
-    var temp = Array()
+    var temp = []
     axios
       .get("http://192.168.0.118:4001/RegEnsacado")
       .then((response) => {
         SetProductos(response.data.Productos);
+        console.log(response.data)
         SetEnsacados(response.data.Ensacados);
         response.data.Productos.map(i => {
           return temp =[...temp, i.ProductoID]
@@ -111,26 +106,31 @@ export default function RegEnsacado({LoggedUser}) {
 
   //Construimos las filas
   let rows = [];
-
-  Ensacados.map((i, n) => {
-    return (rows = [
-      ...rows,
-      {
-        id: n++,
-        Fecha: dateFormat(i.Fecha, "dd/mm/yyyy"),
-        Turno: i.Turno,
-        Producto: i.Producto,
-        Palet: i.Palet,
-        Cantidad: i.Cantidad,
-        Resto: i.Resto,
-        Peso_Saco: i.Peso_Saco,
-        Ant: i.Ant,
-        Iniciales : i.Iniciales,
-        Observaciones : i.Observaciones,
-        ID: i.ID
-      },
-    ]);
-  });
+  try{
+    Ensacados.map((i, n) => {
+      return (rows = [
+        ...rows,
+        {
+          id: n++,
+          Fecha: dateFormat(i.Fecha, "dd/mm/yyyy"),
+          Turno: i.Turno,
+          Producto: i.Producto,
+          Palet: i.Palet,
+          Cantidad: i.Cantidad,
+          Resto: i.Resto,
+          Peso_Saco: i.Peso_Saco,
+          Ant: i.Ant,
+          Iniciales: i.Iniciales,
+          Observaciones: i.Observaciones,
+          ID: i.ID,
+        },
+      ]);
+    });
+  }
+  catch{
+    console.log('No se ha guardado correctamente los datos de ensacado')
+  }
+  
 
   //Funciones para tratar los textFields
 
@@ -387,7 +387,7 @@ export default function RegEnsacado({LoggedUser}) {
             <FormControl>
               <Autocomplete
                 value={M_Turno}
-                isOptionEqualToValue={(option, value) => option == value}
+                isOptionEqualToValue={(option, value) => option === value}
                 options={["Mañana", "Tarde", "Noche"]}
                 renderInput={(e) => (
                   <TextField
@@ -405,7 +405,7 @@ export default function RegEnsacado({LoggedUser}) {
             <FormControl>
               <Autocomplete
                 value={M_Producto}
-                isOptionEqualToValue={(option, value) => option == value}
+                isOptionEqualToValue={(option, value) => option === value}
                 options={ArrProd}
                 inputRef={ProdRef}
                 inputProps={{
