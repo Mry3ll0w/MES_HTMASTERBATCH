@@ -19,10 +19,16 @@
     margin: 1.5%;
 }
 
+.TablaResiduosRechGR{
+    margin-left: 2%;
+    margin-right: 2%;
+    
+}
 .thGR {
     background-color: #BABFC8;
     border: 1px solid black;
-    min-width: 50px;
+    min-width: 60px;
+    max-width: 150px;
     width: auto;
     margin-top: 5px;
     padding: 2px;
@@ -34,4 +40,51 @@
     border: solid 1px black;
     text-align: center;
     padding: 2px;
+    max-width: 150px;
+}
+
+.mutabletdGR{
+    background-color: white;
+    width: auto;
+    border: solid 1px black;
+    text-align: center;
+    padding: 0%;
+}
+
+.centeredTableGR{
+    margin-top: 2%;
+    margin-bottom: 2%;
+    margin-left: 25%;
+    margin-right: 15%;
+}
+
+.inputGR{
+    background-color: white;
+    text-align: center;
+    font-size: 14px;
+    min-width: 30px;
+    width: 100px;
+}
+
+.EstadoResiduo{
+    margin-left: 45%;
+    margin-right: 33%;
+    margin-top: 2%;
+    margin-bottom: 1%;
+}
+
+.botonGR{
+    margin-top: 2%;
+    margin-left: 41.5%;
+    height: 50px;
+    background-color: #1876D2;
+        /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor:pointer;
 }

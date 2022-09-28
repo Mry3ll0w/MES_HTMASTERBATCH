@@ -16,6 +16,8 @@ import TrazabilidadRegPlanta from './Components/Trazabilidad';
 import GestionResiduos from './Components/GestionResiduos';
 //Imagenes
 import Personal from './pages/AdminUsers';
+import HomeProduccion from './pages/Produccion';
+import HomeMantenimiento from './pages/Mantenimiento';
 let loggeduser=''
 export function App() {
 
@@ -42,7 +44,8 @@ export function App() {
           <Route path="/RegistroPlanta" element={<RegistroPlanta />} />
           <Route path='/RegistroPlanta/Trazabilidad' element={<TrazabilidadRegPlanta />} />
           <Route path='/RegistroPlanta/GestionDesperdicio' element={<GestionResiduos />} />
-          
+          <Route path='/DepartamentoProduccion' element={<HomeProduccion />} />
+          <Route path='/DepartamentoMantenimiento' element={<HomeMantenimiento />} />
         </Routes>
       </div>
       <Footer />
