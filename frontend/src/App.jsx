@@ -16,9 +16,12 @@ import TrazabilidadRegPlanta from './Components/Trazabilidad';
 import GestionResiduos from './Components/GestionResiduos';
 //Imagenes
 import Personal from './pages/AdminUsers';
-import HomeProduccion from './pages/Produccion';
-import HomeMantenimiento from './pages/Mantenimiento';
+import HomeProduccion from './pages/menu_departamentos/Produccion';
+import HomeMantenimiento from "./pages/menu_departamentos/Mantenimiento";
+import HomePlanta from "./pages/menu_departamentos/Planta";
+import MantenimientoTareas from './pages/Mantenimiento/Tareas'
 let loggeduser=''
+
 export function App() {
 
   useEffect(()=>{
@@ -42,10 +45,21 @@ export function App() {
           <Route path="/Login" element={<LoginForm />} />
           <Route path="/Personal" element={<Personal />} />
           <Route path="/RegistroPlanta" element={<RegistroPlanta />} />
-          <Route path='/RegistroPlanta/Trazabilidad' element={<TrazabilidadRegPlanta />} />
-          <Route path='/RegistroPlanta/GestionDesperdicio' element={<GestionResiduos />} />
-          <Route path='/DepartamentoProduccion' element={<HomeProduccion />} />
-          <Route path='/DepartamentoMantenimiento' element={<HomeMantenimiento />} />
+          <Route
+            path="/RegistroPlanta/Trazabilidad"
+            element={<TrazabilidadRegPlanta />}
+          />
+          <Route
+            path="/RegistroPlanta/GestionDesperdicio"
+            element={<GestionResiduos />}
+          />
+          <Route path="/DepartamentoProduccion" element={<HomeProduccion />} />
+          <Route
+            path="/DepartamentoMantenimiento"
+            element={<HomeMantenimiento />}
+          />
+          <Route path="/Planta" element={<HomePlanta />} />
+          <Route path="/TareasMantenimiento" element={<MantenimientoTareas />} />
         </Routes>
       </div>
       <Footer />

@@ -51,7 +51,7 @@ export default function GestionResiduos() {
         SetValoresCorrectos(true);
         //Enviamos a la API
         axios.post(
-          "http://192.168.0.118:4001/RegistroPlanta/GestionDesperdicios",
+          `http://${process.env.REACT_APP_SERVER}/RegistroPlanta/GestionDesperdicios`,
           {
             OF : sessionStorage('OF'),
             Des : {
@@ -74,7 +74,7 @@ export default function GestionResiduos() {
         
         axios
           .get(
-            `http://192.168.0.118:4001/RegistroPlanta/GestionDesperdicios/${sessionStorage.getItem('OF')}`
+            `http://${process.env.REACT_APP_SERVER}/RegistroPlanta/GestionDesperdicios/${sessionStorage.getItem('OF')}`
           )
           .then((response) => {
             console.table(response.data.Rech)

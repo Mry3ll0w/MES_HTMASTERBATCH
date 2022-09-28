@@ -75,7 +75,7 @@ export default function RegEnsacado({LoggedUser}) {
   useEffect(() => {
     var temp = []
     axios
-      .get("http://192.168.0.118:4001/RegEnsacado")
+      .get(`http://${process.env.REACT_APP_SERVER}/RegEnsacado`)
       .then((response) => {
         SetProductos(response.data.Productos);
         console.log(response.data)
@@ -184,7 +184,7 @@ export default function RegEnsacado({LoggedUser}) {
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
       axios
-        .post("http://192.168.0.118:4001/UpdateEnsacado", {
+        .post(`http://${process.env.REACT_APP_SERVER}/UpdateEnsacado`, {
           Fecha: dateFormat(M_Fecha,'yyyy-mm-dd'),
           Turno: M_Turno,
           Producto: M_Producto,
@@ -274,7 +274,7 @@ export default function RegEnsacado({LoggedUser}) {
         Ant: M_Ant,
       })
       axios
-        .post("http://192.168.0.118:4001/RegistraEnsacado", {
+        .post(`http://${process.env.REACT_APP_SERVER}/RegistraEnsacado`, {
           Fecha: M_Fecha,
           Turno: M_Turno,
           Producto: M_Producto,
@@ -301,7 +301,7 @@ export default function RegEnsacado({LoggedUser}) {
     var err;
     console.log(M_Fecha)
     axios
-      .post("http://192.168.0.118:4001/DelEns", {
+      .post(`http://${process.env.REACT_APP_SERVER}/DelEns`, {
         Fecha: M_Fecha,
         Turno: M_Turno,
         Palet: M_Palet,

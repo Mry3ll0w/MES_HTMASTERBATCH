@@ -25,7 +25,7 @@ export default function TrazabilidadRegPlanta() {
     () => {
       axios
         .get(
-          `http://192.168.0.118:4001/RegistroPlanta/Trazabilidad/${sessionStorage.getItem('OF')}`
+          `http://${process.env.REACT_APP_SERVER}/RegistroPlanta/Trazabilidad/${sessionStorage.getItem('OF')}`
         )
         .catch((error) => console.log(error))
         .then((response) => {
@@ -66,7 +66,7 @@ export default function TrazabilidadRegPlanta() {
    * @param {Trazabilidad} t 
    */
   function UpdateTrazabilidad(t){
-    axios.post("http://192.168.0.118:4001/RegistroPlanta/UpdateTrazabilidad", {Trazabilidad: t}).catch( e => console.table(e))
+    axios.post(`http://${process.env.REACT_APP_SERVER}/RegistroPlanta/UpdateTrazabilidad`, {Trazabilidad: t}).catch( e => console.table(e))
     .then(window.location.reload(false))
     
     
