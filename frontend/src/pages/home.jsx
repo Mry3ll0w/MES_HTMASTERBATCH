@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react'
-import HomeProduccion from './Produccion'
-import HomeMantenimiento from './Mantenimiento';
-import HomePlanta from './Planta';
+import HomeProduccion from "./menu_departamentos/Produccion";
+import HomeMantenimiento from "./menu_departamentos/Mantenimiento";
+import HomePlanta from "./menu_departamentos/Planta";
+
 function Selector_Menu(){
     
     switch(sessionStorage.getItem('Formulario')){

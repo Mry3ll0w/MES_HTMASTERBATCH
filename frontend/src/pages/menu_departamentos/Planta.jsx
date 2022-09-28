@@ -1,9 +1,9 @@
 import React from "react";
-import DropDownMenu from "../Components/DropDownMenu";
+import DropDownMenu from "../../Components/DropDownMenu";
 import { Fragment } from "react";
 import { Button,Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { styles } from "../Style/styles";
+import { styles } from "../../Style/styles";
 import { textAlign } from "@mui/system";
 import './menu.css'
 
@@ -36,7 +36,7 @@ export default function HomePlanta() {
     return (
     <Fragment>
       <div className="TitleDiv">
-        <Typography fontSize={"25px"}>Departamento de Planta</Typography>
+        <Typography fontSize={"25px"}>Menú de Planta</Typography>
       </div>
       <br />
       <div className="MenuDiv">

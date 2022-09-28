@@ -255,7 +255,6 @@ app.get('/Login', (request,res)=>{
         try{
             var query = 'select Formulario,Codigo,Pwd_Hashed,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;'
             var resultado = await MES_query(query);
-            //console.log(resultado)
             res.send({user : resultado.query})
         }
         catch{

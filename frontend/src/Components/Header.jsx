@@ -9,9 +9,9 @@ import { useState } from 'react';
 import {Drawer} from '@mui/material'
 import { styles } from '../Style/styles';
 import { useNavigate } from 'react-router-dom';
-import HomeProduccion from '../pages/Produccion';
-import HomeMantenimiento from '../pages/Mantenimiento';
-import HomePlanta from '../pages/Planta';
+import HomeProduccion from "../pages/menu_departamentos/Produccion";
+import HomeMantenimiento from "../pages/menu_departamentos/Mantenimiento";
+import HomePlanta from "../pages/menu_departamentos/Planta";
 
 export function Header () {
   
@@ -36,44 +36,108 @@ export function Header () {
         <Toolbar>
           <IconButton
             size="large"
-            onClick = {() => {openmenu(true)}}
+            onClick={() => {
+              openmenu(true);
+            }}
             edge="start"
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-            disabled = {On_Login}
+            disabled={On_Login}
           >
             <MenuIcon />
           </IconButton>
-          
+
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             MES UNNOX-HT
           </Typography>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 , textAlign : 'left', marginLeft: '65%'}}>
-          
-          <Button 
-            style={styles.buttons} onClick={() => {navigate('/Login');openmenu(false);sessionStorage.clear();setOnLogin(true);}} 
-            variant='contained' hidden={On_Login}>
-              Cerrar sesion {sessionStorage.getItem('logged')}
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, textAlign: "left", marginLeft: "65%" }}
+          >
+            <Button
+              style={styles.buttons}
+              onClick={() => {
+                navigate("/Login");
+                openmenu(false);
+                sessionStorage.clear();
+                setOnLogin(true);
+              }}
+              variant="contained"
+              hidden={On_Login}
+            >
+              Cerrar sesion {sessionStorage.getItem("logged")}
             </Button>
-            
           </Typography>
         </Toolbar>
 
-        <Drawer style={styles.drawer} open={OpenMenu} onClose={() => {openmenu(false)}} >
-          <Box sx={{width : '400px', marginTop: '20px'}}>
-            
+        <Drawer
+          style={styles.drawer}
+          open={OpenMenu}
+          onClose={() => {
+            openmenu(false);
+          }}
+        >
+          <Box sx={{ width: "400px", marginTop: "20px" }}>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Departamentos 
+              Departamentos
             </Typography>
-            <Button style={styles.buttons} onClick={() => {navigate('/profile');openmenu(false)}} variant='contained' type="password">Perfil</Button>
+            <Button
+              style={styles.buttons}
+              onClick={() => {
+                navigate("/profile");
+                openmenu(false);
+              }}
+              variant="contained"
+              type="password"
+            >
+              Perfil
+            </Button>
             <br />
-            <Button style={styles.buttons} onClick={() => {navigate('/home');openmenu(false)}} variant='contained'>Mi Departamento</Button>
-            
+            <Button
+              style={styles.buttons}
+              onClick={() => {
+                navigate("/home");
+                openmenu(false);
+              }}
+              variant="contained"
+            >
+              Mi Departamento
+            </Button>
+            <Button
+              style={styles.buttons}
+              onClick={() => {
+                navigate("/DepartamentoMantenimiento");
+                openmenu(false);
+              }}
+              variant="contained"
+            >
+              Departamento de Mantenimiento
+            </Button>
+            <Button
+              style={styles.buttons}
+              onClick={() => {
+                navigate("/DepartamentoProduccion");
+                openmenu(false);
+              }}
+              variant="contained"
+            >
+              Departamento de Produccion
+            </Button>
+            <br />
+            <Button
+              style={styles.buttons}
+              onClick={() => {
+                navigate("/Planta");
+                openmenu(false);
+              }}
+              variant="contained"
+            >
+              Planta
+            </Button>
           </Box>
-
         </Drawer>
-
       </AppBar>
     </Box>
   );

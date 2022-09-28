@@ -27,7 +27,7 @@ export default function LoginForm() {
     
     useEffect(() => {
         axios
-          .get("http://192.168.0.118:4001/Login")
+          .get(`http://${process.env.REACT_APP_SERVER}/Login`)
           .then((response) => {
             
             setUsuarios(response.data.user);

@@ -84,7 +84,7 @@ export default function RegistroPlanta() {
     //Para obtener los valores de los campos para el registro de la planta
     useEffect(()=>{
         alert("Bienvenido al Registro de Planta, seleccione con TRES click el elemento de la lista que desea tratar")
-        axios.get('http://192.168.0.118:4001/RegPlanta')
+        axios.get(`http://${process.env.REACT_APP_SERVER}/RegPlanta`)
         .catch(error=>console.log(error))
         .then(response=>{
             setDatosPlanta(response.data.Datos)
@@ -165,7 +165,7 @@ export default function RegistroPlanta() {
         navigate("/RegistroPlanta/Trazabilidad");
         if(EnviadoPor !== ''){
           axios
-            .post("http://192.168.0.118:4001/RegPlanta/Trazabilidad", {
+            .post(`http://${process.env.REACT_APP_SERVER}/RegPlanta/Trazabilidad`, {
               OF: OF,
               ModPor: sessionStorage.getItem("iniciales"),
               EnvPor: EnviadoPor,
@@ -919,7 +919,7 @@ export default function RegistroPlanta() {
             );
             //Seleccion del ensacado, filtramos por OF y TurnoID (1,2,5)
             axios
-              .post("http://192.168.0.118:4001/RegPlanta", {
+              .post(`http://${process.env.REACT_APP_SERVER}/RegPlanta`, {
                 OF: selectedRowData[0].OF,
               })
               .catch((error) => console.log(error))

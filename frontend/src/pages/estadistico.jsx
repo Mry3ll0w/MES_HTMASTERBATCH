@@ -53,7 +53,7 @@ export default function GraficaEstadistico() {
   
   //Peticiones a REST API
   useEffect(()=>{
-    axios.get('http://192.168.0.118:4001/dataEstadistico').then((response) => {
+    axios.get(`http://${process.env.REACT_APP_SERVER}/dataEstadistico`).then((response) => {
             setOFs(response.data.OFS)
             SetProductos(response.data.Productos);
             setTendencias(response.data.Tendencias);
@@ -134,7 +134,7 @@ export default function GraficaEstadistico() {
       if (Selected_Ten === '#'){ok = false; alert("Tienes que seleccionar una tendencia");} 
       
       if(ok){
-        axios.post('http://192.168.0.118:4001/calcEstadistico',
+        axios.post(`http://${process.env.REACT_APP_SERVER}/calcEstadistico`,
           {
             Lim_Sup : corrector_fecha(Fecha_Limite_Superior),
             Lim_Inf : corrector_fecha(Fecha_Limite_Inferior),
