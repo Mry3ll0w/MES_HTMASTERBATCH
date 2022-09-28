@@ -85,8 +85,8 @@ export default function MantenimientoTareas() {
                     {...e}
                     value={SelCOD1}
                     onChange={(e) => SetCOD1(e.target.value)}
-                    sx={{ width: "100", m: "3px", p: "3px", minWidth: 200 }}
-                    label="Turno"
+                    sx={{ width: "100px", m: "3px", p: "3px", minWidth: 200 }}
+                    
                   ></TextField>
                 )}
               >
