@@ -676,3 +676,30 @@ app.get('/RegistroPlanta/GestionDesperdicios/:OF',(request,reply)=>{
     }
 f();
 });
+
+app.get('/Mantenimiento/Tareas',(request, reply) =>{
+    async function f(){
+        var q_maquinas = `
+            use MES;
+            SELECT
+                tbCOD1.Nombre as 'COD1NOMBRE'
+            FROM tbCOD2 , tbCOD1, tbMaquina
+            WHERE
+                tbCOD1.ID = tbMaquina.COD1
+                and
+                tbCOD2.ID = tbMaquina.COD2
+            GROUP BY tbCOD1.Nombre;
+        `
+        var res_maquinas = await MES_query(q_maquinas);
+        reply.send({Maquinas: res_maquinas.query})
+    }
+f()
+})
+
+app.post('/Mantenimiento/Tareas', (request, reply) => {
+    console.log(request)
+    async function f(){
+
+    }
+f()
+})

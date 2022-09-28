@@ -59,7 +59,7 @@ export function App() {
             element={<HomeMantenimiento />}
           />
           <Route path="/Planta" element={<HomePlanta />} />
-          <Route path="/TareasMantenimiento" element={<MantenimientoTareas />} />
+          <Route path="/Mantenimiento/Tareas" element={<MantenimientoTareas />} />
         </Routes>
       </div>
       <Footer />

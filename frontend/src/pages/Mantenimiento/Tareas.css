@@ -1,0 +1,21 @@
+.MenuDiv{
+    margin-left: 33%;
+    margin-right: 33%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    text-align: center;
+}
+
+.AccordionDiv{
+    background-color: #B6D0E1;
+}
+
+.SmallSelect{
+    width: 100px;
+    margin: 0.3%;
+}
+
+.MediumSelect{
+    width: 200px;
+    margin: 0.4%;
+}

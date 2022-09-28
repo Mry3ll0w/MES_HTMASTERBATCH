@@ -26,7 +26,7 @@ export default function HomeMantenimiento() {
   const menu_tareas = [
       {
         element: (
-          <Button onClick={()=> navigate("/TareasMantenimiento")} variant="contained">
+          <Button onClick={()=> navigate("/Mantenimiento/Tareas")} variant="contained">
             Tareas
           </Button>
         ),
