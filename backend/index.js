@@ -697,9 +697,31 @@ f()
 })
 
 app.post('/Mantenimiento/Tareas', (request, reply) => {
-    console.log(request)
+    console.log(request.body)
     async function f(){
-
+        var q_maquinas = `
+            USE MES;
+            SELECT
+                tbMaquina.ID, tbMaquina.Codigo AS Código,
+                tbCOD1.Cod AS COD1, tbCOD2.Cod AS COD2,
+                tbCOD1.Nombre AS COD1Nombre, tbCOD2.Nombre AS COD2Nombre,
+                tbCOD2.COD1ID
+                FROM tbCOD2 , tbCOD1, tbMaquina
+                WHERE
+                    tbCOD1.ID = tbMaquina.COD1
+                    and
+                    tbCOD2.ID = tbMaquina.COD2
+                    and
+                    tbCOD1.Nombre = '${request.body.COD1}'
+                ;
+        `
+        try{
+            var res_maquinas = await MES_query(q_maquinas)
+            reply.send({FilteredMaquina: res_maquinas.query})
+        }
+        catch{
+            reply.send('Error obteniendo lista de maquinas con ese codigo')
+        }
     }
 f()
 })
