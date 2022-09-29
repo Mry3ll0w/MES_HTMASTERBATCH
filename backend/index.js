@@ -665,7 +665,7 @@ app.get('/RegistroPlanta/GestionDesperdicios/:OF',(request,reply)=>{
             WHERE
                 [OFResiduoRech].[OF] = '${OF}'
             ;`
-
+            
             var res_residuo_rech = await MES_query(q_residuo_rech)
             var res_residuo_des = await MES_query(q_residuo_des)
             reply.send({Rech : res_residuo_rech.query[0], Des: res_residuo_des.query[0]})
@@ -690,8 +690,17 @@ app.get('/Mantenimiento/Tareas',(request, reply) =>{
                 tbCOD2.ID = tbMaquina.COD2
             GROUP BY tbCOD1.Nombre;
         `
+        var q_next_id = `
+        use MES;
+        select TOP 1
+            (ID + 1) AS NextID
+        FROM
+            vwTareasMantenimiento
+        ORDER BY FechaHora DESC;
+        `
+        var res_next_id = await MES_query(q_next_id)
         var res_maquinas = await MES_query(q_maquinas);
-        reply.send({Maquinas: res_maquinas.query})
+        reply.send({Maquinas: res_maquinas.query, NextID: res_next_id.query[0]})
     }
 f()
 })
@@ -705,7 +714,7 @@ app.post('/Mantenimiento/Tareas', (request, reply) => {
                 tbMaquina.ID, tbMaquina.Codigo AS Código,
                 tbCOD1.Cod AS COD1, tbCOD2.Cod AS COD2,
                 tbCOD1.Nombre AS COD1Nombre, tbCOD2.Nombre AS COD2Nombre,
-                tbCOD2.COD1ID
+                tbCOD2.COD1ID, tbMaquina.ID as MaquinaID
                 FROM tbCOD2 , tbCOD1, tbMaquina
                 WHERE
                     tbCOD1.ID = tbMaquina.COD1
@@ -715,8 +724,10 @@ app.post('/Mantenimiento/Tareas', (request, reply) => {
                     tbCOD1.Nombre = '${request.body.COD1}'
                 ;
         `
+        
         try{
             var res_maquinas = await MES_query(q_maquinas)
+            
             reply.send({FilteredMaquina: res_maquinas.query})
         }
         catch{
