@@ -44,6 +44,21 @@
     font-size: 16px;
     margin-left: 1%;
 }
+
+.DescripcionEmpleado {
+    width: 350px;
+    height: 50px;
+    font-size: 16px;
+    margin-left: 1%;
+}
+
+.ObservacionEmpleado {
+    width: 350px;
+    height: 50px;
+    font-size: 16px;
+    margin-left: 1%;
+}
+
 .FormNewTarea{
     width:50%;
     float: left;
@@ -54,12 +69,41 @@
 .AccionesDiv{
     float:right;
     width: 49%;
-    overflow: auto;
+    overflow-y: scroll;
+    overflow-x: scroll;
     height: auto;
     
 }
 
 .customTh{
-    
     padding-right: 20px;
+}
+.FechaRealizacion{
+    margin-left: 33%;
+}
+.inputFecha{
+    border: 1px solid black;
+    width: auto;
+    height: auto;
+    background-color: transparent;
+}
+
+.WrapperAcciones{
+    border: 2px solid #1876D2
+}
+
+.EmpleadosTh{
+    background-color: #BABFC8;
+    border: 1px solid black;
+    min-width: 80px;
+    width: auto;
+    margin-left: 2px;
+    margin-top: 2px;
+    padding: 2px;
+}
+.EmpleadosTd{
+    max-width: 150px;
+    height: auto;
+    border: 1px solid black;
+    
 }

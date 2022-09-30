@@ -1,16 +1,14 @@
 import React, { Fragment, useEffect } from 'react'
-import {Autocomplete,TextField,Button, Typography, Accordion, AccordionDetails, AccordionSummary} from '@mui/material'
+import {Select, Pagination,Autocomplete,TextField,Button, Typography, Accordion, AccordionDetails, AccordionSummary, MenuItem} from '@mui/material'
 import './Tareas.css'
 import axios from 'axios'
 import { useState } from 'react';
-import Select from 'react-select'
-
+import {DateTime} from 'luxon'
 
 
 export default function MantenimientoTareas() {
   
   //useStates
-  
   const [Codigo, SetCodigo] = useState('______')
   const [COD1Maquinas, SetCOD1Maquinas] = useState([]);
   const [SelMaquina,SetSelMaquina] = useState();
@@ -20,8 +18,16 @@ export default function MantenimientoTareas() {
   const [Observacion, SetObservacion] = useState('')
   const [NEquipoID, SetNEquipoID] = useState(0)
   const [NextID, SetNextID] = useState(0)
+  const [CriticidadID,SetCriticidadID] = useState(1)
+  const [CategoriaID, SetCategoriaID] = useState(3)
+  const [EstadoTareaID, SetEstadoTareaID] = useState(1)
+  //Acciones
+  const [PaginaAcciones,SetPaginaAcciones] = useState(1)
+  const [NFecha, SetNFecha] = useState()
+  const [NDescripcionEmpleado, SetNDescripcionEmpleado] = useState('')
+  const [NObservacionesEmpleado, SetNObservacionesEmpleado] = useState('')
 
-  
+  //DataFetch y carga inicial de useStates
   useEffect(()=>{
     axios.get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas`)
     .catch( e => console.log(e))
@@ -44,8 +50,61 @@ export default function MantenimientoTareas() {
     else{
       SetObservacion(`Tarea creada en Mantenimiento por ${sessionStorage.getItem('iniciales')}, cargo de ${sessionStorage.getItem('Formulario')}`)
     }
+
+    //Metemos la fecha actual 
+    const Actual= DateTime.now().c;
+
+    SetNFecha(`${Actual.year}-${Actual.month}-${Actual.day}`)
+
       
   },[])
+
+  //Internal functions
+
+  /**
+   * Funcion para mostrar página que toca dentro de la parte derecha (acciones/consumo de materiales)
+   * @param {Int} Pagina 
+   */
+  function DispAcciones(Pagina, EmpleadosAsignados, EsModificacion){
+    if(Pagina === 1){
+      
+      return (
+        <Fragment>
+          <Typography fontSize={"18px"}>
+            <p textAlign="center" style={{ marginLeft: "20px" }}>
+              Empleados y Tiempo
+            </p>
+          </Typography>
+
+          <table style={{ marginLeft: "20px" }}>
+            <tbody>
+              <tr>
+                <th className="EmpleadosTh">
+                  <Typography fontSize={"14px"}>Emp</Typography>
+                  {/**Codigo E*** */}
+                </th>
+                <th className="EmpleadosTh">
+                  <Typography fontSize={"14px"}>Alias</Typography>
+                </th>
+                <th className="EmpleadosTh">
+                  <Typography fontSize={"14px"}>Nombre</Typography>
+                </th>
+                <th className="EmpleadosTh">
+                  <Typography fontSize={"14px"}>Apellidos</Typography>
+                </th>
+                <th className="EmpleadosTh">
+                  <Typography fontSize={"14px"}>Tiempo</Typography>
+                </th>
+              </tr>
+            </tbody>
+          </table>
+        </Fragment>
+      );
+    }
+    else if(Pagina === 2){
+
+    }
+  }
 
   return (
     <Fragment>
@@ -65,10 +124,85 @@ export default function MantenimientoTareas() {
                   <tr>
                     <th className="customTh">
                       <Typography fontSize={"16px"}>
-                        Selecciona el COD1 de la máquina
+                        Criticidad de Tarea
                       </Typography>
                     </th>
-
+                    <th className="customTh">
+                      <Typography fontSize={"16px"}>
+                        Categoría De Tarea
+                      </Typography>
+                    </th>
+                    <th className="customTh">
+                      <Typography fontSize={"16px"}>
+                        Estado De La Tarea
+                      </Typography>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <Select
+                        value={CriticidadID}
+                        onChange={(e) => {
+                          SetCriticidadID(e.target.value);
+                        }}
+                        sx={{ width: "165px" }}
+                      >
+                        <MenuItem value={1}>Sin definir</MenuItem>
+                        <MenuItem value={2}>Alta</MenuItem>
+                        <MenuItem value={3}>Media</MenuItem>
+                        <MenuItem value={4}>Baja</MenuItem>
+                      </Select>
+                    </td>
+                    <td>
+                      <Select
+                        value={CategoriaID}
+                        onChange={(e) => {
+                          SetCategoriaID(e.target.value);
+                        }}
+                        sx={{ width: "165px" }}
+                      >
+                        <MenuItem value={1}>Producción</MenuItem>
+                        <MenuItem value={2}>Auxiliar</MenuItem>
+                        <MenuItem value={3}>Mantenimiento</MenuItem>
+                      </Select>
+                    </td>
+                    <td>
+                      <Select
+                        value={EstadoTareaID}
+                        onChange={(e) => {
+                          SetEstadoTareaID(e.target.value);
+                        }}
+                        sx={{ width: "165px" }}
+                      >
+                        <MenuItem
+                          value={1}
+                          sx={{ background: "#FF5252", textAlign: "center" }}
+                        >
+                          <Typography
+                            sx={{ background: "#FF5252", textAlign: "center" }}
+                          >
+                            Pendiente
+                          </Typography>
+                        </MenuItem>
+                        <MenuItem
+                          value={2}
+                          sx={{ background: "#7FCC72", textAlign: "center" }}
+                        >
+                          <Typography
+                            sx={{ background: "#7FCC72", textAlign: "center" }}
+                          >
+                            Realizada
+                          </Typography>
+                        </MenuItem>
+                      </Select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <table>
+                <tbody>
+                  <tr>
                     <th className="customTh">
                       <Typography fontSize={"16px"}>
                         Selecciona el equipo
@@ -84,6 +218,7 @@ export default function MantenimientoTareas() {
                         onChange={(e, v) => {
                           SetCOD1(v);
                           SetSelMaquina(null);
+                          SetCodigo("_____");
                           if (v !== null) {
                             axios
                               .post(
@@ -112,7 +247,7 @@ export default function MantenimientoTareas() {
                             {...e}
                             value={COD1Maquinas}
                             sx={{
-                              width: "100px",
+                              width: "120px",
                               m: "3px",
                               p: "3px",
                               minWidth: 200,
@@ -129,19 +264,19 @@ export default function MantenimientoTareas() {
                         options={MaquinasFiltradas}
                         onChange={(e, v) => {
                           //Comprobamos que formato tiene el codigo
-                          var [code, , ,eqID] = v.split(" | ");
+                          var [code, , , eqID] = v.split(" | ");
                           //Generado el codigo usando el formato de planta
                           SetCodigo(`TP${code}-${NextID}`);
-                          SetSelMaquina(v)
+                          SetSelMaquina(v);
                           //Guardamos el EquipoID
-                          SetNEquipoID(eqID)
+                          SetNEquipoID(eqID);
                         }}
                         renderInput={(e) => (
                           <TextField
                             {...e}
                             value={SelMaquina}
                             sx={{
-                              width: "300px",
+                              width: "340px",
                               m: "3px",
                               p: "3px",
                               minWidth: 200,
@@ -153,7 +288,6 @@ export default function MantenimientoTareas() {
                   </tr>
                 </tbody>
               </table>
-
               <Typography fontSize={"16px"}>Descripción:</Typography>
               <br />
               <textarea
@@ -171,14 +305,53 @@ export default function MantenimientoTareas() {
               ></textarea>
               <br />
               <Button variant="contained" sx={{ margin: "10px" }}>
-                Crear Seguimiento
+                Crear Tarea con Codigo : {Codigo}
               </Button>
             </div>
             <div className="AccionesDiv">
               <br />
-              <Typography fontSize={"16px"}>
-                Codigo Generado: {Codigo}
-              </Typography>
+              <div className="BoxPagina">
+                <Typography fontSize={"16px"}>
+                  Descripcion del Empleado:
+                  <span className="FechaRealizacion">
+                    Fecha Creación:
+                    <input
+                      className="inputFecha"
+                      type={"date"}
+                      value={NFecha}
+                      onChange={(e) => SetNFecha(e.target.value)}
+                    />
+                  </span>
+                </Typography>
+                <textarea
+                  className="DescripcionEmpleado"
+                  value={NDescripcionEmpleado}
+                  onChange={(e) => {
+                    SetNDescripcionEmpleado(e.target.value);
+                  }}
+                />
+                <br />
+                <Typography fontSize={"16px"}>
+                  Observaciones del Empleado:
+                </Typography>
+                <textarea
+                  className="ObservacionEmpleado"
+                  value={NObservacionesEmpleado}
+                  onChange={(e) => {
+                    SetNObservacionesEmpleado(e.target.value);
+                  }}
+                />
+                <div className="WrapperAcciones">
+                  {DispAcciones(PaginaAcciones)}
+                  <Pagination
+                    count={2}
+                    onChange={(e, p) => {
+                      SetPaginaAcciones(p);
+                    }}
+                  />
+                  <br />
+                </div>
+              </div>
             </div>
           </AccordionDetails>
         </Accordion>

@@ -5,17 +5,15 @@ import HomePlanta from "./menu_departamentos/Planta";
 
 function Selector_Menu(){
     
-    switch(sessionStorage.getItem('Formulario')){
-        case 'Produccion':
+    
+        if(sessionStorage.getItem('Formulario').includes('Produccion'))
             return <HomeProduccion />
-        break;
-        case 'Mantenimiento':
+        else if(sessionStorage.getItem('Formulario').includes('Mantenimiento'))
             return <HomeMantenimiento />
-        break;
-        case 'Planta':
+        else if(sessionStorage.getItem('Formulario').includes('Planta'))
             return  <HomePlanta />
-        break;
-    }
+        
+    
 }
 
 export default function Home() {
