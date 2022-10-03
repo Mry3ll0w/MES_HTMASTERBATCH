@@ -679,6 +679,12 @@ f();
 
 app.get('/Mantenimiento/Tareas',(request, reply) =>{
     async function f(){
+        var q_empleados = `
+
+                select ID,Codigo,Alias,Nombre,Apellidos 
+                from WEB_API_TABLES.dbo.tbEmpleados 
+                WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;`
+            
         var q_maquinas = `
             use MES;
             SELECT
@@ -700,7 +706,9 @@ app.get('/Mantenimiento/Tareas',(request, reply) =>{
         `
         var res_next_id = await MES_query(q_next_id)
         var res_maquinas = await MES_query(q_maquinas);
-        reply.send({Maquinas: res_maquinas.query, NextID: res_next_id.query[0]})
+        var res_empleados = await MES_query(q_empleados)
+    
+        reply.send({Maquinas: res_maquinas.query, NextID: res_next_id.query[0], Empleados: res_empleados.query})
     }
 f()
 })

@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect } from 'react'
-import {Select, Pagination,Autocomplete,TextField,Button, Typography, Accordion, AccordionDetails, AccordionSummary, MenuItem} from '@mui/material'
+import {Select as RSelect, Pagination,Autocomplete,TextField,Button, Typography, Accordion, AccordionDetails, AccordionSummary, MenuItem} from '@mui/material'
 import './Tareas.css'
 import axios from 'axios'
 import { useState } from 'react';
 import {DateTime} from 'luxon'
+import Select from 'react-dropdown-select'
 
 
 export default function MantenimientoTareas() {
@@ -22,10 +23,11 @@ export default function MantenimientoTareas() {
   const [CategoriaID, SetCategoriaID] = useState(3)
   const [EstadoTareaID, SetEstadoTareaID] = useState(1)
   //Acciones
+  var OpcionesEmpleados = []
   const [PaginaAcciones,SetPaginaAcciones] = useState(1)
-  const [NFecha, SetNFecha] = useState()
-  const [NDescripcionEmpleado, SetNDescripcionEmpleado] = useState('')
-  const [NObservacionesEmpleado, SetNObservacionesEmpleado] = useState('')
+  const [NFecha,SetNFecha]=useState('')
+  const [NObservacionesEmpleado,SetNObservacionesEmpleado]=useState('')
+  const [NDescripcionEmpleado,SetNDescripcionEmpleado]=useState('')
 
   //DataFetch y carga inicial de useStates
   useEffect(()=>{
@@ -41,8 +43,12 @@ export default function MantenimientoTareas() {
       SetCOD1Maquinas(tCOD1)
       console.log(response.data)
       SetNextID(response.data.NextID.NextID)
+      //Preparamos las opciones de empleado
+      response.data.Empleados.map(i => {
+        OpcionesEmpleados=[...OpcionesEmpleados,`${i.Codigo}|${i.Alias} ${i.Nombre} ${i.Apellidos}`]
+      })
     })
-
+    console.log(OpcionesEmpleados)
     
     if(!window.location.href.includes('Mantenimiento')){
       SetObservacion(`Tarea creada en Planta por ${sessionStorage.getItem('iniciales')}` )
@@ -70,34 +76,7 @@ export default function MantenimientoTareas() {
       
       return (
         <Fragment>
-          <Typography fontSize={"18px"}>
-            <p textAlign="center" style={{ marginLeft: "20px" }}>
-              Empleados y Tiempo
-            </p>
-          </Typography>
-
-          <table style={{ marginLeft: "20px" }}>
-            <tbody>
-              <tr>
-                <th className="EmpleadosTh">
-                  <Typography fontSize={"14px"}>Emp</Typography>
-                  {/**Codigo E*** */}
-                </th>
-                <th className="EmpleadosTh">
-                  <Typography fontSize={"14px"}>Alias</Typography>
-                </th>
-                <th className="EmpleadosTh">
-                  <Typography fontSize={"14px"}>Nombre</Typography>
-                </th>
-                <th className="EmpleadosTh">
-                  <Typography fontSize={"14px"}>Apellidos</Typography>
-                </th>
-                <th className="EmpleadosTh">
-                  <Typography fontSize={"14px"}>Tiempo</Typography>
-                </th>
-              </tr>
-            </tbody>
-          </table>
+          
         </Fragment>
       );
     }
@@ -140,7 +119,7 @@ export default function MantenimientoTareas() {
                   </tr>
                   <tr>
                     <td>
-                      <Select
+                      <RSelect
                         value={CriticidadID}
                         onChange={(e) => {
                           SetCriticidadID(e.target.value);
@@ -151,10 +130,10 @@ export default function MantenimientoTareas() {
                         <MenuItem value={2}>Alta</MenuItem>
                         <MenuItem value={3}>Media</MenuItem>
                         <MenuItem value={4}>Baja</MenuItem>
-                      </Select>
+                      </RSelect>
                     </td>
                     <td>
-                      <Select
+                      <RSelect
                         value={CategoriaID}
                         onChange={(e) => {
                           SetCategoriaID(e.target.value);
@@ -164,10 +143,10 @@ export default function MantenimientoTareas() {
                         <MenuItem value={1}>Producción</MenuItem>
                         <MenuItem value={2}>Auxiliar</MenuItem>
                         <MenuItem value={3}>Mantenimiento</MenuItem>
-                      </Select>
+                      </RSelect>
                     </td>
                     <td>
-                      <Select
+                      <RSelect
                         value={EstadoTareaID}
                         onChange={(e) => {
                           SetEstadoTareaID(e.target.value);
@@ -194,7 +173,7 @@ export default function MantenimientoTareas() {
                             Realizada
                           </Typography>
                         </MenuItem>
-                      </Select>
+                      </RSelect>
                     </td>
                   </tr>
                 </tbody>
