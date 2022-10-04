@@ -89,7 +89,8 @@
 }
 
 .WrapperAcciones{
-    border: 2px solid #1876D2
+    border: 2px solid #1876D2;
+    min-height: 300px;
 }
 
 .EmpleadosTh{
@@ -110,4 +111,15 @@
 
 .EmpleadosInput{
     width: 100px;
+}
+
+.PaginationFooter{
+    position: relative;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+}
+.TablaAcciones{
+    margin: 10px;
 }

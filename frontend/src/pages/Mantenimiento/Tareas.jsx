@@ -1,14 +1,17 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect,cloneElement } from 'react'
 import {Select as RSelect, Pagination,Autocomplete,TextField,Button, Typography, Accordion, AccordionDetails, AccordionSummary, MenuItem} from '@mui/material'
 import './Tareas.css'
 import axios from 'axios'
 import { useState } from 'react';
 import {DateTime} from 'luxon'
-import Select from 'react-dropdown-select'
-
-
+import Dropdown from 'react-dropdown-select'
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { useNavigate } from 'react-router-dom';
 export default function MantenimientoTareas() {
-  
+  //Navigates
+  const navigate = useNavigate()
+
   //useStates
   const [Codigo, SetCodigo] = useState('______')
   const [COD1Maquinas, SetCOD1Maquinas] = useState([]);
@@ -23,20 +26,26 @@ export default function MantenimientoTareas() {
   const [CategoriaID, SetCategoriaID] = useState(3)
   const [EstadoTareaID, SetEstadoTareaID] = useState(1)
   //Acciones
-  var OpcionesEmpleados = []
+  const [Empleados,SetEmpleados]=useState([])
+  const [OpEmpleados,SetOpcionesEmpleados] = useState([])
   const [PaginaAcciones,SetPaginaAcciones] = useState(1)
   const [NFecha,SetNFecha]=useState('')
   const [NObservacionesEmpleado,SetNObservacionesEmpleado]=useState('')
   const [NDescripcionEmpleado,SetNDescripcionEmpleado]=useState('')
-
+  const [SelectedEmpleados,SetSelectedEmpleados]=useState([])
+  const [SelectedID,SetSelectedID]=useState( new Set())
   //DataFetch y carga inicial de useStates
   useEffect(()=>{
+    if(sessionStorage.getItem('iniciales') === null){
+      navigate('/login')
+    }
+
     axios.get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas`)
     .catch( e => console.log(e))
     .then(response => {
       //Preparamos las maquinas para el select
       var tCOD1 = []
-      
+      var Empleados = []
       response.data.Maquinas.map( (i,n) => {
         tCOD1 = [...tCOD1, i.COD1NOMBRE];
       })
@@ -45,10 +54,12 @@ export default function MantenimientoTareas() {
       SetNextID(response.data.NextID.NextID)
       //Preparamos las opciones de empleado
       response.data.Empleados.map(i => {
-        OpcionesEmpleados=[...OpcionesEmpleados,`${i.Codigo}|${i.Alias} ${i.Nombre} ${i.Apellidos}`]
+        Empleados =[...Empleados,{value : i.ID, label: `${i.Codigo} | ${i.Alias} | ${i.Nombre} | ${i.Apellidos}`}]
       })
+      SetOpcionesEmpleados(Empleados)
+      SetEmpleados(response.data.Empleados)
     })
-    console.log(OpcionesEmpleados)
+    
     
     if(!window.location.href.includes('Mantenimiento')){
       SetObservacion(`Tarea creada en Planta por ${sessionStorage.getItem('iniciales')}` )
@@ -71,12 +82,109 @@ export default function MantenimientoTareas() {
    * Funcion para mostrar página que toca dentro de la parte derecha (acciones/consumo de materiales)
    * @param {Int} Pagina 
    */
-  function DispAcciones(Pagina, EmpleadosAsignados, EsModificacion){
+  function DispAcciones(Pagina){
+    
     if(Pagina === 1){
       
       return (
         <Fragment>
-          
+          <br />
+          <Typography fontSize={"16px"} style={{ marginLeft: "10px" }}>
+            Seleccione los empleados implicados en la tarea
+          </Typography>
+          <div>
+            <Dropdown
+              options={OpEmpleados}
+              multi={true}
+              style={{
+                marginLeft: "10px",
+                width: "600px",
+                fontSize: "18px",
+                position: "absolute",
+              }}
+              value={SelectedEmpleados}
+              onChange={(e) => {
+                
+                var tempSet = new Set()
+                Empleados.map( i => {
+                  e.map(j => {
+                    
+                    if( i.ID == j.value)
+                      SetSelectedID(SelectedID.add(j.value))
+                  })
+                })
+
+                SetSelectedEmpleados(e);
+                
+                console.log(SelectedID);
+              }}
+            />
+            <br /> <br /> <br /> <br />
+          </div>
+          <br />
+          <div className="TablaAcciones">
+            <table>
+              <tbody>
+                <tr>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Emp</Typography>
+                  </th>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Alias</Typography>
+                  </th>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Apellidos</Typography>
+                  </th>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Nombre</Typography>
+                  </th>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Tiempo</Typography>
+                  </th>
+                </tr>
+                
+                {Empleados.map((i) => {
+                  if(SelectedID.has(i.ID)){
+                    return (
+                      <tr id={1}>
+                        <td id={i.ID + 2} className="EmpleadosTd">
+                          {i.Codigo}
+                        </td>
+                        <td id={i.ID + 3} className="EmpleadosTd">
+                          {i.Alias}
+                        </td>
+                        <td id={i.ID + 4} className="EmpleadosTd">
+                          {i.Apellidos}
+                        </td>
+                        <td id={i.ID + 5} className="EmpleadosTd">
+                          {i.Nombre}
+                        </td>
+                        <td id={i.ID + 2} className="EmpleadosTd">
+                          <input
+                            value={i.tiempo}
+                            type="time"
+                            
+                            onChange={(e) => {
+                              SetEmpleados(
+                                Empleados.map((j) =>
+                                  j.ID === i.ID
+                                    ? { ...j, tiempo: e.target.value }
+                                    : j
+                                )
+                              );
+                            }}
+                          />
+                        </td>
+                        
+                      </tr>
+                    );
+                  }
+                })}
+                
+              </tbody>
+            </table>
+          </div>
+          <br />
         </Fragment>
       );
     }
@@ -322,13 +430,15 @@ export default function MantenimientoTareas() {
                 />
                 <div className="WrapperAcciones">
                   {DispAcciones(PaginaAcciones)}
-                  <Pagination
-                    count={2}
-                    onChange={(e, p) => {
-                      SetPaginaAcciones(p);
-                    }}
-                  />
-                  <br />
+                  <div className='PaginationFooter'>
+                    <Pagination
+                      count={2}
+                      onChange={(e, p) => {
+                        SetPaginaAcciones(p);
+                      }}
+                    />
+                    <br />
+                  </div>
                 </div>
               </div>
             </div>

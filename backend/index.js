@@ -681,7 +681,7 @@ app.get('/Mantenimiento/Tareas',(request, reply) =>{
     async function f(){
         var q_empleados = `
 
-                select ID,Codigo,Alias,Nombre,Apellidos 
+                select ID,Codigo,Alias,Nombre,Apellidos, '00:00' as tiempo
                 from WEB_API_TABLES.dbo.tbEmpleados 
                 WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;`
             
