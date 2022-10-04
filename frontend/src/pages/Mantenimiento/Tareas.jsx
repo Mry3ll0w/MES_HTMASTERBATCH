@@ -34,8 +34,15 @@ export default function MantenimientoTareas() {
   const [NDescripcionEmpleado,SetNDescripcionEmpleado]=useState('')
   const [SelectedEmpleados,SetSelectedEmpleados]=useState([])
   const [SelectedID,SetSelectedID]=useState( new Set())
+  //Consumo de materiales
+  const [Materiales,SetMateriales]=useState([])
+  const [OpMat,SetOpMat]=useState([])
+  const [SelectedOptionsMat,SetSelectedOptionsMat]=useState([])
+  const [SelectedMatID,SetSelectedMatID]= useState(new Set())
+
   //DataFetch y carga inicial de useStates
   useEffect(()=>{
+
     if(sessionStorage.getItem('iniciales') === null){
       navigate('/login')
     }
@@ -52,12 +59,22 @@ export default function MantenimientoTareas() {
       SetCOD1Maquinas(tCOD1)
       console.log(response.data)
       SetNextID(response.data.NextID.NextID)
+      
       //Preparamos las opciones de empleado
       response.data.Empleados.map(i => {
         Empleados =[...Empleados,{value : i.ID, label: `${i.Codigo} | ${i.Alias} | ${i.Nombre} | ${i.Apellidos}`}]
       })
       SetOpcionesEmpleados(Empleados)
       SetEmpleados(response.data.Empleados)
+
+      //Preparamos las opciones de materiales
+      var tOpM = []
+      SetMateriales(response.data.Materiales)
+      response.data.Materiales.map(i => {
+        tOpM = [...tOpM,{value : i.ID, label: `${i.ID} | ${i.Descripcion}`}]
+      })
+      SetOpMat(tOpM)
+
     })
     
     
@@ -83,7 +100,6 @@ export default function MantenimientoTareas() {
    * @param {Int} Pagina 
    */
   function DispAcciones(Pagina){
-    
     if(Pagina === 1){
       
       return (
@@ -146,7 +162,7 @@ export default function MantenimientoTareas() {
                 {Empleados.map((i) => {
                   if(SelectedID.has(i.ID)){
                     return (
-                      <tr id={1}>
+                      <tr id={1 + i.ID}>
                         <td id={i.ID + 2} className="EmpleadosTd">
                           {i.Codigo}
                         </td>
@@ -188,8 +204,30 @@ export default function MantenimientoTareas() {
         </Fragment>
       );
     }
-    else if(Pagina === 2){
-
+    else if(Pagina ===2){
+      return (
+        <Fragment>
+          <div className="DivConsumoMateriales">
+            <Typography fontSize={'18px'} sx={{margin: '8px'}}>
+              Consumo de Material
+            </Typography>
+            <br />
+            <Typography fontSize={'16px'} sx={{margin: '8px'}}>
+              Selecciona el material usado
+            </Typography>
+            <Dropdown 
+              options={OpMat}
+              multi={true}
+              onChange={e => {
+                console.log(e)
+                SetSelectedID(SelectedID.add(e.value))
+                console.log(SelectedID)
+              }}
+            />
+          </div>
+        </Fragment>
+      );
+      
     }
   }
 

@@ -704,11 +704,18 @@ app.get('/Mantenimiento/Tareas',(request, reply) =>{
             vwTareasMantenimiento
         ORDER BY FechaHora DESC;
         `
+        var q_materiales = `
+        use MES;
+        select ID,Referencia,Descripcion
+        from tbMaterial
+        ORDER by Referencia;
+        `
         var res_next_id = await MES_query(q_next_id)
         var res_maquinas = await MES_query(q_maquinas);
         var res_empleados = await MES_query(q_empleados)
-    
-        reply.send({Maquinas: res_maquinas.query, NextID: res_next_id.query[0], Empleados: res_empleados.query})
+        var res_materiales = await MES_query(q_materiales)
+        reply.send({Maquinas: res_maquinas.query, NextID: res_next_id.query[0], Empleados: res_empleados.query, 
+            Materiales: res_materiales.query})
     }
 f()
 })
