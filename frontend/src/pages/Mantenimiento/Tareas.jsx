@@ -197,26 +197,70 @@ export default function MantenimientoTareas() {
       return (
         <Fragment>
           <div className="DivConsumoMateriales">
-            <Typography fontSize={'18px'} sx={{margin: '8px'}}>
+            <Typography fontSize={"18px"} sx={{ margin: "8px" }}>
               Consumo de Material
             </Typography>
             <br />
-            <Typography fontSize={'16px'} sx={{margin: '8px'}}>
+            <Typography fontSize={"16px"} sx={{ margin: "8px" }}>
               Selecciona el material usado
             </Typography>
-            <Dropdown 
+            <Dropdown
               options={OpMat}
               multi={true}
               value={SelectedOptionsMat}
-              style={{position: 'absolute', width: '600px', marginBottom: '100px', marginLeft: '10px'}}
-              onChange={e => {
-                SetSelectedOptionsMat(e)
+              style={{
+                position: "absolute",
+                width: "600px",
+                marginBottom: "100px",
+                marginLeft: "10px",
+              }}
+              onChange={(e) => {
+                SetSelectedOptionsMat(e);
               }}
             />
-            <br /> <br/> <br /> <br /> <br />
-            <div className='TablaConsumoDiv'>
-
+            <br /> <br /> <br /> <br />
+            <div className="TablaAcciones">
+              <table>
+                <tbody>
+                  <tr>
+                    <th className="EmpleadosTh">
+                      <Typography fontSize={"16px"}>ID Mat</Typography>
+                    </th>
+                    <th className="EmpleadosTh">
+                      <Typography fontSize={"16px"}>Cant</Typography>
+                    </th>
+                  </tr>
+                  
+                    {Materiales.map(i => {
+                      if(SelectedOptionsMat.filter( j => j.value === i.ID).length > 0){
+                        return (
+                          <tr>
+                            <td className="EmpleadosTd">
+                              <Typography fontSize={"16px"}>{i.ID}</Typography>
+                            </td>
+                            <td className='EmpleadosTd'>
+                              <input className='MaterialesInput' value={i.Cantidad} 
+                                onChange={e => {
+                                  SetMateriales(
+                                    Materiales.map((j) =>
+                                      j.ID === i.ID
+                                        ? { ...j, Cantidad: e.target.value }
+                                        : j
+                                    )
+                                  );
+                                }}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      }
+                    })}
+                  
+                </tbody>
+              </table>
             </div>
+            <br />
+            <br />
           </div>
         </Fragment>
       );
@@ -394,7 +438,7 @@ export default function MantenimientoTareas() {
                             {...e}
                             value={SelMaquina}
                             sx={{
-                              width: "340px",
+                              width: "390px",
                               m: "3px",
                               p: "3px",
                               minWidth: 200,
@@ -428,47 +472,53 @@ export default function MantenimientoTareas() {
             </div>
             <div className="AccionesDiv">
               <br />
-              <div className="BoxPagina">
-                <Typography fontSize={"16px"}>
-                  Descripcion del Empleado:
-                  <span className="FechaRealizacion">
-                    Fecha Creación:
-                    <input
-                      className="inputFecha"
-                      type={"date"}
-                      value={NFecha}
-                      onChange={(e) => SetNFecha(e.target.value)}
-                    />
-                  </span>
-                </Typography>
-                <textarea
-                  className="DescripcionEmpleado"
-                  value={NDescripcionEmpleado}
-                  onChange={(e) => {
-                    SetNDescripcionEmpleado(e.target.value);
-                  }}
-                />
-                <br />
-                <Typography fontSize={"16px"}>
-                  Observaciones del Empleado:
-                </Typography>
-                <textarea
-                  className="ObservacionEmpleado"
-                  value={NObservacionesEmpleado}
-                  onChange={(e) => {
-                    SetNObservacionesEmpleado(e.target.value);
-                  }}
-                />
-                <div className="WrapperAcciones">
-                  {DispAcciones(PaginaAcciones)}
-                  <div className='PaginationFooter'>
-                    <Pagination
-                      count={2}
-                      onChange={(e, p) => {
-                        SetPaginaAcciones(p);
-                      }}
-                    />
-                    <br />
+              <div>
+              <div className='TituloAcciones'>
+                <Typography fontSize={'25px'}>Acciones</Typography>
+              </div>
+              
+                <div className="BoxPagina">
+                  <Typography fontSize={"16px"}>
+                    Descripcion del Empleado:
+                    <span className="FechaRealizacion">
+                      Fecha Creación:
+                      <input
+                        className="inputFecha"
+                        type={"date"}
+                        value={NFecha}
+                        onChange={(e) => SetNFecha(e.target.value)}
+                      />
+                    </span>
+                  </Typography>
+                  <textarea
+                    className="DescripcionEmpleado"
+                    value={NDescripcionEmpleado}
+                    onChange={(e) => {
+                      SetNDescripcionEmpleado(e.target.value);
+                    }}
+                  />
+                  <br />
+                  <Typography fontSize={"16px"}>
+                    Observaciones del Empleado:
+                  </Typography>
+                  <textarea
+                    className="ObservacionEmpleado"
+                    value={NObservacionesEmpleado}
+                    onChange={(e) => {
+                      SetNObservacionesEmpleado(e.target.value);
+                    }}
+                  />
+                  <div>
+                    {DispAcciones(PaginaAcciones)}
+                    <div className="PaginationFooter">
+                      <Pagination
+                        count={2}
+                        onChange={(e, p) => {
+                          SetPaginaAcciones(p);
+                        }}
+                      />
+                      <br />
+                    </div>
                   </div>
                 </div>
               </div>

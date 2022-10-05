@@ -46,15 +46,15 @@
 }
 
 .DescripcionEmpleado {
-    width: 350px;
-    height: 50px;
+    width: 400px;
+    height: 80px;
     font-size: 16px;
     margin-left: 1%;
 }
 
 .ObservacionEmpleado {
-    width: 350px;
-    height: 50px;
+    width: 400px;
+    height: 80px;
     font-size: 16px;
     margin-left: 1%;
 }
@@ -79,7 +79,7 @@
     padding-right: 20px;
 }
 .FechaRealizacion{
-    margin-left: 33%;
+    margin-left: 37%;
 }
 .inputFecha{
     border: 1px solid black;
@@ -106,11 +106,16 @@
     max-width: 150px;
     height: auto;
     border: 1px solid black;
-    
+    text-align: center;
 }
 
 .EmpleadosInput{
     width: 100px;
+}
+
+.MaterialesInput{
+    width: 80px;
+    text-align: center;
 }
 
 .PaginationFooter{

@@ -706,7 +706,7 @@ app.get('/Mantenimiento/Tareas',(request, reply) =>{
         `
         var q_materiales = `
         use MES;
-        select ID,Referencia,Descripcion
+        select ID,Referencia,Descripcion, 0 as Cantidad
         from tbMaterial
         ORDER by Referencia;
         `
