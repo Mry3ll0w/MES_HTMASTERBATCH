@@ -96,6 +96,34 @@ export default function MantenimientoTareas() {
   //Internal functions
 
   /**
+   * Funcion para enviar los elementos al back
+   */
+  function SendTarea(){
+
+    var DatosMateriales = []
+    var DatosEmpleados = []
+
+    //Obtenemos los materiales seleccionados
+    SelectedOptionsMat.map( i => {
+      Materiales.map( j => {
+        if( i.value === j.ID)
+          DatosMateriales = [...DatosMateriales, j]
+      })
+    })
+
+    SelectedEmpleados.map(i => {
+      Empleados.map(j => {
+        if (i.value == j.ID)
+          DatosEmpleados = [...DatosEmpleados,j]
+      })
+    })
+
+    //Datos de la accion
+
+    
+  }
+
+  /**
    * Funcion para mostrar página que toca dentro de la parte derecha (acciones/consumo de materiales)
    * @param {Int} Pagina 
    */
@@ -218,7 +246,7 @@ export default function MantenimientoTareas() {
                 SetSelectedOptionsMat(e);
               }}
             />
-            <br /> <br /> <br /> <br />
+            <br /> <br /> <br />
             <div className="TablaAcciones">
               <table>
                 <tbody>
@@ -465,31 +493,35 @@ export default function MantenimientoTareas() {
                 value={Observacion}
                 onChange={(e) => SetObservacion(e.target.value)}
               ></textarea>
-              <br />
-              <Button variant="contained" sx={{ margin: "10px" }}>
+              
+              <Typography fontSize={"16px"}>
+                <span className="FechaRealizacion">
+                  Fecha Creación:
+                  <input
+                    className="inputFecha"
+                    type={"date"}
+                    value={NFecha}
+                    onChange={(e) => SetNFecha(e.target.value)}
+                  />
+                </span>
+              </Typography>
+              <Button
+                variant="contained"
+                sx={{ margin: "10px" }}
+                onClick={() => SendTarea()}
+              >
                 Crear Tarea con Codigo : {Codigo}
               </Button>
+              <br />
             </div>
             <div className="AccionesDiv">
-              <br />
-              <div>
-              <div className='TituloAcciones'>
-                <Typography fontSize={'25px'}>Acciones</Typography>
-              </div>
               
+              <div>
+                <div className="TituloAcciones">
+                  <Typography fontSize={"25px"}>Acciones</Typography>
+                </div>
+
                 <div className="BoxPagina">
-                  <Typography fontSize={"16px"}>
-                    Descripcion del Empleado:
-                    <span className="FechaRealizacion">
-                      Fecha Creación:
-                      <input
-                        className="inputFecha"
-                        type={"date"}
-                        value={NFecha}
-                        onChange={(e) => SetNFecha(e.target.value)}
-                      />
-                    </span>
-                  </Typography>
                   <textarea
                     className="DescripcionEmpleado"
                     value={NDescripcionEmpleado}
