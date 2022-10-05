@@ -109,7 +109,7 @@ app.get('/RegEnsacado', (request, res) => {
     async function query(){
 
         try{
-            let q_ensacados= await MES_query("select * from MES.dbo.TablaAuxiliar4 order by Fecha desc");
+            let q_ensacados= await MES_query("select * from [WEB_API_TABLES].[dbo].[RegistroEnsacado] order by Fecha desc");
             let q_prods = await MES_query(fs.readFileSync('Q_Lista_productos.sql').toString());
         
             res.send({Productos : q_prods.query , Ensacados : q_ensacados.query});
@@ -126,7 +126,7 @@ app.get('/RegEnsacado', (request, res) => {
 app.post('/UpdateEnsacado', (request, res) =>{
     console.log(request.body);
     async function q (){
-        var q_ins = await MES_query(`Update MES.dbo.TablaAuxiliar4 SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`)
+        var q_ins = await MES_query(`Update [WEB_API_TABLES].[dbo].[RegistroEnsacado] SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`)
         console.log(q_ins);
     }
     q();
@@ -136,7 +136,7 @@ app.post('/RegistraEnsacado', (request, res) =>{
     console.log(request.body);
     const E = request.body;
     async function q (){
-        var q_ins = await MES_query(`INSERT INTO MES.dbo.TablaAuxiliar4 (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones) 
+        var q_ins = await MES_query(`INSERT INTO [WEB_API_TABLES].[dbo].[RegistroEnsacado] (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones) 
         VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}');`)
         console.log(q_ins);
     }
@@ -147,7 +147,7 @@ app.post('/DelEns', (request, res) =>{
     console.log(request.body);
     const E = request.body;
     async function q(){
-        var q_ins = await MES_query(`DELETE FROM MES.dbo.TablaAuxiliar4 WHERE ID = ${E.ID};`)
+        var q_ins = await MES_query(`DELETE FROM [WEB_API_TABLES].[dbo].[RegistroEnsacado] WHERE ID = ${E.ID};`)
         console.log(q_ins);
     }
     q();
@@ -679,6 +679,12 @@ f();
 
 app.get('/Mantenimiento/Tareas',(request, reply) =>{
     async function f(){
+        var q_empleados = `
+
+                select ID,Codigo,Alias,Nombre,Apellidos, '00:00' as tiempo
+                from WEB_API_TABLES.dbo.tbEmpleados 
+                WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;`
+            
         var q_maquinas = `
             use MES;
             SELECT
@@ -698,9 +704,18 @@ app.get('/Mantenimiento/Tareas',(request, reply) =>{
             vwTareasMantenimiento
         ORDER BY FechaHora DESC;
         `
+        var q_materiales = `
+        use MES;
+        select ID,Referencia,Descripcion, 0 as Cantidad
+        from tbMaterial
+        ORDER by Referencia;
+        `
         var res_next_id = await MES_query(q_next_id)
         var res_maquinas = await MES_query(q_maquinas);
-        reply.send({Maquinas: res_maquinas.query, NextID: res_next_id.query[0]})
+        var res_empleados = await MES_query(q_empleados)
+        var res_materiales = await MES_query(q_materiales)
+        reply.send({Maquinas: res_maquinas.query, NextID: res_next_id.query[0], Empleados: res_empleados.query, 
+            Materiales: res_materiales.query})
     }
 f()
 })
@@ -735,4 +750,11 @@ app.post('/Mantenimiento/Tareas', (request, reply) => {
         }
     }
 f()
+})
+
+app.post('/Mantenimiento/CreateTareas',(request,reply) => {
+    function f(){
+
+    }
+f();
 })

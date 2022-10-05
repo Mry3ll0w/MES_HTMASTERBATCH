@@ -1339,8 +1339,6 @@ export default function RegistroPlanta() {
                 count={DatosRegPlanta.length}
                 onChange={(e, p) => {
                   SetPaginaTurno(p);
-                  console.log("Pagina: " + p);
-
                   console.table(DatosRegPlanta[PaginaActualTurno - 1]);
                 }}
               ></Pagination>
