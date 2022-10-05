@@ -33,12 +33,12 @@ export default function MantenimientoTareas() {
   const [NObservacionesEmpleado,SetNObservacionesEmpleado]=useState('')
   const [NDescripcionEmpleado,SetNDescripcionEmpleado]=useState('')
   const [SelectedEmpleados,SetSelectedEmpleados]=useState([])
-  const [SelectedID,SetSelectedID]=useState( new Set())
+  
   //Consumo de materiales
   const [Materiales,SetMateriales]=useState([])
   const [OpMat,SetOpMat]=useState([])
   const [SelectedOptionsMat,SetSelectedOptionsMat]=useState([])
-  const [SelectedMatID,SetSelectedMatID]= useState(new Set())
+  
 
   //DataFetch y carga inicial de useStates
   useEffect(()=>{
@@ -120,19 +120,8 @@ export default function MantenimientoTareas() {
               }}
               value={SelectedEmpleados}
               onChange={(e) => {
+                SetSelectedEmpleados(e)
                 
-                var tempSet = new Set()
-                Empleados.map( i => {
-                  e.map(j => {
-                    
-                    if( i.ID == j.value)
-                      SetSelectedID(SelectedID.add(j.value))
-                  })
-                })
-
-                SetSelectedEmpleados(e);
-                
-                console.log(SelectedID);
               }}
             />
             <br /> <br /> <br /> <br />
@@ -160,7 +149,7 @@ export default function MantenimientoTareas() {
                 </tr>
                 
                 {Empleados.map((i) => {
-                  if(SelectedID.has(i.ID)){
+                  if(SelectedEmpleados.filter(j => j.value === i.ID).length > 0){
                     return (
                       <tr id={1 + i.ID}>
                         <td id={i.ID + 2} className="EmpleadosTd">
@@ -218,12 +207,16 @@ export default function MantenimientoTareas() {
             <Dropdown 
               options={OpMat}
               multi={true}
+              value={SelectedOptionsMat}
+              style={{position: 'absolute', width: '600px', marginBottom: '100px', marginLeft: '10px'}}
               onChange={e => {
-                console.log(e)
-                SetSelectedID(SelectedID.add(e.value))
-                console.log(SelectedID)
+                SetSelectedOptionsMat(e)
               }}
             />
+            <br /> <br/> <br /> <br /> <br />
+            <div className='TablaConsumoDiv'>
+
+            </div>
           </div>
         </Fragment>
       );
