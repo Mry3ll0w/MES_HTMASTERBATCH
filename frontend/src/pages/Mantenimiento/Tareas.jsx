@@ -515,12 +515,10 @@ export default function MantenimientoTareas() {
               <br />
             </div>
             <div className="AccionesDiv">
-              
               <div>
                 <div className="TituloAcciones">
                   <Typography fontSize={"25px"}>Acciones</Typography>
                 </div>
-
                 <div className="BoxPagina">
                   <textarea
                     className="DescripcionEmpleado"

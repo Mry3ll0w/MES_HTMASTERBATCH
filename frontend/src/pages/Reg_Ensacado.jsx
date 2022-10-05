@@ -42,7 +42,7 @@ export default function RegEnsacado({LoggedUser}) {
   const [M_Cantidad, mcant] = useState(0);
   const [M_Resto, mresto] = useState(0);
   const [M_Ant, mant] = useState(0);
-  const [M_Observaciones, mObser] = useState("");
+  const [M_Observaciones, mObser] = useState("-");
   const [M_ID, mID] = useState(0)
   //Manejadores de errores
   const [Err_palet, err_palet] = useState(false);
@@ -101,7 +101,7 @@ export default function RegEnsacado({LoggedUser}) {
     { field: "Ant", headerName: "Anterior (KG)", width: "100" },
     { field: "Iniciales", headerName: "Imputado por", width: "100" },
     { field: "Observaciones", headerName: "Observaciones", width : "500" },
-    { field: "ID", headerName : "ID", width : "30"}
+    { field: "ID", headerName : "ID", width : "30", hideable: false}
   ];
 
   //Construimos las filas
@@ -284,7 +284,7 @@ export default function RegEnsacado({LoggedUser}) {
           Resto: M_Resto ? 0 : M_Resto,
           Ant: M_Ant  ? 0 : M_Ant,
           iniciales : sessionStorage.getItem('iniciales'),
-          Observaciones : M_Observaciones ? ' ' : M_Observaciones
+          Observaciones : M_Observaciones ? '-' : M_Observaciones
         })
         .then(() => {
           alert("Insercion realizada");
@@ -331,6 +331,7 @@ export default function RegEnsacado({LoggedUser}) {
       </p>
       <div style={{ height: 700, width: "100%" }}>
         <DataGrid
+          
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={rows}
           columns={columns}
@@ -360,7 +361,7 @@ export default function RegEnsacado({LoggedUser}) {
               mprod(i.Producto);
               console.log(M_Producto);
               mObser(i.Observaciones);
-              mID(i.ID)
+              mID(i.ID);
               return 0;
             });
           }}
@@ -407,16 +408,6 @@ export default function RegEnsacado({LoggedUser}) {
                 value={M_Producto}
                 isOptionEqualToValue={(option, value) => option === value}
                 options={ArrProd}
-                inputRef={ProdRef}
-                inputProps={{
-                  onKeyPress: (event) => {
-                    const { key } = event;
-                    console.log(key);
-                    if (key === "Enter") {
-                      PaletRef.current.focus();
-                    }
-                  },
-                }}
                 renderInput={(e) => (
                   <TextField
                     {...e}
@@ -426,8 +417,7 @@ export default function RegEnsacado({LoggedUser}) {
                     label="Productos"
                   ></TextField>
                 )}
-                onChange={(e, v) => mprod(v.ProductoID)}
-                freeSolo
+                onChange={(e, v) => mprod(v)}
               />
             </FormControl>
 
@@ -449,23 +439,6 @@ export default function RegEnsacado({LoggedUser}) {
               error={Err_palet}
             />
             <TextField
-              value={M_Peso_Saco}
-              onChange={(e) => mpsaco(e.target.value)}
-              label="Peso Saco(kg)"
-              sx={{ m: "3px", p: "3px" }}
-              inputRef={PesoSacoRef}
-              inputProps={{
-                onKeyPress: (event) => {
-                  const { key } = event;
-                  console.log(key);
-                  if (key === "Enter") {
-                    CantRef.current.focus();
-                  }
-                },
-              }}
-            />
-            <p></p>
-            <TextField
               value={M_Cantidad}
               onChange={(e) => mcant(e.target.value)}
               label="Cantidad (kg)"
@@ -482,7 +455,23 @@ export default function RegEnsacado({LoggedUser}) {
                 },
               }}
             />
-
+            <p></p>
+            <TextField
+              value={M_Peso_Saco}
+              onChange={(e) => mpsaco(e.target.value)}
+              label="Control Peso Saco(kg)"
+              sx={{ m: "3px", p: "3px" }}
+              inputRef={PesoSacoRef}
+              inputProps={{
+                onKeyPress: (event) => {
+                  const { key } = event;
+                  console.log(key);
+                  if (key === "Enter") {
+                    CantRef.current.focus();
+                  }
+                },
+              }}
+            />
             <TextField
               value={M_Resto}
               onChange={(e) => mresto(e.target.value)}
@@ -509,12 +498,12 @@ export default function RegEnsacado({LoggedUser}) {
               error={Ant_Error}
               inputRef={AntRef}
             />
-            
+
             <TextField
               value={M_Observaciones}
               onChange={(e) => mObser(e.target.value)}
               label="Observaciones/Comentarios"
-              sx={{ m: "3px", p: "3px", width : "600px" }}
+              sx={{ m: "3px", p: "3px", width: "600px" }}
             />
             <br />
             <Button
