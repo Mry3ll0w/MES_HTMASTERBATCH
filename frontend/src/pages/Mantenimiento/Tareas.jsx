@@ -117,9 +117,31 @@ export default function MantenimientoTareas() {
           DatosEmpleados = [...DatosEmpleados,j]
       })
     })
-
+    
     //Datos de la accion
-
+    
+    axios
+      .post(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/CreateTarea`, {
+        EmpleadosAccion: DatosEmpleados,
+        MaterialesUsados: DatosMateriales,
+        DatosAccion: {
+          Accion: NDescripcionEmpleado,
+          Notas: NObservacionesEmpleado,
+        },
+        DatosTarea: {
+          ID : NextID,
+          Codigo: Codigo,
+          CriticidadID: CriticidadID,
+          Descripcion: Descripcion,
+          Observacion: Observacion,
+          CategoriaID: CategoriaID,
+          EstadoTareaID: EstadoTareaID,
+          EquipoID: NEquipoID,
+          FechaHora: NFecha,
+          Abreviatura: sessionStorage.getItem("iniciales"),
+        },
+      })
+      .catch((e) => console.log(e));
     
   }
 

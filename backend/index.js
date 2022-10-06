@@ -702,7 +702,7 @@ app.get('/Mantenimiento/Tareas',(request, reply) =>{
             (ID + 1) AS NextID
         FROM
             vwTareasMantenimiento
-        ORDER BY FechaHora DESC;
+        ORDER BY ID DESC;
         `
         var q_materiales = `
         use MES;
@@ -752,9 +752,60 @@ app.post('/Mantenimiento/Tareas', (request, reply) => {
 f()
 })
 
-app.post('/Mantenimiento/CreateTareas',(request,reply) => {
-    function f(){
+app.post('/Mantenimiento/CreateTarea',(request,reply) => {
+    
+    async function f(){
+        try{
+            var {EmpleadosAccion,MaterialesUsados,DatosAccion,DatosTarea} = request.body
+            var q_insercion_tarea =`
+            USE MES;
+            INSERT INTO vwTareasMantenimiento
+                (Codigo, CriticidadID, Descripcion,
+                CategoriaID,EstadoTareaID,FechaHora,
+                Abreviatura)
+            VALUES
+                ('${DatosTarea.Codigo}', '${DatosTarea.CriticidadID}', '${DatosTarea.Descripcion}',
+                ${DatosTarea.CategoriaID},${DatosTarea.EstadoTareaID},'${DatosTarea.FechaHora}',
+                '${DatosTarea.Abreviatura}')
+            `
+            var q_insercion_accion = `
+            USE MES;
+            INSERT INTO tbAcciones
+                (TareasID,Accion,Notas,FechaHora)
+            VALUES
+                (${DatosTarea.ID}, '${DatosAccion.Accion}','${DatosAccion.Notas}','${DatosTarea.FechaHora}');
+            `
 
+            //Como el numero de empleados implicados es variable, tenemos que 
+            //preparar la query
+
+            var q_insercion_AccEmpl = `
+            USE MES;
+            INSERT INTO tbAccEmpleados
+                (AccionID, EmpleadoID,AccionTiempo,FechaCreacion)
+            VALUES
+                
+            `
+            var q_NextID_Accion = `
+            use mes;
+                select top 1 (ID+1) as NEXTID from tbAcciones order by ID desc;
+            `
+            var NEXTID = await MES_query(q_NextID_Accion)
+            console.log(NEXTID.query[0])
+
+            EmpleadosAccion.map(i => {
+                q_insercion_AccEmpl += `()`
+            })
+
+            var q_insercion_Tarea_Acc = `
+            USE MES;
+
+            `
+
+        }
+        catch{
+            console.log('Error en la creacion de la tarea')
+        }
     }
 f();
 })
