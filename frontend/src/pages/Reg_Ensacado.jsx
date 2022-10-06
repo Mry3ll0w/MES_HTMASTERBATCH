@@ -34,6 +34,7 @@ export default function RegEnsacado({LoggedUser}) {
 
 
   //Necesitamos UseState para tratar con los TextFields
+  const [EstadoBotonEliminar,SetEstadoBotonEliminar] = useState('visible')
   const [M_Fecha, mfecha] = useState("");
   const [M_Turno, mturno] = useState("");
   const [M_Producto, mprod] = useState("");
@@ -73,6 +74,9 @@ export default function RegEnsacado({LoggedUser}) {
 
   //Obtenemos el resultado del get
   useEffect(() => {
+    if(!sessionStorage.getItem('Formulario').includes('Produccion')){
+      SetEstadoBotonEliminar('hidden')
+    }
     var temp = []
     axios
       .get(`http://${process.env.REACT_APP_SERVER}/RegEnsacado`)
@@ -83,6 +87,7 @@ export default function RegEnsacado({LoggedUser}) {
         response.data.Productos.map(i => {
           return temp =[...temp, i.ProductoID]
         })
+        temp = [...temp,'PRUEBA']
         setArrProd(temp)
       })
       .catch((error) => console.log(error));
@@ -248,19 +253,23 @@ export default function RegEnsacado({LoggedUser}) {
     if (isNaN(M_Cantidad) === true) {
       ok = false;
       cerror(true);
-      alert("La Cantidad no puede ser un valor no numerico");
+      alert("La Cantidad no puede ser un valor no numerico ni tener comas, si es un decimal usa . en vez de ,");
     } else cerror(false);
 
     if (isNaN(M_Resto) === true) {
       ok = false;
       rerror(true);
-      alert("El Resto no puede ser no numerico");
+      alert(
+        "El Resto no puede ser no numerico, si es un decimal usa . en vez de ,"
+      );
     } else rerror(false);
 
     if (isNaN(M_Resto) === true) {
       ok = false;
       rerror(true);
-      alert("El Resto no puede ser no numerico");
+      alert(
+        "El Resto no puede ser no numerico, si es un decimal usa . en vez de ,"
+      );
     } else rerror(false);
 
     
@@ -510,10 +519,12 @@ export default function RegEnsacado({LoggedUser}) {
             >
               Inserta el Ensacado
             </Button>
+            
             <Button
-              sx={{ m: "10px" }}
+              sx={{ m: "10px", visibility:EstadoBotonEliminar}}
               onClick={DeleteEnsacados}
               variant="contained"
+              
             >
               Elimina el ensacado seleccionado
             </Button>
