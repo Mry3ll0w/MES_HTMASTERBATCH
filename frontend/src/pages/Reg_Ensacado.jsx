@@ -7,7 +7,7 @@ import {
   FormControl,
   Autocomplete,
 } from "@mui/material";
-import { DataGrid, esES} from '@mui/x-data-grid';
+import { DataGrid,GridToolbar, esES} from '@mui/x-data-grid';
 import React, { Fragment,useRef } from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -131,11 +131,11 @@ export default function RegEnsacado({LoggedUser}) {
     console.log('No se ha guardado correctamente los datos de ensacado')
   }
   
-
-  //Funciones para tratar los textFields
-
+  
+  
   //Comprueba los erorres de la posible modificacion y modifica el Ensacado seleccionado
   function UpdateEnsacado() {
+    
     var ok = true;
     //Comprobamos que se cumplan los elementos dados
     if (M_Fecha === "") {
@@ -170,19 +170,22 @@ export default function RegEnsacado({LoggedUser}) {
     if (isNaN(M_Cantidad) === true) {
       ok = false;
       cerror(true);
-      alert("La Cantidad no puede ser un valor no numerico");
+      alert("La Cantidad no puede ser un valor no numerico, si es un número decimal usa . en vez de ,");
     } else cerror(false);
 
     if (isNaN(M_Resto) === true) {
       ok = false;
       rerror(true);
-      alert("El Resto no puede ser no numerico");
+      alert(
+        "El Resto no puede ser no numerico , si es un número decimal usa . en vez de ,"
+      );
     } else rerror(false);
 
     
 
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
+
       axios
         .post(`http://${process.env.REACT_APP_SERVER}/UpdateEnsacado`, {
           Fecha: dateFormat(M_Fecha,'yyyy-mm-dd'),
@@ -279,10 +282,10 @@ export default function RegEnsacado({LoggedUser}) {
           Turno: M_Turno,
           Producto: M_Producto,
           Palet: M_Palet,
-          Peso_Saco: M_Peso_Saco  ? 0 : M_Peso_Saco,
-          Cantidad: M_Cantidad  ? 0 : M_Cantidad,
-          Resto: M_Resto ? 0 : M_Resto,
-          Ant: M_Ant  ? 0 : M_Ant,
+          Peso_Saco: M_Peso_Saco === null  ? 0 : M_Peso_Saco,
+          Cantidad: M_Cantidad === null  ? 0 : M_Cantidad,
+          Resto: M_Resto === null ? 0 : M_Resto,
+          Ant: M_Ant === null ? 0 : M_Ant,
           iniciales : sessionStorage.getItem('iniciales'),
           Observaciones : M_Observaciones ? '-' : M_Observaciones
         })
@@ -331,11 +334,11 @@ export default function RegEnsacado({LoggedUser}) {
       </p>
       <div style={{ height: 700, width: "100%" }}>
         <DataGrid
-          
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           rows={rows}
           columns={columns}
           pageSize={20}
+          components={{ Toolbar: GridToolbar }}
           //checkboxSelection
           rowsPerPageOptions={[10]}
           onSelectionModelChange={(r) => {
@@ -362,7 +365,7 @@ export default function RegEnsacado({LoggedUser}) {
               mObser(i.Observaciones);
               mID(i.ID);
               return 0;
-            })
+            });
           }}
         />
       </div>
@@ -425,7 +428,6 @@ export default function RegEnsacado({LoggedUser}) {
               inputProps={{
                 onKeyPress: (event) => {
                   const { key } = event;
-                  console.log(key);
                   if (key === "Enter") {
                     PesoSacoRef.current.focus();
                   }
@@ -446,7 +448,6 @@ export default function RegEnsacado({LoggedUser}) {
               inputProps={{
                 onKeyPress: (event) => {
                   const { key } = event;
-                  console.log(key);
                   if (key === "Enter") {
                     RestoRef.current.focus();
                   }
@@ -463,7 +464,6 @@ export default function RegEnsacado({LoggedUser}) {
               inputProps={{
                 onKeyPress: (event) => {
                   const { key } = event;
-                  console.log(key);
                   if (key === "Enter") {
                     CantRef.current.focus();
                   }
@@ -480,7 +480,6 @@ export default function RegEnsacado({LoggedUser}) {
               inputProps={{
                 onKeyPress: (event) => {
                   const { key } = event;
-                  console.log(key);
                   if (key === "Enter") {
                     AntRef.current.focus();
                   }
