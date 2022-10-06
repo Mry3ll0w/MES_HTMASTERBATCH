@@ -101,7 +101,7 @@ export default function RegEnsacado({LoggedUser}) {
     { field: "Ant", headerName: "Anterior (KG)", width: "100" },
     { field: "Iniciales", headerName: "Imputado por", width: "100" },
     { field: "Observaciones", headerName: "Observaciones", width : "500" },
-    { field: "ID", headerName : "ID", width : "30", hideable: false}
+    { field: "ID", headerName : "ID", width : "30", hide: true }
   ];
 
   //Construimos las filas
@@ -359,11 +359,10 @@ export default function RegEnsacado({LoggedUser}) {
               setOldPalet(i.Palet);
               mturno(i.Turno);
               mprod(i.Producto);
-              console.log(M_Producto);
               mObser(i.Observaciones);
               mID(i.ID);
               return 0;
-            });
+            })
           }}
         />
       </div>
@@ -371,7 +370,6 @@ export default function RegEnsacado({LoggedUser}) {
         <Box sx={{ p: 2, m: "3px", border: "1px dotted blue" }}>
           <Paper>
             <h2>Inserta el nuevo ensacado</h2>
-
             <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
               <MobileDatePicker
                 label="Fecha"
