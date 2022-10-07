@@ -34,6 +34,7 @@ export default function RegEnsacado({LoggedUser}) {
 
 
   //Necesitamos UseState para tratar con los TextFields
+  const [ObsError, SetObsError] = useState(false)
   const [EstadoBotonEliminar,SetEstadoBotonEliminar] = useState('visible')
   const [M_Fecha, mfecha] = useState("");
   const [M_Turno, mturno] = useState("");
@@ -93,7 +94,22 @@ export default function RegEnsacado({LoggedUser}) {
       .catch((error) => console.log(error));
       
   }, []);
-
+  function UpdateData(){
+    var temp = [];
+    axios
+      .get(`http://${process.env.REACT_APP_SERVER}/RegEnsacado`)
+      .then((response) => {
+        SetProductos(response.data.Productos);
+        console.log(response.data)
+        SetEnsacados(response.data.Ensacados);
+        response.data.Productos.map(i => {
+          return temp =[...temp, i.ProductoID]
+        })
+        temp = [...temp,'PRUEBA']
+        setArrProd(temp)
+      })
+      .catch((error) => console.log(error));
+  }
   //Columnas
   const columns = [
     { field: "Fecha", headerName: "Fecha", width: "150" },
@@ -186,11 +202,17 @@ export default function RegEnsacado({LoggedUser}) {
       );
     } else rerror(false);
 
-    
+    if (M_Observaciones === '') {
+      ok = false;
+      SetObsError(true);
+      alert(
+        "El campo de observacion no puede estar vacio, ponga - si quiere estar vacio."
+      );
+    } else SetObsError(false);
 
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
-
+      console.log("ENTRO OK");
       axios
         .post(`http://${process.env.REACT_APP_SERVER}/UpdateEnsacado`, {
           Fecha: dateFormat(M_Fecha,'yyyy-mm-dd'),
@@ -211,7 +233,8 @@ export default function RegEnsacado({LoggedUser}) {
         .catch((err) => {
           console.log(err);
         });
-      window.location.reload(false);
+        UpdateData()
+      //window.location.reload(false);
     }
   }
 
@@ -271,10 +294,18 @@ export default function RegEnsacado({LoggedUser}) {
         "El Resto no puede ser no numerico, si es un decimal usa . en vez de ,"
       );
     } else rerror(false);
-
+    
+    if (M_Observaciones === '') {
+      ok = false;
+      SetObsError(true);
+      alert(
+        "El campo de observacion no puede estar vacio, ponga - si quiere estar vacio."
+      );
+    } else SetObsError(false);
     
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
+      console.log('ENTRO OK')
       console.log({
         Fecha: M_Fecha,
         Turno: M_Turno,
@@ -296,7 +327,7 @@ export default function RegEnsacado({LoggedUser}) {
           Resto: M_Resto === null ? 0 : M_Resto,
           Ant: M_Ant === null ? 0 : M_Ant,
           iniciales : sessionStorage.getItem('iniciales'),
-          Observaciones : M_Observaciones ? '-' : M_Observaciones
+          Observaciones : M_Observaciones
         })
         .then(() => {
           alert("Insercion realizada");
@@ -304,7 +335,7 @@ export default function RegEnsacado({LoggedUser}) {
         .catch((err) => {
           console.log(err);
         });
-      window.location.reload(false);
+     UpdateData();
     }
   }
 
