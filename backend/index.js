@@ -829,3 +829,20 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
     }
 f();
 })
+
+app.get('/Mantenimiento/ListaTareas',(request, reply) => {
+    async function f(){
+        var q_lista_tareas = `
+        use MES;
+        SELECT ID, Codigo, Descripcion
+        FROM tbTareas
+        WHERE
+            ID <> 25538
+        order by ID desc;
+        `
+        var res_lista_tareas = await MES_query(q_lista_tareas)
+
+        reply.send({ListaTareas : res_lista_tareas.query})
+    }
+f()
+})

@@ -5,9 +5,8 @@ import axios from 'axios'
 import { useState } from 'react';
 import {DateTime} from 'luxon'
 import Dropdown from 'react-dropdown-select'
-import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { useNavigate } from 'react-router-dom';
+import { DataGrid,esES,GridToolbar } from '@mui/x-data-grid';
 export default function MantenimientoTareas() {
   //Navigates
   const navigate = useNavigate()
@@ -33,12 +32,17 @@ export default function MantenimientoTareas() {
   const [NObservacionesEmpleado,SetNObservacionesEmpleado]=useState('')
   const [NDescripcionEmpleado,SetNDescripcionEmpleado]=useState('')
   const [SelectedEmpleados,SetSelectedEmpleados]=useState([])
-  
+
   //Consumo de materiales
   const [Materiales,SetMateriales]=useState([])
   const [OpMat,SetOpMat]=useState([])
   const [SelectedOptionsMat,SetSelectedOptionsMat]=useState([])
   
+  //Datos Tareas
+  const [ListaTareas,SetListaTareas] = useState([])
+  const [TareaSeleccionada, SetTareaSeleccionada] = useState([])
+
+
 
   //DataFetch y carga inicial de useStates
   useEffect(()=>{
@@ -95,53 +99,105 @@ export default function MantenimientoTareas() {
 
   //Internal functions
 
+  //-------------------------------------------------------------- FUNCIONES TAREAS --------------------------------------
+  function FetchTareas(){
+    axios
+      .get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/ListaTareas`)
+      .catch((e) => console.log(e))
+      .then(response => {
+        console.log(response.data)
+        SetListaTareas(response.data.ListaTareas)
+      })
+      console.log(RowsListaTareas)
+  }
+  const ColsTareas = [
+    { field: "ID", headerName: "ID", width: 150, hide: true },
+    { field: 'Codigo', headerName: 'Codigo', width : 150},
+    { field: 'Descripcion', headerName: 'Descripcion', width: 600}
+  ];
+
+  var RowsListaTareas =[]
+  try{
+    ListaTareas.map(i => {
+      RowsListaTareas = [...RowsListaTareas,
+      {
+        id : i.ID,
+        ID : i.ID,
+        Codigo: i.Codigo,
+        Descripcion: i.Descripcion
+      }]
+    })
+  }
+  catch{
+    console.log("Error en la obtencion de la lista de tareas")
+  }
+
+  /**
+   * Devuelve true si los campos necesarios para rellenar la tarea han sido llenados satisfactoriamente, 
+   * en cualquier otro caso devuelve false
+   */
+  function CamposCorrectos(){
+    var ok = true;
+
+    if(SelCOD1 === 'Seleccioname'){
+      ok = false;
+      alert('Selecciona el COD1 de la maquina')
+    }
+
+    
+
+  }
+
   /**
    * Funcion para enviar los elementos al back
    */
   function SendTarea(){
+    if(CamposCorrectos()){
+      var DatosMateriales = [];
+      var DatosEmpleados = [];
 
-    var DatosMateriales = []
-    var DatosEmpleados = []
+      //Obtenemos los materiales seleccionados
+      SelectedOptionsMat.map((i) => {
+        Materiales.map((j) => {
+          if (i.value === j.ID) DatosMateriales = [...DatosMateriales, j];
+        });
+      });
 
-    //Obtenemos los materiales seleccionados
-    SelectedOptionsMat.map( i => {
-      Materiales.map( j => {
-        if( i.value === j.ID)
-          DatosMateriales = [...DatosMateriales, j]
-      })
-    })
+      SelectedEmpleados.map((i) => {
+        Empleados.map((j) => {
+          if (i.value == j.ID) DatosEmpleados = [...DatosEmpleados, j];
+        });
+      });
 
-    SelectedEmpleados.map(i => {
-      Empleados.map(j => {
-        if (i.value == j.ID)
-          DatosEmpleados = [...DatosEmpleados,j]
-      })
-    })
-    
-    //Datos de la accion
-    
-    axios
-      .post(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/CreateTarea`, {
-        EmpleadosAccion: DatosEmpleados,
-        MaterialesUsados: DatosMateriales,
-        DatosAccion: {
-          Accion: NDescripcionEmpleado,
-          Notas: NObservacionesEmpleado,
-        },
-        DatosTarea: {
-          ID : NextID,
-          Codigo: Codigo,
-          CriticidadID: CriticidadID,
-          Descripcion: Descripcion,
-          Observacion: Observacion,
-          CategoriaID: CategoriaID,
-          EstadoTareaID: EstadoTareaID,
-          EquipoID: NEquipoID,
-          FechaHora: NFecha,
-          Abreviatura: sessionStorage.getItem("iniciales"),
-        },
-      })
-      .catch((e) => console.log(e));
+      //Datos de la accion
+
+      axios
+        .post(
+          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/CreateTarea`,
+          {
+            EmpleadosAccion: DatosEmpleados,
+            MaterialesUsados: DatosMateriales,
+            DatosAccion: {
+              Accion: NDescripcionEmpleado,
+              Notas: NObservacionesEmpleado,
+            },
+            DatosTarea: {
+              ID: NextID,
+              Codigo: Codigo,
+              CriticidadID: CriticidadID,
+              Descripcion: Descripcion,
+              Observacion: Observacion,
+              CategoriaID: CategoriaID,
+              EstadoTareaID: EstadoTareaID,
+              EquipoID: NEquipoID,
+              FechaHora: NFecha,
+              Abreviatura: sessionStorage.getItem("iniciales"),
+            },
+          }
+        )
+        .catch((e) => console.log(e));
+      window.location.reload(false);
+    }
     
   }
 
@@ -162,6 +218,7 @@ export default function MantenimientoTareas() {
             <Dropdown
               options={OpEmpleados}
               multi={true}
+              
               style={{
                 marginLeft: "10px",
                 width: "600px",
@@ -170,8 +227,7 @@ export default function MantenimientoTareas() {
               }}
               value={SelectedEmpleados}
               onChange={(e) => {
-                SetSelectedEmpleados(e)
-                
+                SetSelectedEmpleados(e);
               }}
             />
             <br /> <br /> <br /> <br />
@@ -197,9 +253,11 @@ export default function MantenimientoTareas() {
                     <Typography fontSize={"16px"}>Tiempo</Typography>
                   </th>
                 </tr>
-                
+
                 {Empleados.map((i) => {
-                  if(SelectedEmpleados.filter(j => j.value === i.ID).length > 0){
+                  if (
+                    SelectedEmpleados.filter((j) => j.value === i.ID).length > 0
+                  ) {
                     return (
                       <tr id={1 + i.ID}>
                         <td id={i.ID + 2} className="EmpleadosTd">
@@ -218,7 +276,6 @@ export default function MantenimientoTareas() {
                           <input
                             value={i.tiempo}
                             type="time"
-                            
                             onChange={(e) => {
                               SetEmpleados(
                                 Empleados.map((j) =>
@@ -230,12 +287,10 @@ export default function MantenimientoTareas() {
                             }}
                           />
                         </td>
-                        
                       </tr>
                     );
                   }
                 })}
-                
               </tbody>
             </table>
           </div>
@@ -515,7 +570,7 @@ export default function MantenimientoTareas() {
                 value={Observacion}
                 onChange={(e) => SetObservacion(e.target.value)}
               ></textarea>
-              
+
               <Typography fontSize={"16px"}>
                 <span className="FechaRealizacion">
                   Fecha Creación:
@@ -579,12 +634,32 @@ export default function MantenimientoTareas() {
         </Accordion>
         <br />
         <Accordion sx={{ margin: "1%" }}>
-          <AccordionSummary>
+          <AccordionSummary
+            sx={{ border: "1px solid black" }}
+            onClick={() => FetchTareas()}
+          >
             <Typography fontSize={"20px"} sx={{ textAlign: "center" }}>
               Modificación de Seguimientos/Tareas/Acciones
             </Typography>
           </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
+          <AccordionDetails>
+            <br />
+            <div className="SelectorTareas">
+              <Typography fontSize={"22px"}>
+                Seleccione la tarea a Modificar
+              </Typography>
+              <br />
+              <DataGrid
+                columns={ColsTareas}
+                components={{ Toolbar: GridToolbar }}
+                rows={RowsListaTareas}
+                sx={{ width: "700px", height: "400px" }}
+                rowsPerPageOptions={[10]}
+                pageSize={20}
+                localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+              />
+            </div>
+          </AccordionDetails>
         </Accordion>
         <br />
       </div>
