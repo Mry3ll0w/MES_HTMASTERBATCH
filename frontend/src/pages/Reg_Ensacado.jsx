@@ -234,7 +234,7 @@ export default function RegEnsacado({LoggedUser}) {
           console.log(err);
         });
         UpdateData()
-      //window.location.reload(false);
+      window.location.reload(false);
     }
   }
 
@@ -336,6 +336,7 @@ export default function RegEnsacado({LoggedUser}) {
           console.log(err);
         });
      UpdateData();
+     window.location.reload(false);
     }
   }
 
