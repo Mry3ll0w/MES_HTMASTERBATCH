@@ -273,7 +273,7 @@ app.get('/Profile/:user',(request,res)=>{
     async function f(){
         var query = `select * from WEB_API_TABLES.dbo.tbEmpleados where Codigo = '${user}';`
         var resultado = await MES_query(query);
-        console.log(resultado.query)
+        //console.log(resultado.query)
         res.send({user : resultado.query})
     }
     f();
@@ -757,17 +757,20 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
     async function f(){
         try{
             var {EmpleadosAccion,MaterialesUsados,DatosAccion,DatosTarea} = request.body
+            
             var q_insercion_tarea =`
             USE MES;
-            INSERT INTO vwTareasMantenimiento
+            INSERT INTO tbTareas
                 (Codigo, CriticidadID, Descripcion,
                 CategoriaID,EstadoTareaID,FechaHora,
-                Abreviatura)
+                EmpleadoNom)
             VALUES
                 ('${DatosTarea.Codigo}', '${DatosTarea.CriticidadID}', '${DatosTarea.Descripcion}',
                 ${DatosTarea.CategoriaID},${DatosTarea.EstadoTareaID},'${DatosTarea.FechaHora}',
                 '${DatosTarea.Abreviatura}')
             `
+            var res_insercion_tarea = await MES_query(q_insercion_tarea)
+            
             var q_insercion_accion = `
             USE MES;
             INSERT INTO tbAcciones
@@ -775,7 +778,8 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
             VALUES
                 (${DatosTarea.ID}, '${DatosAccion.Accion}','${DatosAccion.Notas}','${DatosTarea.FechaHora}');
             `
-
+            var res_q_insercion_accion = await MES_query(q_insercion_accion)
+            
             //Como el numero de empleados implicados es variable, tenemos que 
             //preparar la query
 
@@ -784,23 +788,39 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
             INSERT INTO tbAccEmpleados
                 (AccionID, EmpleadoID,AccionTiempo,FechaCreacion)
             VALUES
-                
             `
+            
             var q_NextID_Accion = `
             use mes;
-                select top 1 (ID+1) as NEXTID from tbAcciones order by ID desc;
+                select top 1 ID as NEXTID from tbAcciones order by ID desc;
             `
-            var NEXTID = await MES_query(q_NextID_Accion)
-            console.log(NEXTID.query[0])
-
+            var AccNEXTID = await MES_query(q_NextID_Accion)
+            
             EmpleadosAccion.map(i => {
-                q_insercion_AccEmpl += `()`
+                q_insercion_AccEmpl += `(${AccNEXTID.query[0].NEXTID},${i.ID},'${i.tiempo}','${DatosTarea.FechaHora}'),`
             })
+            var corrected_query = q_insercion_AccEmpl.substring(0, q_insercion_AccEmpl.length-1) + ';'
+            q_insercion_AccEmpl = corrected_query
+            
+            var res_insercionAccEmpl = await MES_query(q_insercion_AccEmpl);
 
-            var q_insercion_Tarea_Acc = `
+            //Vinculamos accion con materiales
+            var q_AccMateriales = `
             USE MES;
-
+            INSERT INTO tbAccMaterial
+                (AccionID, MaterialID,CantidadMaterial,EstadoConsumoID)
+            VALUES 
             `
+            MaterialesUsados.map( i => {
+                q_AccMateriales += `(${AccNEXTID.query[0].NEXTID}, ${i.ID},${i.Cantidad},1),`
+            })
+            
+            corrected_query = q_AccMateriales.substring(0, q_AccMateriales.length-1) + ';'
+            q_AccMateriales = corrected_query
+            var insercion_AccMateriales = await MES_query(q_AccMateriales)
+            
+           
+
 
         }
         catch{
