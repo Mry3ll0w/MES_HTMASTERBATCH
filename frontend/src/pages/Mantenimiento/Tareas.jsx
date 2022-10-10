@@ -144,8 +144,13 @@ export default function MantenimientoTareas() {
       alert('Selecciona el COD1 de la maquina')
     }
 
-    
+    if (SelMaquina === null){
+      ok = false;
+      alert('No dejes el equipo sin seleccionar')
+    }
 
+
+    return ok;
   }
 
   /**

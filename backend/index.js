@@ -819,7 +819,7 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
             q_AccMateriales = corrected_query
             var insercion_AccMateriales = await MES_query(q_AccMateriales)
             
-           
+           console.log('Tarea insertada')
 
 
         }
