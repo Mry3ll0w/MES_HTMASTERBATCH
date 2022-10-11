@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect,cloneElement } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import {Select as RSelect, Pagination,Autocomplete,TextField,Button, Typography, Accordion, AccordionDetails, AccordionSummary, MenuItem} from '@mui/material'
 import './Tareas.css'
 import axios from 'axios'
@@ -18,7 +18,7 @@ export default function MantenimientoTareas() {
   const [MaquinasFiltradas, SetMaquinasFiltradas] = useState([])
   const [SelCOD1,SetCOD1] = useState('Seleccioname')
   const [Descripcion,SetDescripcion] = useState('')
-  const [Observacion, SetObservacion] = useState('')
+  const [Observacion, SetObservacion] = useState("Tarea creada en Planta:");
   const [NEquipoID, SetNEquipoID] = useState(0)
   const [NextID, SetNextID] = useState(0)
   const [CriticidadID,SetCriticidadID] = useState(1)
@@ -42,9 +42,15 @@ export default function MantenimientoTareas() {
   const [ListaTareas,SetListaTareas] = useState([])
   const [TareaSeleccionada, SetTareaSeleccionada] = useState([])
 
-
+  //Seccion de Modificacion de ensacado
+  const [MTarea, SetMTarea] = useState([])
+  const [MAccion, SetMAccion] = useState([])
+  const [MEmpleados,SetMEmpleados] = useState([])
+  const [MMateriales,SetMMateriales] = useState([])
 
   //DataFetch y carga inicial de useStates
+  
+
   useEffect(()=>{
 
     if(sessionStorage.getItem('iniciales') === null){
@@ -81,17 +87,8 @@ export default function MantenimientoTareas() {
 
     })
     
-    
-    if(!window.location.href.includes('Mantenimiento')){
-      SetObservacion(`Tarea creada en Planta por ${sessionStorage.getItem('iniciales')}` )
-    }
-    else{
-      SetObservacion(`Tarea creada en Mantenimiento por ${sessionStorage.getItem('iniciales')}, cargo de ${sessionStorage.getItem('Formulario')}`)
-    }
-
     //Metemos la fecha actual 
     const Actual= DateTime.now().c;
-
     SetNFecha(`${Actual.year}-${Actual.month}-${Actual.day}`)
 
       
@@ -201,7 +198,8 @@ export default function MantenimientoTareas() {
           }
         )
         .catch((e) => console.log(e));
-      window.location.reload(false);
+        alert('Tarea Insertada')
+        window.location.reload(false);
     }
     
   }
@@ -378,6 +376,175 @@ export default function MantenimientoTareas() {
     }
   }
 
+  //Clonica a la anterior, modifica las acciones
+  function DispAccionesMod(Pagina) {
+    if (Pagina === 1) {
+      return (
+        <Fragment>
+          <br />
+          <Typography fontSize={"16px"} style={{ marginLeft: "10px" }}>
+            Seleccione los empleados implicados en la tarea
+          </Typography>
+          <div>
+            <Dropdown
+              options={OpEmpleados}
+              multi={true}
+              style={{
+                marginLeft: "10px",
+                width: "600px",
+                fontSize: "18px",
+                position: "absolute",
+              }}
+              value={SelectedEmpleados}
+              onChange={(e) => {
+                SetSelectedEmpleados(e);
+              }}
+            />
+            <br /> <br /> <br /> <br />
+          </div>
+          <br />
+          <div className="TablaAcciones">
+            <table>
+              <tbody>
+                <tr>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Emp</Typography>
+                  </th>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Alias</Typography>
+                  </th>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Apellidos</Typography>
+                  </th>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Nombre</Typography>
+                  </th>
+                  <th className="EmpleadosTh">
+                    <Typography fontSize={"16px"}>Tiempo</Typography>
+                  </th>
+                </tr>
+
+                {Empleados.map((i) => {
+                  if (
+                    SelectedEmpleados.filter((j) => j.value === i.ID).length > 0
+                  ) {
+                    return (
+                      <tr id={1 + i.ID}>
+                        <td id={i.ID + 2} className="EmpleadosTd">
+                          {i.Codigo}
+                        </td>
+                        <td id={i.ID + 3} className="EmpleadosTd">
+                          {i.Alias}
+                        </td>
+                        <td id={i.ID + 4} className="EmpleadosTd">
+                          {i.Apellidos}
+                        </td>
+                        <td id={i.ID + 5} className="EmpleadosTd">
+                          {i.Nombre}
+                        </td>
+                        <td id={i.ID + 2} className="EmpleadosTd">
+                          <input
+                            value={i.tiempo}
+                            type="time"
+                            onChange={(e) => {
+                              SetEmpleados(
+                                Empleados.map((j) =>
+                                  j.ID === i.ID
+                                    ? { ...j, tiempo: e.target.value }
+                                    : j
+                                )
+                              );
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  }
+                })}
+              </tbody>
+            </table>
+          </div>
+          <br />
+        </Fragment>
+      );
+    } else if (Pagina === 2) {
+      return (
+        <Fragment>
+          <div className="DivConsumoMateriales">
+            <Typography fontSize={"18px"} sx={{ margin: "8px" }}>
+              Consumo de Material
+            </Typography>
+            <br />
+            <Typography fontSize={"16px"} sx={{ margin: "8px" }}>
+              Selecciona el material usado
+            </Typography>
+            <Dropdown
+              options={OpMat}
+              multi={true}
+              value={SelectedOptionsMat}
+              style={{
+                position: "absolute",
+                width: "600px",
+                marginBottom: "100px",
+                marginLeft: "10px",
+              }}
+              onChange={(e) => {
+                SetSelectedOptionsMat(e);
+              }}
+            />
+            <br /> <br /> <br />
+            <div className="TablaAcciones">
+              <table>
+                <tbody>
+                  <tr>
+                    <th className="EmpleadosTh">
+                      <Typography fontSize={"16px"}>ID Mat</Typography>
+                    </th>
+                    <th className="EmpleadosTh">
+                      <Typography fontSize={"16px"}>Cant</Typography>
+                    </th>
+                  </tr>
+
+                  {Materiales.map((i) => {
+                    if (
+                      SelectedOptionsMat.filter((j) => j.value === i.ID)
+                        .length > 0
+                    ) {
+                      return (
+                        <tr>
+                          <td className="EmpleadosTd">
+                            <Typography fontSize={"16px"}>{i.ID}</Typography>
+                          </td>
+                          <td className="EmpleadosTd">
+                            <input
+                              className="MaterialesInput"
+                              value={i.Cantidad}
+                              onChange={(e) => {
+                                SetMateriales(
+                                  Materiales.map((j) =>
+                                    j.ID === i.ID
+                                      ? { ...j, Cantidad: e.target.value }
+                                      : j
+                                  )
+                                );
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    }
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <br />
+            <br />
+          </div>
+        </Fragment>
+      );
+    }
+  }
+
   return (
     <Fragment>
       <div className="AccordionDiv">
@@ -408,6 +575,9 @@ export default function MantenimientoTareas() {
                       <Typography fontSize={"16px"}>
                         Estado De La Tarea
                       </Typography>
+                    </th>
+                    <th className="customTh">
+                      <Typography fontSize={"16px"}> Creado:</Typography>
                     </th>
                   </tr>
                   <tr>
@@ -468,19 +638,24 @@ export default function MantenimientoTareas() {
                         </MenuItem>
                       </RSelect>
                     </td>
+                    <td>
+                      <input
+                        className="inputFecha"
+                        type={"date"}
+                        value={NFecha}
+                        onChange={(e) => SetNFecha(e.target.value)}
+                      />
+                    </td>
                   </tr>
                 </tbody>
               </table>
               <br />
+              <Typography fontSize={"16px"} sx={{ marginLeft: "10px" }}>
+                Selecciona la maquina
+              </Typography>
               <table>
                 <tbody>
-                  <tr>
-                    <th className="customTh">
-                      <Typography fontSize={"16px"}>
-                        Selecciona el equipo
-                      </Typography>
-                    </th>
-                  </tr>
+                  <tr></tr>
                   <tr>
                     <td>
                       <Autocomplete
@@ -560,7 +735,9 @@ export default function MantenimientoTareas() {
                   </tr>
                 </tbody>
               </table>
-              <Typography fontSize={"16px"}>Descripción:</Typography>
+              <Typography fontSize={"16px"} sx={{ marginLeft: "10px" }}>
+                Descripción:
+              </Typography>
               <br />
               <textarea
                 className="Descripcion"
@@ -568,7 +745,9 @@ export default function MantenimientoTareas() {
                 onChange={(e) => SetDescripcion(e.target.value)}
               ></textarea>
               <br />
-              <Typography fontSize={"16px"}>Observacion:</Typography>
+              <Typography fontSize={"16px"} sx={{ marginLeft: "10px" }}>
+                Observacion:
+              </Typography>
               <br />
               <textarea
                 className="Observacion"
@@ -576,17 +755,6 @@ export default function MantenimientoTareas() {
                 onChange={(e) => SetObservacion(e.target.value)}
               ></textarea>
 
-              <Typography fontSize={"16px"}>
-                <span className="FechaRealizacion">
-                  Fecha Creación:
-                  <input
-                    className="inputFecha"
-                    type={"date"}
-                    value={NFecha}
-                    onChange={(e) => SetNFecha(e.target.value)}
-                  />
-                </span>
-              </Typography>
               <Button
                 variant="contained"
                 sx={{ margin: "10px" }}
@@ -662,7 +830,278 @@ export default function MantenimientoTareas() {
                 rowsPerPageOptions={[10]}
                 pageSize={20}
                 localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+                onSelectionModelChange={(r) => {
+                  const selectedIDs = new Set(r);
+                  const selectedRowData = RowsListaTareas.filter((row) =>
+                    selectedIDs.has(row.id)
+                  );
+                  axios
+                    .post(
+                      `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tarea`,
+                      {
+                        ID: selectedRowData[0].ID,
+                      }
+                    )
+                    .catch((e) => console.log(e))
+                    .then((response) => {
+                      console.log(response.data);
+                    });
+                }}
               />
+              <br />
+              <div className="FormNewTarea">
+                <br />
+                <table>
+                  <tbody>
+                    <tr>
+                      <th className="customTh">
+                        <Typography fontSize={"16px"}>
+                          Criticidad de Tarea
+                        </Typography>
+                      </th>
+                      <th className="customTh">
+                        <Typography fontSize={"16px"}>
+                          Categoría De Tarea
+                        </Typography>
+                      </th>
+                      <th className="customTh">
+                        <Typography fontSize={"16px"}>
+                          Estado De La Tarea
+                        </Typography>
+                      </th>
+                      <th className="customTh">
+                        <Typography fontSize={"16px"}> Creado:</Typography>
+                      </th>
+                    </tr>
+                    <tr>
+                      <td>
+                        <RSelect
+                          value={CriticidadID}
+                          onChange={(e) => {
+                            SetCriticidadID(e.target.value);
+                          }}
+                          sx={{ width: "165px" }}
+                        >
+                          <MenuItem value={1}>Sin definir</MenuItem>
+                          <MenuItem value={2}>Alta</MenuItem>
+                          <MenuItem value={3}>Media</MenuItem>
+                          <MenuItem value={4}>Baja</MenuItem>
+                        </RSelect>
+                      </td>
+                      <td>
+                        <RSelect
+                          value={CategoriaID}
+                          onChange={(e) => {
+                            SetCategoriaID(e.target.value);
+                          }}
+                          sx={{ width: "165px" }}
+                        >
+                          <MenuItem value={1}>Producción</MenuItem>
+                          <MenuItem value={2}>Auxiliar</MenuItem>
+                          <MenuItem value={3}>Mantenimiento</MenuItem>
+                        </RSelect>
+                      </td>
+                      <td>
+                        <RSelect
+                          value={EstadoTareaID}
+                          onChange={(e) => {
+                            SetEstadoTareaID(e.target.value);
+                          }}
+                          sx={{ width: "165px" }}
+                        >
+                          <MenuItem
+                            value={1}
+                            sx={{ background: "#FF5252", textAlign: "center" }}
+                          >
+                            <Typography
+                              sx={{
+                                background: "#FF5252",
+                                textAlign: "center",
+                              }}
+                            >
+                              Pendiente
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem
+                            value={2}
+                            sx={{ background: "#7FCC72", textAlign: "center" }}
+                          >
+                            <Typography
+                              sx={{
+                                background: "#7FCC72",
+                                textAlign: "center",
+                              }}
+                            >
+                              Realizada
+                            </Typography>
+                          </MenuItem>
+                        </RSelect>
+                      </td>
+                      <td>
+                        <input
+                          className="inputFecha"
+                          type={"date"}
+                          value={NFecha}
+                          onChange={(e) => SetNFecha(e.target.value)}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br />
+                <Typography fontSize={"16px"} sx={{ marginLeft: "10px" }}>
+                  Selecciona la maquina
+                </Typography>
+                <table>
+                  <tbody>
+                    <tr></tr>
+                    <tr>
+                      <td>
+                        <Autocomplete
+                          value={SelCOD1}
+                          //isOptionEqualToValue={(option, value) => option === value}
+                          options={COD1Maquinas}
+                          onChange={(e, v) => {
+                            SetCOD1(v);
+                            SetSelMaquina(null);
+                            SetCodigo("_____");
+                            if (v !== null) {
+                              axios
+                                .post(
+                                  `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas`,
+                                  { COD1: v }
+                                )
+                                .catch((error) => console.log(error))
+                                .then((reply) => {
+                                  try {
+                                    var StrMaquinas = [];
+                                    reply.data.FilteredMaquina.map((i) => {
+                                      StrMaquinas = [
+                                        ...StrMaquinas,
+                                        `${i.Código} | ${i.COD2Nombre} | ${i.COD2} | ${i.MaquinaID}`,
+                                      ];
+                                    });
+                                    SetMaquinasFiltradas(StrMaquinas);
+                                  } catch {
+                                    console.log("Error en datos recibidos");
+                                  }
+                                });
+                            }
+                          }}
+                          renderInput={(e) => (
+                            <TextField
+                              {...e}
+                              value={COD1Maquinas}
+                              sx={{
+                                width: "120px",
+                                m: "3px",
+                                p: "3px",
+                                minWidth: 200,
+                              }}
+                            ></TextField>
+                          )}
+                        ></Autocomplete>
+                      </td>
+                      <td>
+                        <Autocomplete
+                          value={SelMaquina}
+                          key={SelMaquina === null}
+                          //isOptionEqualToValue={(option, value) => option === value}
+                          options={MaquinasFiltradas}
+                          onChange={(e, v) => {
+                            //Comprobamos que formato tiene el codigo
+                            var [code, , , eqID] = v.split(" | ");
+                            //Generado el codigo usando el formato de planta
+                            SetCodigo(`TP${code}-${NextID}`);
+                            SetSelMaquina(v);
+                            //Guardamos el EquipoID
+                            SetNEquipoID(eqID);
+                          }}
+                          renderInput={(e) => (
+                            <TextField
+                              {...e}
+                              value={SelMaquina}
+                              sx={{
+                                width: "390px",
+                                m: "3px",
+                                p: "3px",
+                                minWidth: 200,
+                              }}
+                            ></TextField>
+                          )}
+                        ></Autocomplete>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <Typography fontSize={"16px"} sx={{ marginLeft: "10px" }}>
+                  Descripción:
+                </Typography>
+                <br />
+                <textarea
+                  className="Descripcion"
+                  value={Descripcion}
+                  onChange={(e) => SetDescripcion(e.target.value)}
+                ></textarea>
+                <br />
+                <Typography fontSize={"16px"} sx={{ marginLeft: "10px" }}>
+                  Observacion:
+                </Typography>
+                <br />
+                <textarea
+                  className="Observacion"
+                  value={Observacion}
+                  onChange={(e) => SetObservacion(e.target.value)}
+                ></textarea>
+
+                <Button
+                  variant="contained"
+                  sx={{ margin: "10px" }}
+                  onClick={() => SendTarea()}
+                >
+                  Crear Tarea con Codigo : {Codigo}
+                </Button>
+                <br />
+              </div>
+              <div className="AccionesDiv">
+                <div>
+                  <div className="TituloAcciones">
+                    <Typography fontSize={"25px"}>Acciones</Typography>
+                  </div>
+                  <div className="BoxPagina">
+                    <textarea
+                      className="DescripcionEmpleado"
+                      value={NDescripcionEmpleado}
+                      onChange={(e) => {
+                        SetNDescripcionEmpleado(e.target.value);
+                      }}
+                    />
+                    <br />
+                    <Typography fontSize={"16px"}>
+                      Observaciones del Empleado:
+                    </Typography>
+                    <textarea
+                      className="ObservacionEmpleado"
+                      value={NObservacionesEmpleado}
+                      onChange={(e) => {
+                        SetNObservacionesEmpleado(e.target.value);
+                      }}
+                    />
+                    <div>
+                      {DispAcciones(PaginaAcciones)}
+                      <div className="PaginationFooter">
+                        <Pagination
+                          count={2}
+                          onChange={(e, p) => {
+                            SetPaginaAcciones(p);
+                          }}
+                        />
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </AccordionDetails>
         </Accordion>

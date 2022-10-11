@@ -771,12 +771,20 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
             `
             var res_insercion_tarea = await MES_query(q_insercion_tarea)
             
+            var NextIDTarea = await MES_query(`
+                use MES;
+                SELECT top 1 ID
+                FROM tbTareas
+                order by ID desc;
+            `)
+            
+
             var q_insercion_accion = `
             USE MES;
             INSERT INTO tbAcciones
                 (TareasID,Accion,Notas,FechaHora)
             VALUES
-                (${DatosTarea.ID}, '${DatosAccion.Accion}','${DatosAccion.Notas}','${DatosTarea.FechaHora}');
+                (${NextIDTarea.query[0].ID}, '${DatosAccion.Accion}','${DatosAccion.Notas}','${DatosTarea.FechaHora}');
             `
             var res_q_insercion_accion = await MES_query(q_insercion_accion)
             
@@ -818,8 +826,9 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
             corrected_query = q_AccMateriales.substring(0, q_AccMateriales.length-1) + ';'
             q_AccMateriales = corrected_query
             var insercion_AccMateriales = await MES_query(q_AccMateriales)
+        
             
-           console.log('Tarea insertada')
+            console.log('Tarea Insertada')
 
 
         }
@@ -843,6 +852,75 @@ app.get('/Mantenimiento/ListaTareas',(request, reply) => {
         var res_lista_tareas = await MES_query(q_lista_tareas)
 
         reply.send({ListaTareas : res_lista_tareas.query})
+    }
+f()
+})
+
+app.post('/Mantenimiento/Tarea', (request, reply) => {
+    async function f(){
+        try{
+            var q_get_tarea = `
+        use MES;
+        SELECT top 1 
+            ID, Codigo,
+            CriticidadID,
+            Descripcion,
+            CategoriaID,
+            EstadoTareaID,
+            FechaHora,
+            EmpleadoNom
+        FROM tbTareas
+        WHERE
+            ID = '${request.body.ID}';`
+        var q_accion_vinculada = `
+            use MES;
+            SELECT 
+                ID,TareasID,Accion,
+                Notas,FechaHora
+            FROM 
+                tbAcciones
+            WHERE
+                TareasID = '${request.body.ID}'
+            ;
+        `
+        var res_get_tarea = await MES_query(q_get_tarea);
+        var res_get_accion = await MES_query(q_accion_vinculada);
+        if(res_get_accion.query.length !== 0 ){
+            
+            
+            var q_empleados_accion = `
+            use MES;
+            SELECT 
+                *
+            FROM 
+                tbAccEmpleados
+            WHERE
+                AccionID = '${res_get_accion.query[0].ID}'
+            ;
+            `
+            var res_get_empleados_accion = await MES_query(q_empleados_accion)
+            var q_materiales_accion = `
+                use MES;
+                SELECT 
+                    *
+                FROM 
+                    tbAccMaterial
+                WHERE
+                    AccionID = '${res_get_accion.query[0].ID}'
+                ;
+            `
+            var res_get_materiales_accion = await MES_query(q_materiales_accion)
+            reply.send({Tarea : res_get_tarea.query[0], Accion: res_get_accion.query, Empleados: res_get_empleados_accion.query, MaterialesAccion: res_get_materiales_accion.query})
+        }
+        else{
+            reply.send({Tarea: res_get_tarea.query[0], Accion : 'Sin Accion Asociada', MaterialesAccion : 'Sin Materiales Asociados', EmpleadosAccion : 'Sin Empleados Asociados'})
+        }
+        
+        }
+        catch{
+            console.log('Error obteniendo datos de la tarea')
+           
+        }
     }
 f()
 })
