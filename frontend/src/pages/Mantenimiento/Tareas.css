@@ -6,9 +6,7 @@
     text-align: center;
 }
 
-.AccordionDiv{
-    background-color: #B6D0E1;
-}
+
 
 .SmallSelect{
     width: 100px;
@@ -69,10 +67,12 @@
 .AccionesDiv{
     float:right;
     width: 49%;
-    overflow-y: scroll;
-    overflow-x: scroll;
     height: auto;
+    overflow: scroll;
     
+}
+.OverlflowDiv{
+    overflow: scroll;
 }
 
 .customTh{

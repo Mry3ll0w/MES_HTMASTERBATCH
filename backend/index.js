@@ -756,29 +756,75 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
     
     async function f(){
         try{
-            var {EmpleadosAccion,MaterialesUsados,DatosAccion,DatosTarea} = request.body
-            
+            var DatosTarea = request.body.DatosTarea
+            //console.log(DatosTarea.FechaHora)
             var q_insercion_tarea =`
             USE MES;
             INSERT INTO tbTareas
                 (Codigo, CriticidadID, Descripcion,
                 CategoriaID,EstadoTareaID,FechaHora,
-                EmpleadoNom)
+                EmpleadoNom,EquipoID)
             VALUES
                 ('${DatosTarea.Codigo}', '${DatosTarea.CriticidadID}', '${DatosTarea.Descripcion}',
                 ${DatosTarea.CategoriaID},${DatosTarea.EstadoTareaID},'${DatosTarea.FechaHora}',
-                '${DatosTarea.Abreviatura}')
+                '${DatosTarea.Abreviatura}',${DatosTarea.EquipoID})
             `
             var res_insercion_tarea = await MES_query(q_insercion_tarea)
+            //Insertamos n acciones
             
-            var NextIDTarea = await MES_query(`
-                use MES;
-                SELECT top 1 ID
-                FROM tbTareas
-                order by ID desc;
-            `)
+            
+            var NextIDTarea = await MES_query(`use MES;
+                SELECT TOP 1 ID
+                FROM 
+                    tbTareas
+                ORDER BY ID DESC
+                ;
+            `) 
             
 
+            var i = parseInt(request.body.NAcciones)
+            var q_insercion_acciones = `
+            USE MES;
+            INSERT INTO tbAcciones
+                (TareasID,Accion,Notas,FechaHora)
+            VALUES
+            `
+            console.log(i)
+            var values = ''
+            for(j = 0 ; j < i ; ++j){
+                q_insercion_acciones+= `(${NextIDTarea.query[0].ID}, 'Sin descripcion','Sin observacion','${DatosTarea.FechaHora}'),`
+            }
+            var corrected_query = q_insercion_acciones.substring(0, q_insercion_acciones.length-1) + ';'
+            q_insercion_acciones = corrected_query
+            var res_insertar_acciones = await MES_query(q_insercion_acciones)
+            console.log('Tarea Insertada')
+
+            //Devolvemos las acciones que hemos creado
+            var q_acciones_insertadas = `
+            use MES;
+            SELECT 
+                ID, TareasID, Accion,Notas,
+                FechaHora
+            FROM
+                tbAcciones
+            WHERE
+                TareasID = '${NextIDTarea.query[0].ID}'
+            ORDER BY ID DESC;
+            `
+            var res_acciones_insertadas = await MES_query(q_acciones_insertadas);
+            reply.send({Acciones : res_acciones_insertadas})
+
+        }
+        catch{
+           console.log('Error en la creacion de la tarea')
+        }
+    }
+f();
+})
+
+app.post('/Mantenimiento/ModificaAccion',(request,reply)=>{
+    async function f(){
+        try{
             var q_insercion_accion = `
             USE MES;
             INSERT INTO tbAcciones
@@ -826,17 +872,12 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
             corrected_query = q_AccMateriales.substring(0, q_AccMateriales.length-1) + ';'
             q_AccMateriales = corrected_query
             var insercion_AccMateriales = await MES_query(q_AccMateriales)
-        
-            
-            console.log('Tarea Insertada')
-
-
         }
         catch{
-            console.log('Error en la creacion de la tarea')
+            console.log('Error Modificando Acciones')
         }
     }
-f();
+f()
 })
 
 app.get('/Mantenimiento/ListaTareas',(request, reply) => {
@@ -913,7 +954,7 @@ app.post('/Mantenimiento/Tarea', (request, reply) => {
             reply.send({Tarea : res_get_tarea.query[0], Accion: res_get_accion.query, Empleados: res_get_empleados_accion.query, MaterialesAccion: res_get_materiales_accion.query})
         }
         else{
-            reply.send({Tarea: res_get_tarea.query[0], Accion : 'Sin Accion Asociada', MaterialesAccion : 'Sin Materiales Asociados', EmpleadosAccion : 'Sin Empleados Asociados'})
+            reply.send({Tarea: res_get_tarea.query[0], Accion : [], MaterialesAccion : [], EmpleadosAccion : []})
         }
         
         }

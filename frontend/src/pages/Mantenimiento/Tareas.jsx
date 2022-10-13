@@ -25,6 +25,10 @@ export default function MantenimientoTareas() {
   const [CategoriaID, SetCategoriaID] = useState(3)
   const [EstadoTareaID, SetEstadoTareaID] = useState(1)
   //Acciones
+  const [NAccionesAsociadas,SetNAccionesAsociadas] = useState(1)
+  const [Acciones,SetAcciones] = useState([])
+  const [MAcciones,SetMAcciones] = useState([])
+
   const [Empleados,SetEmpleados]=useState([])
   const [OpEmpleados,SetOpcionesEmpleados] = useState([])
   const [PaginaAcciones,SetPaginaAcciones] = useState(1)
@@ -96,6 +100,13 @@ export default function MantenimientoTareas() {
 
   //Internal functions
 
+  //Mostrar Acciones
+  function SelectorAcciones(n){
+
+  }
+
+
+
   //-------------------------------------------------------------- FUNCIONES TAREAS --------------------------------------
   function FetchTareas(){
     axios
@@ -155,34 +166,12 @@ export default function MantenimientoTareas() {
    */
   function SendTarea(){
     if(CamposCorrectos()){
-      var DatosMateriales = [];
-      var DatosEmpleados = [];
-
-      //Obtenemos los materiales seleccionados
-      SelectedOptionsMat.map((i) => {
-        Materiales.map((j) => {
-          if (i.value === j.ID) DatosMateriales = [...DatosMateriales, j];
-        });
-      });
-
-      SelectedEmpleados.map((i) => {
-        Empleados.map((j) => {
-          if (i.value == j.ID) DatosEmpleados = [...DatosEmpleados, j];
-        });
-      });
-
-      //Datos de la accion
 
       axios
         .post(
           `http://${process.env.REACT_APP_SERVER}/Mantenimiento/CreateTarea`,
           {
-            EmpleadosAccion: DatosEmpleados,
-            MaterialesUsados: DatosMateriales,
-            DatosAccion: {
-              Accion: NDescripcionEmpleado,
-              Notas: NObservacionesEmpleado,
-            },
+            NAcciones : NAccionesAsociadas,
             DatosTarea: {
               ID: NextID,
               Codigo: Codigo,
@@ -197,9 +186,13 @@ export default function MantenimientoTareas() {
             },
           }
         )
-        .catch((e) => console.log(e));
+        .catch((e) => console.log(e))
+        .then( response => {
+          console.log(response.data)
+          SetAcciones(response.data.Acciones)
+        })
         alert('Tarea Insertada')
-        window.location.reload(false);
+        //window.location.reload(false);
     }
     
   }
@@ -754,6 +747,16 @@ export default function MantenimientoTareas() {
                 value={Observacion}
                 onChange={(e) => SetObservacion(e.target.value)}
               ></textarea>
+              <br />
+              <Typography fontSize={"16px"} margin={"10px"}>
+                Numero Acciones Asociadas :{" "}
+                <input
+                  type={"number"}
+                  value={NAccionesAsociadas}
+                  onChange={(e) => SetNAccionesAsociadas(e.target.value)}
+                  style={{ textAlign: "center", width: "100px" }}
+                />
+              </Typography>
 
               <Button
                 variant="contained"
@@ -762,47 +765,11 @@ export default function MantenimientoTareas() {
               >
                 Crear Tarea con Codigo : {Codigo}
               </Button>
+
               <br />
             </div>
-            <div className="AccionesDiv">
-              <div>
-                <div className="TituloAcciones">
-                  <Typography fontSize={"25px"}>Acciones</Typography>
-                </div>
-                <div className="BoxPagina">
-                  <textarea
-                    className="DescripcionEmpleado"
-                    value={NDescripcionEmpleado}
-                    onChange={(e) => {
-                      SetNDescripcionEmpleado(e.target.value);
-                    }}
-                  />
-                  <br />
-                  <Typography fontSize={"16px"}>
-                    Observaciones del Empleado:
-                  </Typography>
-                  <textarea
-                    className="ObservacionEmpleado"
-                    value={NObservacionesEmpleado}
-                    onChange={(e) => {
-                      SetNObservacionesEmpleado(e.target.value);
-                    }}
-                  />
-                  <div>
-                    {DispAcciones(PaginaAcciones)}
-                    <div className="PaginationFooter">
-                      <Pagination
-                        count={2}
-                        onChange={(e, p) => {
-                          SetPaginaAcciones(p);
-                        }}
-                      />
-                      <br />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
+            <div className="AccionesDiv"></div>
           </AccordionDetails>
         </Accordion>
         <br />
@@ -822,32 +789,46 @@ export default function MantenimientoTareas() {
                 Seleccione la tarea a Modificar
               </Typography>
               <br />
-              <DataGrid
-                columns={ColsTareas}
-                components={{ Toolbar: GridToolbar }}
-                rows={RowsListaTareas}
-                sx={{ width: "700px", height: "400px" }}
-                rowsPerPageOptions={[10]}
-                pageSize={20}
-                localeText={esES.components.MuiDataGrid.defaultProps.localeText}
-                onSelectionModelChange={(r) => {
-                  const selectedIDs = new Set(r);
-                  const selectedRowData = RowsListaTareas.filter((row) =>
-                    selectedIDs.has(row.id)
-                  );
-                  axios
-                    .post(
-                      `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tarea`,
-                      {
-                        ID: selectedRowData[0].ID,
-                      }
-                    )
-                    .catch((e) => console.log(e))
-                    .then((response) => {
-                      console.log(response.data);
-                    });
-                }}
-              />
+              <Accordion>
+                <AccordionSummary>
+                  <Typography fontSize={25} textAlign={"center"}>
+                    Selecciona la tarea a Modificar
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails
+                  sx={{ textAlign: "center",  }}
+                >
+                  <DataGrid
+                    columns={ColsTareas}
+                    components={{ Toolbar: GridToolbar }}
+                    rows={RowsListaTareas}
+                    sx={{ width: "700px", height: "400px", marginLeft: "25%" }}
+                    rowsPerPageOptions={[10]}
+                    pageSize={20}
+                    localeText={
+                      esES.components.MuiDataGrid.defaultProps.localeText
+                    }
+                    onSelectionModelChange={(r) => {
+                      const selectedIDs = new Set(r);
+                      const selectedRowData = RowsListaTareas.filter((row) =>
+                        selectedIDs.has(row.id)
+                      );
+                      axios
+                        .post(
+                          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tarea`,
+                          {
+                            ID: selectedRowData[0].ID,
+                          }
+                        )
+                        .catch((e) => console.log(e))
+                        .then((response) => {
+                          console.log(response.data);
+                          SetMAcciones(response.data.Accion);
+                        });
+                    }}
+                  />
+                </AccordionDetails>
+              </Accordion>
               <br />
               <div className="FormNewTarea">
                 <br />
@@ -1064,43 +1045,47 @@ export default function MantenimientoTareas() {
                 <br />
               </div>
               <div className="AccionesDiv">
-                <div>
-                  <div className="TituloAcciones">
-                    <Typography fontSize={"25px"}>Acciones</Typography>
-                  </div>
-                  <div className="BoxPagina">
-                    <textarea
-                      className="DescripcionEmpleado"
-                      value={NDescripcionEmpleado}
-                      onChange={(e) => {
-                        SetNDescripcionEmpleado(e.target.value);
-                      }}
-                    />
-                    <br />
-                    <Typography fontSize={"16px"}>
-                      Observaciones del Empleado:
-                    </Typography>
-                    <textarea
-                      className="ObservacionEmpleado"
-                      value={NObservacionesEmpleado}
-                      onChange={(e) => {
-                        SetNObservacionesEmpleado(e.target.value);
-                      }}
-                    />
-                    <div>
-                      {DispAcciones(PaginaAcciones)}
-                      <div className="PaginationFooter">
-                        <Pagination
-                          count={2}
-                          onChange={(e, p) => {
-                            SetPaginaAcciones(p);
+                {MAcciones.map((i) => {
+                  return (
+                    <div className="OverflowDiv">
+                      <div className="TituloAcciones">
+                        <Typography fontSize={"25px"}>Acciones</Typography>
+                      </div>
+                      <div className="">
+                        <textarea
+                          className="DescripcionEmpleado"
+                          value={NDescripcionEmpleado}
+                          onChange={(e) => {
+                            SetNDescripcionEmpleado(e.target.value);
                           }}
                         />
                         <br />
+                        <Typography fontSize={"16px"}>
+                          Observaciones del Empleado:
+                        </Typography>
+                        <textarea
+                          className="ObservacionEmpleado"
+                          value={NObservacionesEmpleado}
+                          onChange={(e) => {
+                            SetNObservacionesEmpleado(e.target.value);
+                          }}
+                        />
+                        <div>
+                          {DispAcciones(PaginaAcciones)}
+                          <div className="PaginationFooter">
+                            <Pagination
+                              count={2}
+                              onChange={(e, p) => {
+                                SetPaginaAcciones(p);
+                              }}
+                            />
+                            <br />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
           </AccordionDetails>
