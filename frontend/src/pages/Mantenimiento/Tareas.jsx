@@ -26,15 +26,13 @@ export default function MantenimientoTareas() {
   const [EstadoTareaID, SetEstadoTareaID] = useState(1)
   //Acciones
   const [NAccionesAsociadas,SetNAccionesAsociadas] = useState(1)
-  const [Acciones,SetAcciones] = useState([])
   const [MAcciones,SetMAcciones] = useState([])
+  const [AccEmpleados,SetAccEmpleados]=useState([])
 
   const [Empleados,SetEmpleados]=useState([])
   const [OpEmpleados,SetOpcionesEmpleados] = useState([])
   const [PaginaAcciones,SetPaginaAcciones] = useState(1)
   const [NFecha,SetNFecha]=useState('')
-  const [NObservacionesEmpleado,SetNObservacionesEmpleado]=useState('')
-  const [NDescripcionEmpleado,SetNDescripcionEmpleado]=useState('')
   const [SelectedEmpleados,SetSelectedEmpleados]=useState([])
 
   //Consumo de materiales
@@ -44,8 +42,7 @@ export default function MantenimientoTareas() {
   
   //Datos Tareas
   const [ListaTareas,SetListaTareas] = useState([])
-  const [TareaSeleccionada, SetTareaSeleccionada] = useState([])
-
+  
   //Seccion de Modificacion de ensacado
   const [MTarea, SetMTarea] = useState([])
   const [MAccion, SetMAccion] = useState([])
@@ -71,7 +68,6 @@ export default function MantenimientoTareas() {
         tCOD1 = [...tCOD1, i.COD1NOMBRE];
       })
       SetCOD1Maquinas(tCOD1)
-      console.log(response.data)
       SetNextID(response.data.NextID.NextID)
       
       //Preparamos las opciones de empleado
@@ -100,11 +96,10 @@ export default function MantenimientoTareas() {
 
   //Internal functions
 
-  //Mostrar Acciones
-  function SelectorAcciones(n){
+  //Update de la totalidad de la tarea (Acciones, materiales,Empleados)
+  function Update_Tarea_Completa(){
 
   }
-
 
 
   //-------------------------------------------------------------- FUNCIONES TAREAS --------------------------------------
@@ -187,10 +182,6 @@ export default function MantenimientoTareas() {
           }
         )
         .catch((e) => console.log(e))
-        .then( response => {
-          console.log(response.data)
-          SetAcciones(response.data.Acciones)
-        })
         alert('Tarea Insertada')
         //window.location.reload(false);
     }
@@ -214,7 +205,6 @@ export default function MantenimientoTareas() {
             <Dropdown
               options={OpEmpleados}
               multi={true}
-              
               style={{
                 marginLeft: "10px",
                 width: "600px",
@@ -223,6 +213,7 @@ export default function MantenimientoTareas() {
               }}
               value={SelectedEmpleados}
               onChange={(e) => {
+                console.log(e)
                 SetSelectedEmpleados(e);
               }}
             />
@@ -249,7 +240,7 @@ export default function MantenimientoTareas() {
                     <Typography fontSize={"16px"}>Tiempo</Typography>
                   </th>
                 </tr>
-
+                
                 {Empleados.map((i) => {
                   if (
                     SelectedEmpleados.filter((j) => j.value === i.ID).length > 0
@@ -286,6 +277,7 @@ export default function MantenimientoTareas() {
                       </tr>
                     );
                   }
+                 
                 })}
               </tbody>
             </table>
@@ -316,6 +308,7 @@ export default function MantenimientoTareas() {
                 marginLeft: "10px",
               }}
               onChange={(e) => {
+                console.log(e)
                 SetSelectedOptionsMat(e);
               }}
             />
@@ -369,175 +362,7 @@ export default function MantenimientoTareas() {
     }
   }
 
-  //Clonica a la anterior, modifica las acciones
-  function DispAccionesMod(Pagina) {
-    if (Pagina === 1) {
-      return (
-        <Fragment>
-          <br />
-          <Typography fontSize={"16px"} style={{ marginLeft: "10px" }}>
-            Seleccione los empleados implicados en la tarea
-          </Typography>
-          <div>
-            <Dropdown
-              options={OpEmpleados}
-              multi={true}
-              style={{
-                marginLeft: "10px",
-                width: "600px",
-                fontSize: "18px",
-                position: "absolute",
-              }}
-              value={SelectedEmpleados}
-              onChange={(e) => {
-                SetSelectedEmpleados(e);
-              }}
-            />
-            <br /> <br /> <br /> <br />
-          </div>
-          <br />
-          <div className="TablaAcciones">
-            <table>
-              <tbody>
-                <tr>
-                  <th className="EmpleadosTh">
-                    <Typography fontSize={"16px"}>Emp</Typography>
-                  </th>
-                  <th className="EmpleadosTh">
-                    <Typography fontSize={"16px"}>Alias</Typography>
-                  </th>
-                  <th className="EmpleadosTh">
-                    <Typography fontSize={"16px"}>Apellidos</Typography>
-                  </th>
-                  <th className="EmpleadosTh">
-                    <Typography fontSize={"16px"}>Nombre</Typography>
-                  </th>
-                  <th className="EmpleadosTh">
-                    <Typography fontSize={"16px"}>Tiempo</Typography>
-                  </th>
-                </tr>
-
-                {Empleados.map((i) => {
-                  if (
-                    SelectedEmpleados.filter((j) => j.value === i.ID).length > 0
-                  ) {
-                    return (
-                      <tr id={1 + i.ID}>
-                        <td id={i.ID + 2} className="EmpleadosTd">
-                          {i.Codigo}
-                        </td>
-                        <td id={i.ID + 3} className="EmpleadosTd">
-                          {i.Alias}
-                        </td>
-                        <td id={i.ID + 4} className="EmpleadosTd">
-                          {i.Apellidos}
-                        </td>
-                        <td id={i.ID + 5} className="EmpleadosTd">
-                          {i.Nombre}
-                        </td>
-                        <td id={i.ID + 2} className="EmpleadosTd">
-                          <input
-                            value={i.tiempo}
-                            type="time"
-                            onChange={(e) => {
-                              SetEmpleados(
-                                Empleados.map((j) =>
-                                  j.ID === i.ID
-                                    ? { ...j, tiempo: e.target.value }
-                                    : j
-                                )
-                              );
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  }
-                })}
-              </tbody>
-            </table>
-          </div>
-          <br />
-        </Fragment>
-      );
-    } else if (Pagina === 2) {
-      return (
-        <Fragment>
-          <div className="DivConsumoMateriales">
-            <Typography fontSize={"18px"} sx={{ margin: "8px" }}>
-              Consumo de Material
-            </Typography>
-            <br />
-            <Typography fontSize={"16px"} sx={{ margin: "8px" }}>
-              Selecciona el material usado
-            </Typography>
-            <Dropdown
-              options={OpMat}
-              multi={true}
-              value={SelectedOptionsMat}
-              style={{
-                position: "absolute",
-                width: "600px",
-                marginBottom: "100px",
-                marginLeft: "10px",
-              }}
-              onChange={(e) => {
-                SetSelectedOptionsMat(e);
-              }}
-            />
-            <br /> <br /> <br />
-            <div className="TablaAcciones">
-              <table>
-                <tbody>
-                  <tr>
-                    <th className="EmpleadosTh">
-                      <Typography fontSize={"16px"}>ID Mat</Typography>
-                    </th>
-                    <th className="EmpleadosTh">
-                      <Typography fontSize={"16px"}>Cant</Typography>
-                    </th>
-                  </tr>
-
-                  {Materiales.map((i) => {
-                    if (
-                      SelectedOptionsMat.filter((j) => j.value === i.ID)
-                        .length > 0
-                    ) {
-                      return (
-                        <tr>
-                          <td className="EmpleadosTd">
-                            <Typography fontSize={"16px"}>{i.ID}</Typography>
-                          </td>
-                          <td className="EmpleadosTd">
-                            <input
-                              className="MaterialesInput"
-                              value={i.Cantidad}
-                              onChange={(e) => {
-                                SetMateriales(
-                                  Materiales.map((j) =>
-                                    j.ID === i.ID
-                                      ? { ...j, Cantidad: e.target.value }
-                                      : j
-                                  )
-                                );
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      );
-                    }
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <br />
-            <br />
-          </div>
-        </Fragment>
-      );
-    }
-  }
-
+  
   return (
     <Fragment>
       <div className="AccordionDiv">
@@ -748,6 +573,11 @@ export default function MantenimientoTareas() {
                 onChange={(e) => SetObservacion(e.target.value)}
               ></textarea>
               <br />
+
+              <br />
+            </div>
+
+            <div>
               <Typography fontSize={"16px"} margin={"10px"}>
                 Numero Acciones Asociadas :{" "}
                 <input
@@ -757,19 +587,17 @@ export default function MantenimientoTareas() {
                   style={{ textAlign: "center", width: "100px" }}
                 />
               </Typography>
-
               <Button
                 variant="contained"
-                sx={{ margin: "10px" }}
                 onClick={() => SendTarea()}
               >
                 Crear Tarea con Codigo : {Codigo}
               </Button>
-
-              <br />
+              
+              <Typography fontSize={'13px'} sx={{marginTop: '10px'}}>
+                *Nota : La tarea será rellenada en la sección inferior de modificar tareas y acciones
+              </Typography>
             </div>
-
-            <div className="AccionesDiv"></div>
           </AccordionDetails>
         </Accordion>
         <br />
@@ -795,9 +623,7 @@ export default function MantenimientoTareas() {
                     Selecciona la tarea a Modificar
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails
-                  sx={{ textAlign: "center",  }}
-                >
+                <AccordionDetails sx={{ textAlign: "center" }}>
                   <DataGrid
                     columns={ColsTareas}
                     components={{ Toolbar: GridToolbar }}
@@ -823,6 +649,18 @@ export default function MantenimientoTareas() {
                         .catch((e) => console.log(e))
                         .then((response) => {
                           console.log(response.data);
+                          
+                          var t =[]
+                          response.data.Empleados.map(i => {
+                            t.push({ value: i.EmpleadoID});
+                          })
+                          SetSelectedEmpleados(t);
+                          t = []
+                          response.data.MaterialesAccion.map( i=> {
+                            t.push({ value: i.MaterialID });
+                            
+                          })
+                          SetSelectedOptionsMat(t)
                           SetMAcciones(response.data.Accion);
                         });
                     }}
@@ -1038,13 +876,13 @@ export default function MantenimientoTareas() {
                 <Button
                   variant="contained"
                   sx={{ margin: "10px" }}
-                  onClick={() => SendTarea()}
+                  onClick={() => Update_Tarea_Completa()}
                 >
-                  Crear Tarea con Codigo : {Codigo}
+                  Actuliza la tarea 
                 </Button>
                 <br />
               </div>
-              <div className="AccionesDiv">
+              <div className="AccionesDiv" style={{ overflowY: "auto" }}>
                 {MAcciones.map((i) => {
                   return (
                     <div className="OverflowDiv">
@@ -1054,9 +892,15 @@ export default function MantenimientoTareas() {
                       <div className="">
                         <textarea
                           className="DescripcionEmpleado"
-                          value={NDescripcionEmpleado}
+                          value={i.Accion}
                           onChange={(e) => {
-                            SetNDescripcionEmpleado(e.target.value);
+                            SetMAcciones(
+                              MAcciones.map((j) =>
+                                j.ID === i.ID
+                                  ? { ...j, Accion: e.target.value }
+                                  : j
+                              )
+                            );
                           }}
                         />
                         <br />
@@ -1065,9 +909,15 @@ export default function MantenimientoTareas() {
                         </Typography>
                         <textarea
                           className="ObservacionEmpleado"
-                          value={NObservacionesEmpleado}
+                          value={i.Notas}
                           onChange={(e) => {
-                            SetNObservacionesEmpleado(e.target.value);
+                            SetMAcciones(
+                              MAcciones.map((j) =>
+                                j.ID === i.ID
+                                  ? { ...j, Notas: e.target.value }
+                                  : j
+                              )
+                            );
                           }}
                         />
                         <div>

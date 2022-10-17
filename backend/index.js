@@ -799,21 +799,6 @@ app.post('/Mantenimiento/CreateTarea',(request,reply) => {
             var res_insertar_acciones = await MES_query(q_insercion_acciones)
             console.log('Tarea Insertada')
 
-            //Devolvemos las acciones que hemos creado
-            var q_acciones_insertadas = `
-            use MES;
-            SELECT 
-                ID, TareasID, Accion,Notas,
-                FechaHora
-            FROM
-                tbAcciones
-            WHERE
-                TareasID = '${NextIDTarea.query[0].ID}'
-            ORDER BY ID DESC;
-            `
-            var res_acciones_insertadas = await MES_query(q_acciones_insertadas);
-            reply.send({Acciones : res_acciones_insertadas})
-
         }
         catch{
            console.log('Error en la creacion de la tarea')
