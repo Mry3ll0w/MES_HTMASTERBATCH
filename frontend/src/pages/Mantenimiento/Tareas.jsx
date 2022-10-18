@@ -44,6 +44,7 @@ export default function MantenimientoTareas() {
   const [ListaTareas,SetListaTareas] = useState([])
   
   //Seccion de Modificacion de ensacado
+  const [IDSelectedRow,SetIDSelectedRow] = useState()
   const [MTarea, SetMTarea] = useState([])
   const [MAccion, SetMAccion] = useState([])
   const [MEmpleados,SetMEmpleados] = useState([])
@@ -95,6 +96,46 @@ export default function MantenimientoTareas() {
 
       
   },[])
+
+  function fetchSelectedAction(ID){
+    axios
+                        .post(
+                          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tarea`,
+                          {
+                            ID: ID,
+                          }
+                        )
+                        .catch((e) => console.log(e))
+                        .then((response) => {
+                          console.log(response.data);
+                          
+                          var t =[]
+                          //ERROR EN LOS EMPLEADOS NO PUEDE SER UNDEFINED
+                          if(response.data.Empleados !== undefined){
+                            response.data.Empleados.map((i) => {
+                              t.push({ value: i.EmpleadoID,AccionID : i.AccionID });
+                            });
+                            SetSelectedEmpleados(t);
+                          }
+                          t = []
+                          if(response.data.MaterialesAccion !== undefined){
+                            response.data.MaterialesAccion.map((i) => {
+                              t.push({ value: i.MaterialID,AccionID : i.AccionID });
+                            });
+                            SetSelectedOptionsMat(t);
+                          }
+                          var [f] = response.data.Tarea.FechaHora.split('T')
+                          SetNFecha(f);
+                          SetMAcciones(response.data.Accion);
+                          SetMTarea(response.data.Tarea);
+                          SetMAccion(response.data.Accion)
+                          SetMEmpleados(response.data.Empleados)
+                          SetMMateriales(response.data.MaterialesAccion)
+                          SetMDescripcion(response.data.Tarea.Descripcion);
+                          SetMCodigo(response.data.Tarea.Codigo)
+                          
+                        });
+  }
 
   //Internal functions
 
@@ -381,7 +422,10 @@ export default function MantenimientoTareas() {
         ++i
       }
       alert('Acciones añadidas')
-      window.location.reload(false)
+      fetchSelectedAction(IDSelectedRow)
+    }
+    else{
+      alert('Selecciona una tarea de la lista')
     }
 
   }
@@ -398,7 +442,24 @@ export default function MantenimientoTareas() {
       ).catch(e => console.table(e))
 
       alert('Tarea eliminada')
-      window.location.reload(false)
+      fetchSelectedAction(IDSelectedRow);
+    }
+    else{
+      alert('Selecciona una tarea de la lista')
+    }
+  }
+
+  function Update_Accion(Accion){
+    if(Accion !== undefined && Accion !== null){
+       axios
+        .post(
+          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/UpdateAccion`,
+          {
+            Accion: Accion,
+          }
+        )
+        .catch((e) => console.table(e)
+        );
     }
   }
   
@@ -675,43 +736,8 @@ export default function MantenimientoTareas() {
                       const selectedRowData = RowsListaTareas.filter((row) =>
                         selectedIDs.has(row.id)
                       );
-                      axios
-                        .post(
-                          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tarea`,
-                          {
-                            ID: selectedRowData[0].ID,
-                          }
-                        )
-                        .catch((e) => console.log(e))
-                        .then((response) => {
-                          console.log(response.data);
-                          
-                          var t =[]
-                          //ERROR EN LOS EMPLEADOS NO PUEDE SER UNDEFINED
-                          if(response.data.Empleados !== undefined){
-                            response.data.Empleados.map((i) => {
-                              t.push({ value: i.EmpleadoID,AccionID : i.AccionID });
-                            });
-                            SetSelectedEmpleados(t);
-                          }
-                          t = []
-                          if(response.data.MaterialesAccion !== undefined){
-                            response.data.MaterialesAccion.map((i) => {
-                              t.push({ value: i.MaterialID,AccionID : i.AccionID });
-                            });
-                            SetSelectedOptionsMat(t);
-                          }
-                          var [f] = response.data.Tarea.FechaHora.split('T')
-                          SetNFecha(f);
-                          SetMAcciones(response.data.Accion);
-                          SetMTarea(response.data.Tarea);
-                          SetMAccion(response.data.Accion)
-                          SetMEmpleados(response.data.Empleados)
-                          SetMMateriales(response.data.MaterialesAccion)
-                          SetMDescripcion(response.data.Tarea.Descripcion);
-                          SetMCodigo(response.data.Tarea.Codigo)
-                          
-                        });
+                      SetIDSelectedRow(selectedRowData[0].ID);
+                      fetchSelectedAction(selectedRowData[0].ID);
                     }}
                   />
                 </AccordionDetails>
@@ -983,6 +1009,25 @@ export default function MantenimientoTareas() {
                           }}
                         />
                         <div>
+                          <br />
+                          <Button
+                            variant="contained"
+                            sx={{ marginRight: "5px" }}
+                            size="small"
+                            onClick={() => Erase_Accion(i.ID)}
+                          >
+                            Eliminar Acción
+                          </Button>
+
+                          <Button
+                            variant="contained"
+                            sx={{ marginRight: "5px" }}
+                            size="small"
+                            onClick={() => Update_Accion(i)}
+                          >
+                            Actualizar Acción
+                          </Button>
+                          <br />
                           {DispAcciones(PaginaAcciones)}
                           <div className="PaginationFooter">
                             <Pagination
@@ -991,9 +1036,6 @@ export default function MantenimientoTareas() {
                                 SetPaginaAcciones(p);
                               }}
                             />
-                            <br />
-                            
-                            <Button variant='contained' size='small'onClick={() =>Erase_Accion(i.ID)}>Eliminar Acción</Button>
                           </div>
                         </div>
                       </div>

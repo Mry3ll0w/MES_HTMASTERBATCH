@@ -995,3 +995,14 @@ app.post('/Mantenimiento/DelAccion',(request,reply)=>{
     }
 f()
 })
+
+app.post('/Mantenimiento/UpdateAccion',(request, reply)=>{
+    async function f(){
+        var {Accion} = request.body
+        var q_update_accion = 
+        `
+        
+        `
+    }
+f()
+})
