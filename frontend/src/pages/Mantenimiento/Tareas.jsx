@@ -27,7 +27,7 @@ export default function MantenimientoTareas() {
   //Acciones
   const [NAccionesAsociadas,SetNAccionesAsociadas] = useState(1)
   const [MAcciones,SetMAcciones] = useState([])
-  const [AccEmpleados,SetAccEmpleados]=useState([])
+  
 
   const [Empleados,SetEmpleados]=useState([])
   const [OpEmpleados,SetOpcionesEmpleados] = useState([])
@@ -48,7 +48,9 @@ export default function MantenimientoTareas() {
   const [MAccion, SetMAccion] = useState([])
   const [MEmpleados,SetMEmpleados] = useState([])
   const [MMateriales,SetMMateriales] = useState([])
-
+  const [MDescripcion,SetMDescripcion] = useState([])
+  const [MCodigo,SetMCodigo] = useState('-----')
+  const [AgregaAcciones,SetAgregaAcciones]=useState(1)
   //DataFetch y carga inicial de useStates
   
 
@@ -96,7 +98,8 @@ export default function MantenimientoTareas() {
 
   //Internal functions
 
-  //Update de la totalidad de la tarea (Acciones, materiales,Empleados)
+  //CRUD TAREAS
+
   function Update_Tarea_Completa(){
 
   }
@@ -362,6 +365,42 @@ export default function MantenimientoTareas() {
     }
   }
 
+  // CRUD de Acciones
+
+  function AddAccion(TAREAID){
+    //Si el ID no esta vacio
+    if(TAREAID !== undefined && TAREAID !== null){
+      var i = 0;
+      while(i < AgregaAcciones){
+        axios.post(
+          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/NewAccion`,{
+            TAREAID : TAREAID,
+            FechaHora : NFecha
+          }
+        );
+        ++i
+      }
+      alert('Acciones añadidas')
+      window.location.reload(false)
+    }
+
+  }
+
+  function Erase_Accion(ID){
+
+    if(ID !== null && ID !== undefined){
+      
+      axios.post(
+        `http://${process.env.REACT_APP_SERVER}/Mantenimiento/DelAccion`,
+        {
+          AccionID: ID
+        }
+      ).catch(e => console.table(e))
+
+      alert('Tarea eliminada')
+      window.location.reload(false)
+    }
+  }
   
   return (
     <Fragment>
@@ -613,12 +652,9 @@ export default function MantenimientoTareas() {
           <AccordionDetails>
             <br />
             <div className="SelectorTareas">
-              <Typography fontSize={"22px"}>
-                Seleccione la tarea a Modificar
-              </Typography>
               <br />
               <Accordion>
-                <AccordionSummary>
+                <AccordionSummary sx={{border: '1px solid black'}}>
                   <Typography fontSize={25} textAlign={"center"}>
                     Selecciona la tarea a Modificar
                   </Typography>
@@ -651,17 +687,30 @@ export default function MantenimientoTareas() {
                           console.log(response.data);
                           
                           var t =[]
-                          response.data.Empleados.map(i => {
-                            t.push({ value: i.EmpleadoID});
-                          })
-                          SetSelectedEmpleados(t);
+                          //ERROR EN LOS EMPLEADOS NO PUEDE SER UNDEFINED
+                          if(response.data.Empleados !== undefined){
+                            response.data.Empleados.map((i) => {
+                              t.push({ value: i.EmpleadoID,AccionID : i.AccionID });
+                            });
+                            SetSelectedEmpleados(t);
+                          }
                           t = []
-                          response.data.MaterialesAccion.map( i=> {
-                            t.push({ value: i.MaterialID });
-                            
-                          })
-                          SetSelectedOptionsMat(t)
+                          if(response.data.MaterialesAccion !== undefined){
+                            response.data.MaterialesAccion.map((i) => {
+                              t.push({ value: i.MaterialID,AccionID : i.AccionID });
+                            });
+                            SetSelectedOptionsMat(t);
+                          }
+                          var [f] = response.data.Tarea.FechaHora.split('T')
+                          SetNFecha(f);
                           SetMAcciones(response.data.Accion);
+                          SetMTarea(response.data.Tarea);
+                          SetMAccion(response.data.Accion)
+                          SetMEmpleados(response.data.Empleados)
+                          SetMMateriales(response.data.MaterialesAccion)
+                          SetMDescripcion(response.data.Tarea.Descripcion);
+                          SetMCodigo(response.data.Tarea.Codigo)
+                          
                         });
                     }}
                   />
@@ -831,7 +880,7 @@ export default function MantenimientoTareas() {
                             //Comprobamos que formato tiene el codigo
                             var [code, , , eqID] = v.split(" | ");
                             //Generado el codigo usando el formato de planta
-                            SetCodigo(`TP${code}-${NextID}`);
+                            SetMCodigo(`TP${code}-${NextID}`);
                             SetSelMaquina(v);
                             //Guardamos el EquipoID
                             SetNEquipoID(eqID);
@@ -859,8 +908,8 @@ export default function MantenimientoTareas() {
                 <br />
                 <textarea
                   className="Descripcion"
-                  value={Descripcion}
-                  onChange={(e) => SetDescripcion(e.target.value)}
+                  value={MTarea.Descripcion}
+                  onChange={(e) => SetMDescripcion(e.target.value)}
                 ></textarea>
                 <br />
                 <Typography fontSize={"16px"} sx={{ marginLeft: "10px" }}>
@@ -878,11 +927,24 @@ export default function MantenimientoTareas() {
                   sx={{ margin: "10px" }}
                   onClick={() => Update_Tarea_Completa()}
                 >
-                  Actuliza la tarea 
+                  Actualiza la tarea (Codigo Generado: {MCodigo})
                 </Button>
                 <br />
               </div>
-              <div className="AccionesDiv" style={{ overflowY: "auto" }}>
+              <div className='OverflowDiv' style={{ overflowY: "auto" }}>
+                <br />
+                <div className='AgregaAcciones'>
+                  <Typography fontSize={'18px'}>
+                    Agregar Acciones :{" "} 
+                    <input 
+                      type={'number'} min='1' 
+                      style={{width : '100px'}}
+                      value={AgregaAcciones}
+                      onChange={ (e) => SetAgregaAcciones(e.target.value)}
+                    />
+                    <Button variant='contained' size='small' sx={{marginLeft: '10px'}} onClick={() => AddAccion(MTarea.ID)}>Agregar Acciones</Button>
+                  </Typography>
+                </div>
                 {MAcciones.map((i) => {
                   return (
                     <div className="OverflowDiv">
@@ -930,6 +992,8 @@ export default function MantenimientoTareas() {
                               }}
                             />
                             <br />
+                            
+                            <Button variant='contained' size='small'onClick={() =>Erase_Accion(i.ID)}>Eliminar Acción</Button>
                           </div>
                         </div>
                       </div>
@@ -937,6 +1001,7 @@ export default function MantenimientoTareas() {
                   );
                 })}
               </div>
+              
             </div>
           </AccordionDetails>
         </Accordion>

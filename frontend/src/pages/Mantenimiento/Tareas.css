@@ -64,15 +64,8 @@
     overflow: auto;
 }
 
-.AccionesDiv{
-    float:right;
-    width: 49%;
-    height: auto;
-    overflow: scroll;
-    
-}
-.OverlflowDiv{
-    overflow: scroll;
+.OverflowDiv{
+    overflow-y: scroll;
 }
 
 .customTh{

@@ -950,3 +950,48 @@ app.post('/Mantenimiento/Tarea', (request, reply) => {
     }
 f()
 })
+
+//Se encarga de crear una nueva accion vacia
+app.post('/Mantenimiento/NewAccion',(request, reply)=>{
+    async function f(){
+        try{
+            
+            var q_insercion_accion_vacia = `
+            USE MES;
+            INSERT INTO tbAcciones
+                (TareasID,Accion,Notas,FechaHora)
+            VALUES
+                ('${request.body.TAREAID}','Sin descripción asociada','Sin Notas Asociadas','${request.body.FechaHora}');
+            `
+            var res_q_insercion_accion = await MES_query(q_insercion_accion_vacia)
+            
+            
+
+        }
+        catch{
+            console.log('Error de insercion')
+        }
+    }
+f();
+})
+
+app.post('/Mantenimiento/DelAccion',(request,reply)=>{
+    async function f(){
+        var q_delete_accion = `
+            USE MES;
+            DELETE FROM tbAccMaterial
+            WHERE
+                AccionID = ${request.body.AccionID};
+
+            DELETE FROM tbAccEmpleados
+            WHERE
+                AccionID = ${request.body.AccionID};
+
+            DELETE FROM tbAcciones
+            WHERE
+                ID = ${request.body.AccionID};
+        `
+        var erase_accion = await MES_query(q_delete_accion)
+    }
+f()
+})
