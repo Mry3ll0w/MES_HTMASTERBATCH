@@ -755,11 +755,11 @@ app.post("/Mantenimiento/CreateTarea", (request, reply) => {
             INSERT INTO tbTareas
                 (Codigo, CriticidadID, Descripcion,
                 CategoriaID,EstadoTareaID,FechaHora,
-                EmpleadoNom,EquipoID)
+                EmpleadoNom,EquipoID,Observaciones)
             VALUES
                 ('${DatosTarea.Codigo}', '${DatosTarea.CriticidadID}', '${DatosTarea.Descripcion}',
                 ${DatosTarea.CategoriaID},${DatosTarea.EstadoTareaID},'${DatosTarea.FechaHora}',
-                '${DatosTarea.Abreviatura}',${DatosTarea.EquipoID})
+                '${DatosTarea.Abreviatura}',${DatosTarea.EquipoID},'${DatosTarea.Observaciones}')
             `;
       var res_insercion_tarea = await MES_query(q_insercion_tarea);
       //Insertamos n acciones
@@ -1067,6 +1067,42 @@ app.post("/Mantenimiento/Tareas/UpdateEmpleadoAccion", (request, reply) => {
       let res_update_emp = await MES_query(q_update_emp);
     } catch {
       console.error("Error actualizando al empleado dado");
+    }
+  }
+  f();
+});
+
+app.post("/Mantenimiento/Tareas/DelTarea", (request, reply) => {
+  async function f() {
+    try {
+      let q_borrar_Tarea = `
+        USE MES;
+        USE MES;
+        DELETE FROM tbAccMaterial
+        WHERE
+            AccionID = (
+              Select ID
+              from tbAcciones
+              where TareasID = ${request.body.TareaID}
+            )
+        ;
+        DELETE FROM tbAccEmpleados
+        WHERE
+            AccionID = (
+              Select ID
+              from tbAcciones
+              where TareasID = ${request.body.TareaID}
+            );
+        DELETE FROM tbAcciones
+        WHERE
+            TareasID = ${request.body.TareaID};
+        DELETE FROM tbTareas
+        WHERE 
+          ID = ${request.body.TareaID};
+        `;
+      let res_del_Tarea = await MES_query(q_borrar_Tarea);
+    } catch {
+      console.error("Fallo en la eliminacion de la tarea");
     }
   }
   f();

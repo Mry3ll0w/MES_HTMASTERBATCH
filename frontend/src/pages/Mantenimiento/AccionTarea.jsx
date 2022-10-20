@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import Dropdown from "react-dropdown-select";
+import { Pagination } from "@mui/material";
 import {
   Accordion,
   AccordionDetails,
@@ -12,7 +13,6 @@ import axios from "axios";
 
 export default function AccionTarea({
   OpEmpleados,
-  Pagina,
   OpMat,
   Materiales,
   Empleados,
@@ -24,7 +24,7 @@ export default function AccionTarea({
   const [LocalMatSel, SetLocalMatSel] = useState([]);
   const [LocalEmpleados, SetLocalEmpleados] = useState([]);
   const [LocalMateriales, SetLocalMateriales] = useState([]);
-
+  const [Pagina, SetPagina] = useState(1);
   //Datafetch
 
   function Update_Empleados(AccionID) {
@@ -286,6 +286,15 @@ export default function AccionTarea({
           </Typography>
         </AccordionSummary>
         <AccordionDetails>{DetallesAccion()}</AccordionDetails>
+        <div className='PaginationFooter'>
+          <Pagination
+            count={2}
+            onChange={(e, p) => {
+              SetPagina(p);
+            }}
+          />
+        </div>
+        <br />
       </Accordion>
       <br />
     </Fragment>

@@ -41,7 +41,7 @@ export default function MantenimientoTareas() {
 
   const [Empleados, SetEmpleados] = useState([]);
   const [OpEmpleados, SetOpcionesEmpleados] = useState([]);
-  const [PaginaAcciones, SetPaginaAcciones] = useState(1);
+
   const [NFecha, SetNFecha] = useState("");
   const [EmpleadosAccion, SetEmpleadosAccion] = useState([]);
 
@@ -122,8 +122,12 @@ export default function MantenimientoTareas() {
         console.log(response.data);
         SetSelectedOptionsMat(response.data.MaterialesAccion);
         SetEmpleadosAccion(response.data.Empleados);
-        var [f] = response.data.Tarea.FechaHora.split("T");
-        SetNFecha(f);
+        try {
+          var [f] = response.data.Tarea.FechaHora.split("T");
+          SetNFecha(f);
+        } catch {
+          SetNFecha(new Date.toISOString().slice(0, 10));
+        }
         SetMAcciones(response.data.Accion);
         SetMTarea(response.data.Tarea);
         SetMAccion(response.data.Accion);
@@ -139,7 +143,20 @@ export default function MantenimientoTareas() {
   //CRUD TAREAS
 
   function Update_Tarea_Completa() {}
-
+  function DeleteTarea() {
+    alert("Tarea Eliminada");
+    axios
+      .post(
+        `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/DelTarea`,
+        {
+          TareaID: MTarea.ID,
+        }
+      )
+      .catch((e) => {
+        console.log(e);
+      });
+    window.location.reload(false);
+  }
   //-------------------------------------------------------------- FUNCIONES TAREAS --------------------------------------
   function FetchTareas() {
     axios
@@ -149,7 +166,7 @@ export default function MantenimientoTareas() {
         console.log(response.data);
         SetListaTareas(response.data.ListaTareas);
       });
-    console.log(RowsListaTareas);
+    //console.log(RowsListaTareas);
   }
   const ColsTareas = [
     { field: "ID", headerName: "ID", width: 150, hide: true },
@@ -209,7 +226,7 @@ export default function MantenimientoTareas() {
               Codigo: Codigo,
               CriticidadID: CriticidadID,
               Descripcion: Descripcion,
-              Observacion: Observacion,
+              Observaciones: Observacion,
               CategoriaID: CategoriaID,
               EstadoTareaID: EstadoTareaID,
               EquipoID: NEquipoID,
@@ -219,6 +236,7 @@ export default function MantenimientoTareas() {
           }
         )
         .catch((e) => console.log(e));
+      FetchTareas();
       alert("Tarea Insertada");
       //window.location.reload(false);
     }
@@ -773,6 +791,14 @@ export default function MantenimientoTareas() {
                   Actualiza la tarea (Codigo Generado: {MCodigo})
                 </Button>
                 <br />
+                <Button
+                  sx={{ margin: "10px" }}
+                  variant='contained'
+                  onClick={() => DeleteTarea()}
+                >
+                  Eliminar Tarea Seleccionada
+                </Button>
+                <br />
               </div>
               <div className='OverflowDiv' style={{ overflowY: "auto" }}>
                 <br />
@@ -856,21 +882,12 @@ export default function MantenimientoTareas() {
 
                           <AccionTarea
                             OpEmpleados={OpEmpleados}
-                            Pagina={PaginaAcciones}
                             Materiales={Materiales}
                             OpMat={OpMat}
                             Empleados={Empleados}
                             AccionID={i.ID}
                             FechaCreacion={NFecha}
                           />
-                          <div className='PaginationFooter'>
-                            <Pagination
-                              count={2}
-                              onChange={(e, p) => {
-                                SetPaginaAcciones(p);
-                              }}
-                            />
-                          </div>
                         </div>
                       </div>
                     </div>
