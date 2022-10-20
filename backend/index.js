@@ -999,10 +999,16 @@ f()
 app.post('/Mantenimiento/UpdateAccion',(request, reply)=>{
     async function f(){
         var {Accion} = request.body
+        console.table(Accion)
         var q_update_accion = 
         `
-        
+        USE MES;
+        UPDATE tbAcciones
+        SET Accion = '${Accion.Accion}', Notas = '${Accion.Notas}'
+        WHERE
+            ID = ${Accion.ID};
         `
+        var res_update = await MES_query(q_update_accion)
     }
 f()
 })

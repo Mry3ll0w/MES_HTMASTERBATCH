@@ -1,5 +1,6 @@
 import React from 'react'
-import { styles } from '../Style/styles'
+import { styles }
+from '../Style/styles'
 import Typography from '@mui/material/Typography';
 export default function Footer() {
   return (
