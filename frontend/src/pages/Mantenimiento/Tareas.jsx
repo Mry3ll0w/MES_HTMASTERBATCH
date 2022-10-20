@@ -15,7 +15,6 @@ import "./Tareas.css";
 import axios from "axios";
 import { useState } from "react";
 import { DateTime } from "luxon";
-import Dropdown from "react-dropdown-select";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
 import AccionTarea from "./AccionTarea";
@@ -44,13 +43,12 @@ export default function MantenimientoTareas() {
   const [OpEmpleados, SetOpcionesEmpleados] = useState([]);
   const [PaginaAcciones, SetPaginaAcciones] = useState(1);
   const [NFecha, SetNFecha] = useState("");
-  const [SelectedEmpleados, SetSelectedEmpleados] = useState([]);
+  const [EmpleadosAccion, SetEmpleadosAccion] = useState([]);
 
   //Consumo de materiales
   const [Materiales, SetMateriales] = useState([]);
   const [OpMat, SetOpMat] = useState([]);
   const [SelectedOptionsMat, SetSelectedOptionsMat] = useState([]);
-
   //Datos Tareas
   const [ListaTareas, SetListaTareas] = useState([]);
 
@@ -122,22 +120,8 @@ export default function MantenimientoTareas() {
       .catch((e) => console.log(e))
       .then((response) => {
         console.log(response.data);
-
-        var t = [];
-        //ERROR EN LOS EMPLEADOS NO PUEDE SER UNDEFINED
-        if (response.data.Empleados !== undefined) {
-          response.data.Empleados.map((i) => {
-            t.push({ value: i.EmpleadoID, AccionID: i.AccionID });
-          });
-          SetSelectedEmpleados(t);
-        }
-        t = [];
-        if (response.data.MaterialesAccion !== undefined) {
-          response.data.MaterialesAccion.map((i) => {
-            t.push({ value: i.MaterialID, AccionID: i.AccionID });
-          });
-          SetSelectedOptionsMat(t);
-        }
+        SetSelectedOptionsMat(response.data.MaterialesAccion);
+        SetEmpleadosAccion(response.data.Empleados);
         var [f] = response.data.Tarea.FechaHora.split("T");
         SetNFecha(f);
         SetMAcciones(response.data.Accion);
@@ -869,12 +853,15 @@ export default function MantenimientoTareas() {
                             Actualizar Acción
                           </Button>
                           <br />
+
                           <AccionTarea
                             OpEmpleados={OpEmpleados}
                             Pagina={PaginaAcciones}
                             Materiales={Materiales}
                             OpMat={OpMat}
                             Empleados={Empleados}
+                            AccionID={i.ID}
+                            FechaCreacion={NFecha}
                           />
                           <div className='PaginationFooter'>
                             <Pagination
