@@ -889,13 +889,14 @@ app.post("/Mantenimiento/ModificaAccion", (request, reply) => {
 app.get("/Mantenimiento/ListaTareas", (request, reply) => {
   async function f() {
     var q_lista_tareas = `
-        use MES;
-        SELECT ID, Codigo, Descripcion
-        FROM tbTareas
-        WHERE
-            ID <> 25538
-        order by ID desc;
-        `;
+      USE MES;  
+      SELECT 
+          tbTareas.ID, Codigo, tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion
+        FROM tbTareas,tbTareasEstados
+      Where
+          tbTareas.EstadoTareaID = tbTareasEstados.ID
+      order by ID desc;
+      `;
     var res_lista_tareas = await MES_query(q_lista_tareas);
 
     reply.send({ ListaTareas: res_lista_tareas.query });

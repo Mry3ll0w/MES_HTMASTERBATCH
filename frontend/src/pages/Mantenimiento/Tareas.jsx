@@ -185,11 +185,12 @@ export default function MantenimientoTareas() {
         console.log(response.data);
         SetListaTareas(response.data.ListaTareas);
       });
-    //console.log(RowsListaTareas);
+    console.log(RowsListaTareas);
   }
   const ColsTareas = [
     { field: "ID", headerName: "ID", width: 150, hide: true },
     { field: "Codigo", headerName: "Codigo", width: 150 },
+    { field: "Estado", headerName: "Estado", width: 150 },
     { field: "Descripcion", headerName: "Descripcion", width: 600 },
   ];
 
@@ -202,6 +203,7 @@ export default function MantenimientoTareas() {
           id: i.ID,
           ID: i.ID,
           Codigo: i.Codigo,
+          Estado: i.Estado,
           Descripcion: i.Descripcion,
         },
       ];
