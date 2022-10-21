@@ -1049,24 +1049,24 @@ app.post("/Mantenimiento/Tareas/UpdateEmpleadoAccion", (request, reply) => {
     try {
       //console.table(request.body);
       var { Empleado, AccionID } = request.body;
-
-      let q_update_emp = `
+      var q_update_emp;
+      if (Empleado !== "VACIO") {
+        q_update_emp = `
         use MES;
-        Select *
-        from tbAccEmpleados
-        WHERE 
-            AccionID = ${AccionID}
-            AND
-            EmpleadoID = ${Empleado.ID}
-        if @@ROWCOUNT > 0
-            Update tbAccEmpleados
-            SET AccionTiempo = '${Empleado.tiempo}'
-            WHERE
-                AccionID = ${AccionID}
-        else
-            INSERT INTO tbAccEmpleados (AccionID, EmpleadoID,AccionTiempo)
-            VALUES(${AccionID},${Empleado.ID},'${Empleado.tiempo}');
+
+        DELETE FROM tbAccEmpleados
+        WHERE
+          AccionID = ${AccionID}
+          AND
+          EmpleadoID = ${Empleado.ID};
+        
+        INSERT INTO tbAccEmpleados (AccionID, EmpleadoID,AccionTiempo)
+          VALUES(${AccionID},${Empleado.ID},'${Empleado.tiempo}');
       `;
+      } else {
+        q_update_emp = `USE MES; DELETE FROM tbAccEmpleados WHERE AccionID = ${AccionID}`;
+      }
+
       let res_update_emp = await MES_query(q_update_emp);
     } catch {
       console.error("Error actualizando al empleado dado");
@@ -1135,4 +1135,34 @@ app.post("/Mantenimiento/Tareas/UpdateTarea", (request, reply) => {
     }
   }
   f();
+});
+
+app.post("/Mantenimiento/Tareas/UpdateMaterialAccion", (request, reply) => {
+  console.log(request.body);
+  async function f() {
+    var { Material, AccionID } = request.body;
+    console.log(Material);
+    var q_update_mat = "";
+
+    if (Material !== "VACIO") {
+      q_update_mat = `
+      use MES;
+      DELETE FROM tbAccMaterial
+      WHERE
+        AccionID = ${AccionID}
+        AND
+        MaterialID = ${Material.ID}
+      INSERT INTO tbAccMaterial (AccionID, MaterialID,CantidadMaterial,EstadoConsumoID)
+      VALUES(${AccionID},${Material.ID},${Material.Cantidad},1);
+      `;
+    } else {
+      q_update_mat = `USE MES;DELETE FROM tbAccMaterial WHERE AccionID = ${AccionID};`;
+    }
+    var res_q_update = await MES_query(q_update_mat);
+  }
+  f();
+  try {
+  } catch {
+    console.log("Error en la inserción/actualización de la tarea");
+  }
 });

@@ -17,7 +17,6 @@ export default function AccionTarea({
   Materiales,
   Empleados,
   AccionID,
-  FechaCreacion,
 }) {
   //UseStates
   const [LocalEmpSel, SetLocalEmpSel] = useState([]);
@@ -34,24 +33,68 @@ export default function AccionTarea({
         empleados_seleccionados.push(i);
       }
     });
-    console.table(empleados_seleccionados);
     //Update a cada uno de los empleados
 
-    empleados_seleccionados.map((i) => {
+    if (empleados_seleccionados.length > 0) {
+      empleados_seleccionados.map((i) => {
+        axios
+          .post(
+            `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateEmpleadoAccion`,
+            {
+              Empleado: i,
+              AccionID: AccionID,
+            }
+          )
+          .catch((e) => console.error(e));
+      });
+    } else {
       axios
         .post(
           `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateEmpleadoAccion`,
           {
-            Empleado: i,
+            Empleado: "VACIO",
             AccionID: AccionID,
           }
         )
-        .catch((e) => console.error(e))
-        .then((r) => {});
-    });
+        .catch((e) => console.error(e));
+    }
   }
 
-  //Funciones
+  function UpdateMaterial(AccionID) {
+    var materiales_seleccionados = [];
+    LocalMateriales.map((i) => {
+      if (LocalMatSel.filter((j) => j.value === i.ID).length > 0) {
+        materiales_seleccionados.push(i);
+      }
+    });
+    //Update a cada uno de los empleados
+    if (materiales_seleccionados.length > 0) {
+      materiales_seleccionados.map((i) => {
+        axios
+          .post(
+            `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateMaterialAccion`,
+            {
+              Material: i,
+              AccionID: AccionID,
+            }
+          )
+          .catch((e) => console.error(e));
+      });
+    } else {
+      // no se han seleccionado ningún elemento, por lo que se eliminan todos los materiales vinculados a la acción
+      axios
+        .post(
+          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateMaterialAccion`,
+          {
+            Material: "VACIO",
+            AccionID: AccionID,
+          }
+        )
+        .catch((e) => console.error(e));
+    }
+  }
+
+  //Funcion para muestreo
   function DetallesAccion() {
     if (Pagina === 1) {
       return (
@@ -227,8 +270,15 @@ export default function AccionTarea({
                   })}
                 </tbody>
               </table>
+              <br />
+              <Button
+                variant='contained'
+                size='small'
+                onClick={() => UpdateMaterial(AccionID)}
+              >
+                Actualizar Materiales
+              </Button>
             </div>
-            <br />
             <br />
           </div>
         </Fragment>
