@@ -6,10 +6,6 @@
     text-align: center;
 }
 
-.AccordionDiv{
-    background-color: #B6D0E1;
-}
-
 .SmallSelect{
     width: 100px;
     margin: 0.3%;
@@ -66,18 +62,15 @@
     overflow: auto;
 }
 
-.AccionesDiv{
-    float:right;
-    width: 49%;
+.OverflowDiv{
     overflow-y: scroll;
-    overflow-x: scroll;
-    height: auto;
-    
 }
 
 .customTh{
     padding-right: 20px;
 }
+
+
 .FechaRealizacion{
     margin-left: 60%;
 }
@@ -127,4 +120,10 @@
 }
 .TablaAcciones{
     margin: 10px;
+}
+
+.SelectorTareas{
+    
+    width: auto;
+    height: auto;
 }
