@@ -68,9 +68,10 @@ export default function LoginForm() {
             sessionStorage.setItem("codigo", Sel_user[0].Codigo); //Para la visualizacion en el registro de ensacado
             sessionStorage.setItem("Formulario", Sel_user[0].Formulario);
             nav_home();
-          } else
+          } else {
             alert("Acceso Incorrecto, comprueba el usuario y/o la contraseña");
-          window.location.reload(false);
+            window.location.reload(false);
+          }
         });
     }
   }

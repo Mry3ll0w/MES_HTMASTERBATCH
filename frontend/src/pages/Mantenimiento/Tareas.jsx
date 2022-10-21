@@ -135,6 +135,9 @@ export default function MantenimientoTareas() {
         SetMMateriales(response.data.MaterialesAccion);
         SetMDescripcion(response.data.Tarea.Descripcion);
         SetMCodigo(response.data.Tarea.Codigo);
+        SetCriticidadID(response.data.Tarea.CriticidadID);
+        SetCategoriaID(response.data.Tarea.CategoriaID);
+        SetEstadoTareaID(response.data.Tarea.EstadoTareaID);
       });
   }
 
@@ -149,6 +152,9 @@ export default function MantenimientoTareas() {
         {
           Tarea: MTarea,
           Descripcion: MDescripcion,
+          CriticidadID: CriticidadID,
+          CategoriaID: CategoriaID,
+          EstadoTareaID: EstadoTareaID,
         }
       )
       .catch((e) => console.error(e));
@@ -169,6 +175,9 @@ export default function MantenimientoTareas() {
   }
   //-------------------------------------------------------------- FUNCIONES TAREAS --------------------------------------
   function FetchTareas() {
+    SetCriticidadID(1);
+    SetCategoriaID(3);
+    SetEstadoTareaID(1);
     axios
       .get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/ListaTareas`)
       .catch((e) => console.log(e))
@@ -399,6 +408,16 @@ export default function MantenimientoTareas() {
                             sx={{ background: "#7FCC72", textAlign: "center" }}
                           >
                             Realizada
+                          </Typography>
+                        </MenuItem>
+                        <MenuItem value={3} sx={{ textAlign: "center" }}>
+                          <Typography sx={{ textAlign: "center" }}>
+                            Aprobada
+                          </Typography>
+                        </MenuItem>
+                        <MenuItem value={4} sx={{ textAlign: "center" }}>
+                          <Typography sx={{ textAlign: "center" }}>
+                            Oculta
                           </Typography>
                         </MenuItem>
                       </RSelect>
@@ -673,6 +692,16 @@ export default function MantenimientoTareas() {
                               }}
                             >
                               Realizada
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem value={3} sx={{ textAlign: "center" }}>
+                            <Typography sx={{ textAlign: "center" }}>
+                              Aprobada
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem value={4} sx={{ textAlign: "center" }}>
+                            <Typography sx={{ textAlign: "center" }}>
+                              Oculta
                             </Typography>
                           </MenuItem>
                         </RSelect>
