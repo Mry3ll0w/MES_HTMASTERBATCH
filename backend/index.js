@@ -111,7 +111,6 @@ app.get("/RegEnsacado", (request, res) => {
     } catch {
       res.send("Fallo al hacer la query");
     }
-    //console.log(q_ensacados)
   }
   query();
 });
@@ -120,7 +119,11 @@ app.post("/UpdateEnsacado", (request, res) => {
   console.log(request.body);
   async function q() {
     var q_ins = await MES_query(
-      `Update [WEB_API_TABLES].[dbo].[RegistroEnsacado] SET Fecha = '${request.body.Fecha}' , Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`
+      `Update [WEB_API_TABLES].[dbo].[RegistroEnsacado] SET Fecha = '${request.body.Fecha}' , 
+      Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', 
+      Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',
+      Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', 
+      Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`
     );
     console.log(q_ins);
   }
@@ -1103,6 +1106,32 @@ app.post("/Mantenimiento/Tareas/DelTarea", (request, reply) => {
       let res_del_Tarea = await MES_query(q_borrar_Tarea);
     } catch {
       console.error("Fallo en la eliminacion de la tarea");
+    }
+  }
+  f();
+});
+
+app.post("/Mantenimiento/Tareas/UpdateTarea", (request, reply) => {
+  async function f() {
+    try {
+      var { Tarea, Descripcion } = request.body;
+
+      var q_update_tarea = `
+      use MES;
+      UPDATE tbTareas
+      SET
+          CriticidadID =${Tarea.CriticidadID} ,
+          Descripcion ='${Descripcion}',
+          CategoriaID=${Tarea.CategoriaID},
+          EstadoTareaID=${Tarea.EstadoTareaID},
+          FechaHora= '${Tarea.FechaHora}',
+          Codigo= '${Tarea.Codigo}'
+      WHERE
+          ID = ${Tarea.ID}
+    `;
+      var r_update_tarea = await MES_query(q_update_tarea);
+    } catch {
+      console.log("Error en la actualización de la tarea");
     }
   }
   f();

@@ -142,7 +142,17 @@ export default function MantenimientoTareas() {
 
   //CRUD TAREAS
 
-  function Update_Tarea_Completa() {}
+  function Update_Tarea_Completa() {
+    axios
+      .post(
+        `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateTarea`,
+        {
+          Tarea: MTarea,
+          Descripcion: MDescripcion,
+        }
+      )
+      .catch((e) => console.error(e));
+  }
   function DeleteTarea() {
     alert("Tarea Eliminada");
     axios
@@ -506,6 +516,7 @@ export default function MantenimientoTareas() {
               <br />
               <textarea
                 className='Observacion'
+                disabled={true}
                 value={Observacion}
                 onChange={(e) => SetObservacion(e.target.value)}
               ></textarea>
@@ -769,7 +780,7 @@ export default function MantenimientoTareas() {
                 <br />
                 <textarea
                   className='Descripcion'
-                  value={MTarea.Descripcion}
+                  value={MDescripcion}
                   onChange={(e) => SetMDescripcion(e.target.value)}
                 ></textarea>
                 <br />
@@ -779,6 +790,7 @@ export default function MantenimientoTareas() {
                 <br />
                 <textarea
                   className='Observacion'
+                  disabled={true}
                   value={Observacion}
                   onChange={(e) => SetObservacion(e.target.value)}
                 ></textarea>
