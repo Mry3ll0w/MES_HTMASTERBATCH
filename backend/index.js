@@ -259,7 +259,7 @@ app.get("/Login", (request, res) => {
   async function f() {
     try {
       var query =
-        "select Formulario,Codigo,Pwd_Hashed,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;";
+        "select ID,Formulario,Codigo,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;";
       var resultado = await MES_query(query);
       res.send({ user: resultado.query });
     } catch {
@@ -268,6 +268,33 @@ app.get("/Login", (request, res) => {
   }
 
   f();
+});
+
+app.post("/Login", (request, reply) => {
+  async function f() {
+    console.table(request.body);
+
+    var { Usuario, Pass } = request.body;
+
+    var q_usuario = `
+      select Codigo,Pwd_Hashed 
+      from WEB_API_TABLES.dbo.tbEmpleados 
+      WHERE 
+        ID = ${request.body.Usuario[0].ID}
+    `;
+    var res_user = await MES_query(q_usuario);
+
+    console.table(res_user.query[0]);
+
+    var token = bcrypt.compareSync(Pass, res_user.query[0].Pwd_Hashed);
+    console.table(token);
+    reply.send({ token: token });
+  }
+  try {
+    f();
+  } catch {
+    console.error("Error obteniendo la contraseña y/o el usuario de l");
+  }
 });
 
 app.get("/Profile/:user", (request, res) => {
@@ -1160,8 +1187,9 @@ app.post("/Mantenimiento/Tareas/UpdateMaterialAccion", (request, reply) => {
     }
     var res_q_update = await MES_query(q_update_mat);
   }
-  f();
+
   try {
+    f();
   } catch {
     console.log("Error en la inserción/actualización de la tarea");
   }
