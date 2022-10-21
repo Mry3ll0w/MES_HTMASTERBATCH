@@ -592,7 +592,7 @@ export default function MantenimientoTareas() {
                     columns={ColsTareas}
                     components={{ Toolbar: GridToolbar }}
                     rows={RowsListaTareas}
-                    sx={{ width: "700px", height: "400px", marginLeft: "25%" }}
+                    sx={{ width: "950px", height: "400px", marginLeft: "14%" }}
                     rowsPerPageOptions={[10]}
                     pageSize={20}
                     localeText={
