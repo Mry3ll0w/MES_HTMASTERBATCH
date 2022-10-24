@@ -58,6 +58,7 @@ export default function AccionTarea({
         )
         .catch((e) => console.error(e));
     }
+    alert("Empleados actualizados");
   }
 
   function UpdateMaterial(AccionID) {
@@ -92,6 +93,7 @@ export default function AccionTarea({
         )
         .catch((e) => console.error(e));
     }
+    alert("Material Actualizado");
   }
 
   //Funcion para muestreo
@@ -174,9 +176,6 @@ export default function AccionTarea({
                                     ? { ...j, tiempo: e.target.value }
                                     : j
                                 )
-                              );
-                              console.log(
-                                LocalEmpleados.filter((i) => i.ID === 51)
                               );
                             }}
                           />
@@ -319,13 +318,32 @@ export default function AccionTarea({
 
                 //Ponemos los Empleados en local empleados
                 t = [];
+
                 Empleados.map((i) => {
-                  t.push(i);
+                  var e = i;
+                  response.data.Empleados.forEach((j) => {
+                    if (j.EmpleadoID === i.ID) {
+                      var [, AccionTiempo] = j.AccionTiempo.split("T");
+                      var [horas, minutos] = AccionTiempo.split(":");
+                      AccionTiempo = `${horas}:${minutos}`;
+                      e.tiempo = AccionTiempo;
+                      console.log({ EMPLEADO_CAMBIADO: e });
+                    }
+                  });
+                  t.push(e);
                 });
                 SetLocalEmpleados(t);
                 t = [];
+
                 Materiales.map((i) => {
-                  t.push(i);
+                  var m = i;
+                  response.data.MaterialesAccion.forEach((j) => {
+                    if (i.ID === j.MaterialID) {
+                      console.log(m);
+                      m.Cantidad = j.CantidadMaterial;
+                    }
+                  });
+                  t.push(m);
                 });
                 SetLocalMateriales(t);
               });

@@ -119,7 +119,7 @@ export default function MantenimientoTareas() {
       })
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         SetSelectedOptionsMat(response.data.MaterialesAccion);
         SetEmpleadosAccion(response.data.Empleados);
         try {
@@ -182,10 +182,11 @@ export default function MantenimientoTareas() {
       .get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/ListaTareas`)
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
+        // ! NECESITO SABER QUIEN TIENE ACCESO A ESTE PANEL PARA PODER FILTRAR LAS PENDIENTES ETC
         SetListaTareas(response.data.ListaTareas);
       });
-    console.log(RowsListaTareas);
+    //console.log(RowsListaTareas);
   }
   const ColsTareas = [
     { field: "ID", headerName: "ID", width: 150, hide: true },
