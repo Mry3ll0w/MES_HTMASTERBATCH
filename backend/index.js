@@ -259,7 +259,7 @@ app.get("/Login", (request, res) => {
   async function f() {
     try {
       var query =
-        "select ID,Formulario,Codigo,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;";
+        "select ID,Formulario,CargoID,Codigo,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;";
       var resultado = await MES_query(query);
       res.send({ user: resultado.query });
     } catch {
@@ -442,6 +442,7 @@ app.get("/AdmUsers", (request, reply) => {
             tbEmpleados
         Where
             Codigo <> 'E###'
+        ORDER BY Codigo
         ;`;
 
     let res_usuarios = await MES_query(q_usuarios);
@@ -812,7 +813,7 @@ app.post("/Mantenimiento/CreateTarea", (request, reply) => {
       console.log(i);
       var values = "";
       for (j = 0; j < i; ++j) {
-        q_insercion_acciones += `(${NextIDTarea.query[0].ID}, 'Sin descripcion','Sin observacion','${DatosTarea.FechaHora}'),`;
+        q_insercion_acciones += `(${NextIDTarea.query[0].ID}, '-','-','${DatosTarea.FechaHora}'),`;
       }
       var corrected_query =
         q_insercion_acciones.substring(0, q_insercion_acciones.length - 1) +

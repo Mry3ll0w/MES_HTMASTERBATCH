@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect } from "react";
 import {
   Select as RSelect,
-  Pagination,
   Autocomplete,
   TextField,
   Button,
@@ -43,19 +42,18 @@ export default function MantenimientoTareas() {
   const [OpEmpleados, SetOpcionesEmpleados] = useState([]);
 
   const [NFecha, SetNFecha] = useState("");
-  const [EmpleadosAccion, SetEmpleadosAccion] = useState([]);
 
   //Consumo de materiales
   const [Materiales, SetMateriales] = useState([]);
   const [OpMat, SetOpMat] = useState([]);
-  const [SelectedOptionsMat, SetSelectedOptionsMat] = useState([]);
+
   //Datos Tareas
   const [ListaTareas, SetListaTareas] = useState([]);
 
   //Seccion de Modificacion de ensacado
   const [IDSelectedRow, SetIDSelectedRow] = useState();
   const [MTarea, SetMTarea] = useState([]);
-  const [MAccion, SetMAccion] = useState([]);
+
   const [MEmpleados, SetMEmpleados] = useState([]);
   const [MMateriales, SetMMateriales] = useState([]);
   const [MDescripcion, SetMDescripcion] = useState([]);
@@ -120,8 +118,7 @@ export default function MantenimientoTareas() {
       .catch((e) => console.log(e))
       .then((response) => {
         //console.log(response.data);
-        SetSelectedOptionsMat(response.data.MaterialesAccion);
-        SetEmpleadosAccion(response.data.Empleados);
+
         try {
           var [f] = response.data.Tarea.FechaHora.split("T");
           SetNFecha(f);
@@ -130,7 +127,6 @@ export default function MantenimientoTareas() {
         }
         SetMAcciones(response.data.Accion);
         SetMTarea(response.data.Tarea);
-        SetMAccion(response.data.Accion);
         SetMEmpleados(response.data.Empleados);
         SetMMateriales(response.data.MaterialesAccion);
         SetMDescripcion(response.data.Tarea.Descripcion);
@@ -183,8 +179,18 @@ export default function MantenimientoTareas() {
       .catch((e) => console.log(e))
       .then((response) => {
         //console.log(response.data);
-        // ! NECESITO SABER QUIEN TIENE ACCESO A ESTE PANEL PARA PODER FILTRAR LAS PENDIENTES ETC
-        SetListaTareas(response.data.ListaTareas);
+        var l = [];
+        var responsabilidades = ["1", "2", "3", "4", "7", "11", "13"];
+        //No pueden ver todas las tareas
+
+        if (
+          !responsabilidades.includes(sessionStorage.getItem("Responsabilidad"))
+        ) {
+          l = response.data.ListaTareas.filter((i) => i.Estado === "Pendiente");
+        } else {
+          l = response.data.ListaTareas;
+        }
+        SetListaTareas(l);
       });
     //console.log(RowsListaTareas);
   }

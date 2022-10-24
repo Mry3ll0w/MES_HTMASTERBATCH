@@ -299,7 +299,6 @@ export default function AccionTarea({
               )
               .catch((e) => console.log(e))
               .then((response) => {
-                console.log(response.data.Empleados);
                 var t = [];
 
                 if (response.data.Empleados !== undefined) {
@@ -327,7 +326,6 @@ export default function AccionTarea({
                       var [horas, minutos] = AccionTiempo.split(":");
                       AccionTiempo = `${horas}:${minutos}`;
                       e.tiempo = AccionTiempo;
-                      console.log({ EMPLEADO_CAMBIADO: e });
                     }
                   });
                   t.push(e);
