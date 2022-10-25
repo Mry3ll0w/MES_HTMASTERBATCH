@@ -259,7 +259,7 @@ app.get("/Login", (request, res) => {
   async function f() {
     try {
       var query =
-        "select Formulario,Codigo,Pwd_Hashed,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;";
+        "select ID,Formulario,CargoID,Codigo,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;";
       var resultado = await MES_query(query);
       res.send({ user: resultado.query });
     } catch {
@@ -268,6 +268,31 @@ app.get("/Login", (request, res) => {
   }
 
   f();
+});
+
+app.post("/Login", (request, reply) => {
+  async function f() {
+    var { Usuario, Pass } = request.body;
+
+    var q_usuario = `
+      select Codigo,Pwd_Hashed 
+      from WEB_API_TABLES.dbo.tbEmpleados 
+      WHERE 
+        ID = ${request.body.Usuario[0].ID}
+    `;
+    var res_user = await MES_query(q_usuario);
+
+    console.table(res_user.query[0]);
+
+    var token = bcrypt.compareSync(Pass, res_user.query[0].Pwd_Hashed);
+    console.table(token);
+    reply.send({ token: token });
+  }
+  try {
+    f();
+  } catch {
+    console.error("Error obteniendo la contraseña y/o el usuario de l");
+  }
 });
 
 app.get("/Profile/:user", (request, res) => {
@@ -415,6 +440,7 @@ app.get("/AdmUsers", (request, reply) => {
             tbEmpleados
         Where
             Codigo <> 'E###'
+        ORDER BY Codigo
         ;`;
 
     let res_usuarios = await MES_query(q_usuarios);
@@ -724,7 +750,7 @@ app.post("/Mantenimiento/Tareas", (request, reply) => {
             USE MES;
             SELECT
                 tbMaquina.ID, tbMaquina.Codigo AS Código,
-                tbCOD1.Cod AS COD1, tbCOD2.Cod AS COD2,
+                tbCOD1.Cod AS COD1, tbCOD2.id AS COD2,
                 tbCOD1.Nombre AS COD1Nombre, tbCOD2.Nombre AS COD2Nombre,
                 tbCOD2.COD1ID, tbMaquina.ID as MaquinaID
                 FROM tbCOD2 , tbCOD1, tbMaquina
@@ -785,7 +811,7 @@ app.post("/Mantenimiento/CreateTarea", (request, reply) => {
       console.log(i);
       var values = "";
       for (j = 0; j < i; ++j) {
-        q_insercion_acciones += `(${NextIDTarea.query[0].ID}, 'Sin descripcion','Sin observacion','${DatosTarea.FechaHora}'),`;
+        q_insercion_acciones += `(${NextIDTarea.query[0].ID}, '-','-','${DatosTarea.FechaHora}'),`;
       }
       var corrected_query =
         q_insercion_acciones.substring(0, q_insercion_acciones.length - 1) +
@@ -862,16 +888,27 @@ app.post("/Mantenimiento/ModificaAccion", (request, reply) => {
 app.get("/Mantenimiento/ListaTareas", (request, reply) => {
   async function f() {
     var q_lista_tareas = `
-        use MES;
-        SELECT ID, Codigo, Descripcion
-        FROM tbTareas
-        WHERE
-            ID <> 25538
-        order by ID desc;
-        `;
+      USE MES;  
+      SELECT 
+          tbTareas.ID, Codigo, tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion,
+          tbCOD2.Cod as Cod
+        FROM tbTareas,tbTareasEstados,tbCOD2
+      Where
+          tbTareas.EstadoTareaID = tbTareasEstados.ID
+          AND
+          tbTareas.EquipoID = tbCOD2.ID
+      order by ID desc;
+      `;
     var res_lista_tareas = await MES_query(q_lista_tareas);
 
-    reply.send({ ListaTareas: res_lista_tareas.query });
+    //Obtencion de los codigo 2 para filtrar el datagrid
+    var q_lista_COD2 = "use MES; SELECT nombre,cod FROM tbCOD2;";
+    var res_lista_COD2 = await MES_query(q_lista_COD2);
+
+    reply.send({
+      ListaTareas: res_lista_tareas.query,
+      ListaCOD2: res_lista_COD2.query,
+    });
   }
   f();
 });
@@ -1160,8 +1197,9 @@ app.post("/Mantenimiento/Tareas/UpdateMaterialAccion", (request, reply) => {
     }
     var res_q_update = await MES_query(q_update_mat);
   }
-  f();
+
   try {
+    f();
   } catch {
     console.log("Error en la inserción/actualización de la tarea");
   }

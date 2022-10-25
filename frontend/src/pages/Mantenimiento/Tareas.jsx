@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect } from "react";
 import {
   Select as RSelect,
-  Pagination,
   Autocomplete,
   TextField,
   Button,
@@ -18,6 +17,7 @@ import { DateTime } from "luxon";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
 import AccionTarea from "./AccionTarea";
+import { COLUMNS_DIMENSION_PROPERTIES } from "@mui/x-data-grid/hooks/features/columns/gridColumnsUtils";
 export default function MantenimientoTareas() {
   //Navigates
   const navigate = useNavigate();
@@ -38,26 +38,24 @@ export default function MantenimientoTareas() {
   //Acciones
   const [NAccionesAsociadas, SetNAccionesAsociadas] = useState(1);
   const [MAcciones, SetMAcciones] = useState([]);
-
+  const [FiltroCOD2, SetFiltroCOD2] = useState(""); //Si lo dejamos a vacio no tiene filtro
+  const [OpcionesCOD2, SetOpcionesCOD2] = useState([]);
   const [Empleados, SetEmpleados] = useState([]);
   const [OpEmpleados, SetOpcionesEmpleados] = useState([]);
 
   const [NFecha, SetNFecha] = useState("");
-  const [EmpleadosAccion, SetEmpleadosAccion] = useState([]);
 
   //Consumo de materiales
   const [Materiales, SetMateriales] = useState([]);
   const [OpMat, SetOpMat] = useState([]);
-  const [SelectedOptionsMat, SetSelectedOptionsMat] = useState([]);
+
   //Datos Tareas
   const [ListaTareas, SetListaTareas] = useState([]);
 
   //Seccion de Modificacion de ensacado
   const [IDSelectedRow, SetIDSelectedRow] = useState();
   const [MTarea, SetMTarea] = useState([]);
-  const [MAccion, SetMAccion] = useState([]);
-  const [MEmpleados, SetMEmpleados] = useState([]);
-  const [MMateriales, SetMMateriales] = useState([]);
+
   const [MDescripcion, SetMDescripcion] = useState([]);
   const [MCodigo, SetMCodigo] = useState("-----");
   const [AgregaAcciones, SetAgregaAcciones] = useState(1);
@@ -119,9 +117,8 @@ export default function MantenimientoTareas() {
       })
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response.data);
-        SetSelectedOptionsMat(response.data.MaterialesAccion);
-        SetEmpleadosAccion(response.data.Empleados);
+        //console.log(response.data);
+
         try {
           var [f] = response.data.Tarea.FechaHora.split("T");
           SetNFecha(f);
@@ -130,11 +127,11 @@ export default function MantenimientoTareas() {
         }
         SetMAcciones(response.data.Accion);
         SetMTarea(response.data.Tarea);
-        SetMAccion(response.data.Accion);
-        SetMEmpleados(response.data.Empleados);
-        SetMMateriales(response.data.MaterialesAccion);
         SetMDescripcion(response.data.Tarea.Descripcion);
         SetMCodigo(response.data.Tarea.Codigo);
+        SetCriticidadID(response.data.Tarea.CriticidadID);
+        SetCategoriaID(response.data.Tarea.CategoriaID);
+        SetEstadoTareaID(response.data.Tarea.EstadoTareaID);
       });
   }
 
@@ -149,6 +146,9 @@ export default function MantenimientoTareas() {
         {
           Tarea: MTarea,
           Descripcion: MDescripcion,
+          CriticidadID: CriticidadID,
+          CategoriaID: CategoriaID,
+          EstadoTareaID: EstadoTareaID,
         }
       )
       .catch((e) => console.error(e));
@@ -169,18 +169,39 @@ export default function MantenimientoTareas() {
   }
   //-------------------------------------------------------------- FUNCIONES TAREAS --------------------------------------
   function FetchTareas() {
+    SetCriticidadID(1);
+    SetCategoriaID(3);
+    SetEstadoTareaID(1);
     axios
       .get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/ListaTareas`)
       .catch((e) => console.log(e))
       .then((response) => {
         console.log(response.data);
-        SetListaTareas(response.data.ListaTareas);
+        var l = [];
+        var responsabilidades = ["1", "2", "3", "4", "7", "11", "13"];
+        //No pueden ver todas las tareas
+
+        if (
+          !responsabilidades.includes(sessionStorage.getItem("Responsabilidad"))
+        ) {
+          l = response.data.ListaTareas.filter((i) => i.Estado === "Pendiente");
+        } else {
+          l = response.data.ListaTareas;
+        }
+        SetListaTareas(l);
+        l = []; //Vaciamos para guardar las opciones cod2
+        response.data.ListaCOD2.forEach((i) => {
+          l.push(`${i.cod}|${i.nombre}`);
+        });
+        SetOpcionesCOD2(l);
       });
     //console.log(RowsListaTareas);
   }
   const ColsTareas = [
     { field: "ID", headerName: "ID", width: 150, hide: true },
-    { field: "Codigo", headerName: "Codigo", width: 150 },
+    { field: "Codigo", headerName: "Codigo Tarea", width: 150 },
+    { field: "Estado", headerName: "Estado Tarea", width: 150 },
+    { field: "Cod", headerName: "COD2", width: 150 },
     { field: "Descripcion", headerName: "Descripcion", width: 600 },
   ];
 
@@ -193,6 +214,8 @@ export default function MantenimientoTareas() {
           id: i.ID,
           ID: i.ID,
           Codigo: i.Codigo,
+          Estado: i.Estado,
+          Cod: i.Cod,
           Descripcion: i.Descripcion,
         },
       ];
@@ -307,9 +330,6 @@ export default function MantenimientoTareas() {
     }
   }
 
-  // CRUD Empleados Accion
-  function UpdateEmpleados() {}
-
   return (
     <Fragment>
       <div className='AccordionDiv'>
@@ -401,6 +421,16 @@ export default function MantenimientoTareas() {
                             Realizada
                           </Typography>
                         </MenuItem>
+                        <MenuItem value={3} sx={{ textAlign: "center" }}>
+                          <Typography sx={{ textAlign: "center" }}>
+                            Aprobada
+                          </Typography>
+                        </MenuItem>
+                        <MenuItem value={4} sx={{ textAlign: "center" }}>
+                          <Typography sx={{ textAlign: "center" }}>
+                            Oculta
+                          </Typography>
+                        </MenuItem>
                       </RSelect>
                     </td>
                     <td>
@@ -476,7 +506,7 @@ export default function MantenimientoTareas() {
                         options={MaquinasFiltradas}
                         onChange={(e, v) => {
                           //Comprobamos que formato tiene el codigo
-                          var [code, , , eqID] = v.split(" | ");
+                          var [code, , eqID] = v.split(" | ");
                           //Generado el codigo usando el formato de planta
                           SetCodigo(`TP${code}-${NextID}`);
                           SetSelMaquina(v);
@@ -567,11 +597,39 @@ export default function MantenimientoTareas() {
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ textAlign: "center" }}>
+                  <Autocomplete
+                    value={FiltroCOD2}
+                    options={OpcionesCOD2}
+                    onChange={(e, v) => {
+                      SetFiltroCOD2(v);
+                      //Filtramos la lista de tareas
+                      var l = [];
+                      var [SelCod] = v.split("|");
+                      l = ListaTareas.filter((i) => i.Cod === SelCod);
+                      console.log({ Lista: l, Codigo: SelCod });
+                    }}
+                    renderInput={(e) => (
+                      <TextField
+                        {...e}
+                        value={FiltroCOD2}
+                        label='Filtrar por COD2'
+                        sx={{
+                          width: "390px",
+                          m: "3px",
+                          p: "3px",
+                          minWidth: 200,
+                        }}
+                      ></TextField>
+                    )}
+                  />{" "}
+                  <br />
+                  <Button variant='contained'>Limpiar Filtrado</Button>
+                  <br /> <br />
                   <DataGrid
                     columns={ColsTareas}
                     components={{ Toolbar: GridToolbar }}
                     rows={RowsListaTareas}
-                    sx={{ width: "700px", height: "400px", marginLeft: "25%" }}
+                    sx={{ width: "950px", height: "400px", marginLeft: "14%" }}
                     rowsPerPageOptions={[10]}
                     pageSize={20}
                     localeText={
@@ -673,6 +731,16 @@ export default function MantenimientoTareas() {
                               }}
                             >
                               Realizada
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem value={3} sx={{ textAlign: "center" }}>
+                            <Typography sx={{ textAlign: "center" }}>
+                              Aprobada
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem value={4} sx={{ textAlign: "center" }}>
+                            <Typography sx={{ textAlign: "center" }}>
+                              Oculta
                             </Typography>
                           </MenuItem>
                         </RSelect>

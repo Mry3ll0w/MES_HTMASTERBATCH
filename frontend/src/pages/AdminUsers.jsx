@@ -1,12 +1,18 @@
-import { TextField,Accordion, AccordionDetails, AccordionSummary, Typography, Button } from '@mui/material'
-import React, { Fragment } from 'react'
-import { useState } from 'react';
-import { useEffect } from 'react';
-import '../Style/AdminUsers.css'
-import axios from 'axios'
-import Select from 'react-select'
+import {
+  TextField,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Typography,
+  Button,
+} from "@mui/material";
+import React, { Fragment } from "react";
+import { useState } from "react";
+import { useEffect } from "react";
+import "../Style/AdminUsers.css";
+import axios from "axios";
+import Select from "react-select";
 export default function Personal() {
-  
   const Tratamientos = [
     { value: "1", label: "Don" },
     { value: "2", label: "Doña" },
@@ -14,72 +20,73 @@ export default function Personal() {
     { value: "4", label: "Señora" },
   ];
 
-  const Cargos =[
-    {value: "1", label: "Gerente-Director Técnico"},
-    {value: "2", label: "Administración General"},
-    {value: "3", label: "Jefe De Producción"},
-    {value: "4", label: "Jefe De Turno"},
-    {value: "5", label: "Técnico Comercial"},
-    {value: "6", label: "Técnico I+D"},
-    {value: "7", label: "Jefe De Mantenimiento"},
-    {value: "8", label: "Técnico Contable"},
-    {value: "9", label: "Operario-Ofical 2º"},
-    {value: "10", label: "Operario-Ofical 3º NoLogin"},
-    {value: "11", label: "Sin Cargo Con Login"},
-    {value: "12", label: "Sin Cargo Sin Login"},
-  ]
+  //Siempre añadir cargos al final para evitar alterar el orden de los cargos
+  const Cargos = [
+    { value: "1", label: "Gerente-Director Técnico" },
+    { value: "2", label: "Administración General" },
+    { value: "3", label: "Responsable De Producción" },
+    { value: "4", label: "Responsable De Turno" },
+    { value: "5", label: "Técnico Comercial" },
+    { value: "6", label: "Técnico I+D" },
+    { value: "7", label: "Responsable De Mantenimiento" },
+    { value: "8", label: "Técnico Contable" },
+    { value: "9", label: "Operario-Ofical 2º" },
+    { value: "10", label: "Operario-Ofical 3º NoLogin" },
+    { value: "11", label: "Sin Cargo Con Login" },
+    { value: "12", label: "Sin Cargo Sin Login" },
+    { value: "13", label: "Técnico De Mantenimiento" },
+  ];
 
   const EstadosContrato = [
-    {value : '1', label: 'En Activo'},
-    {value : '2', label: 'De baja'}
-  ]
+    { value: "1", label: "En Activo" },
+    { value: "2", label: "De baja" },
+  ];
 
   //UseStates
-  const [Usuarios, setUsuarios] = useState([])
-  const [NNombre, setNNombre] = useState('')
-  const [NApellido,setNApellido] = useState('')
-  const [NCodigo, setNCodigo] = useState('')
-  const [NTratamiento, setNTratamiento] = useState(1)
-  const [NCargo, setNCargo]=useState(12)
-  const [NEstadoContrato,setNEstadoContrato]=useState(1)
+  const [Usuarios, setUsuarios] = useState([]);
+  const [NNombre, setNNombre] = useState("");
+  const [NApellido, setNApellido] = useState("");
+  const [NCodigo, setNCodigo] = useState("");
+  const [NTratamiento, setNTratamiento] = useState(1);
+  const [NCargo, setNCargo] = useState(12);
+  const [NEstadoContrato, setNEstadoContrato] = useState(1);
 
   /**
    * Inserta el nuevo empleado a la lista de estos
-   * @param {empleado} u 
+   * @param {empleado} u
    */
-  function InsertaEmpleado(){
-    axios.post(`http://192.168.0.118:4001/NewAdmUsers`,
-    {
-      Codigo : NCodigo,
-      Nombre: NNombre,
-      Apellidos : NApellido,
-      TratamientoID : NTratamiento,
-      CargoID: NCargo,
-      ContratoEstadoID : NEstadoContrato
-    }
-    ).catch(e => {console.log(e)})
+  function InsertaEmpleado() {
+    axios
+      .post(`http://192.168.0.118:4001/NewAdmUsers`, {
+        Codigo: NCodigo,
+        Nombre: NNombre,
+        Apellidos: NApellido,
+        TratamientoID: NTratamiento,
+        CargoID: NCargo,
+        ContratoEstadoID: NEstadoContrato,
+      })
+      .catch((e) => {
+        console.log(e);
+      });
     window.location.reload(false);
-    
   }
 
   useEffect(() => {
     axios
-      .get(
-        `http://192.168.0.118:4001/AdmUsers`
-      )
+      .get(`http://192.168.0.118:4001/AdmUsers`)
       .catch((error) => console.log(error))
       .then((response) => {
-        try{
-          setUsuarios(response.data.Usuarios)
-          
-          setNCodigo(response.data.NextCode)
-          
-        }
-        catch{
-          console.log("Fallo en la recepcion de datos del servidor RUTA: AdmUsers ")
+        try {
+          setUsuarios(response.data.Usuarios);
+
+          setNCodigo(response.data.NextCode);
+        } catch {
+          console.log(
+            "Fallo en la recepcion de datos del servidor RUTA: AdmUsers "
+          );
         }
       });
-  },[])
+  }, []);
 
   return (
     <Fragment>
@@ -103,45 +110,45 @@ export default function Personal() {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <div className="wrap_div">
+          <div className='wrap_div'>
             <table>
               <tbody>
                 <tr>
-                  <th className="th_ADM">
+                  <th className='th_ADM'>
                     <Typography fontSize={"20px"} textAlign={"center"}>
                       {" "}
                       Código
                     </Typography>
                   </th>
-                  <th className="th_ADM">
+                  <th className='th_ADM'>
                     <Typography fontSize={"20px"} textAlign={"center"}>
                       {" "}
                       Alias
                     </Typography>
                   </th>
-                  <th className="th_ADM">
+                  <th className='th_ADM'>
                     <Typography fontSize={"20px"} textAlign={"center"}>
                       {" "}
                       Apellidos
                     </Typography>
                   </th>
-                  <th className="th_ADM">
+                  <th className='th_ADM'>
                     <Typography fontSize={"20px"} textAlign={"center"}>
                       {" "}
                       Nombre
                     </Typography>
                   </th>
-                  <th className="th_ADM">
+                  <th className='th_ADM'>
                     <Typography fontSize={"20px"} textAlign={"center"}>
                       Tratamiento
                     </Typography>
                   </th>
-                  <th className="th_ADM">
+                  <th className='th_ADM'>
                     <Typography fontSize={"20px"} textAlign={"center"}>
                       Cargo
                     </Typography>
                   </th>
-                  <th className="th_ADM">
+                  <th className='th_ADM'>
                     <Typography fontSize={"20px"} textAlign={"center"}>
                       Estado del Contrato
                     </Typography>
@@ -150,7 +157,7 @@ export default function Personal() {
                 {Usuarios.map((i, n) => {
                   return (
                     <tr key={n++}>
-                      <td className="td_ADM" >
+                      <td className='td_ADM'>
                         <input
                           className='SmallInput'
                           value={i.Codigo}
@@ -186,7 +193,7 @@ export default function Personal() {
                           }}
                         />
                       </td>
-                      <td className="td_ADM">
+                      <td className='td_ADM'>
                         <input
                           value={i.Apellidos}
                           onChange={(e) => {
@@ -203,7 +210,7 @@ export default function Personal() {
                           }}
                         />
                       </td>
-                      <td className="td_ADM">
+                      <td className='td_ADM'>
                         <input
                           value={i.Nombre}
                           onChange={(e) => {
@@ -218,7 +225,7 @@ export default function Personal() {
                           }}
                         />
                       </td>
-                      <td className="td_ADM">
+                      <td className='td_ADM'>
                         <Select
                           options={Tratamientos}
                           onChange={(e) =>
@@ -233,7 +240,7 @@ export default function Personal() {
                           defaultValue={Tratamientos[i.TratamientoID - 1]}
                         />
                       </td>
-                      <td className="td_ADM">
+                      <td className='td_ADM'>
                         <Select
                           options={Cargos}
                           defaultValue={Cargos[i.CargoID - 1]}
@@ -246,7 +253,7 @@ export default function Personal() {
                           }
                         />
                       </td>
-                      <td className="td_ADM">
+                      <td className='td_ADM'>
                         <Select
                           options={EstadosContrato}
                           defaultValue={EstadosContrato[i.ContratoEstadoID - 1]}
@@ -275,26 +282,33 @@ export default function Personal() {
                               .then((response) => {
                                 try {
                                   setUsuarios(response.data.Usuarios);
-                                  
                                 } catch {
                                   console.log(
                                     "Fallo en la recepcion de datos del servidor RUTA: AdmUsers "
                                   );
                                 }
                               });
-                              window.location.reload(false);
+                            window.location.reload(false);
                           }}
                         >
                           Modificar Empleado
                         </button>
                       </td>
                       <td>
-                        <button onClick={()=>{
-                          axios.post(
-                            `http://192.168.0.118:4001/EraseAdmUsers`,{ID : i.ID}
-                          ).catch(e => {console.log(e)});
-                          window.location.reload(false)
-                        }}>Eliminar Empleado</button>
+                        <button
+                          onClick={() => {
+                            axios
+                              .post(`http://192.168.0.118:4001/EraseAdmUsers`, {
+                                ID: i.ID,
+                              })
+                              .catch((e) => {
+                                console.log(e);
+                              });
+                            window.location.reload(false);
+                          }}
+                        >
+                          Eliminar Empleado
+                        </button>
                       </td>
                     </tr>
                   );
@@ -352,7 +366,7 @@ export default function Personal() {
           <div style={{ margin: "5px" }}>
             <Typography fontSize={"18px"}>Tratamiento: </Typography>
             <Select
-              className="Custom_Select"
+              className='Custom_Select'
               options={Tratamientos}
               defaultValue={Tratamientos[0]}
               onChange={(e) => setNTratamiento(e.value)}
@@ -360,7 +374,7 @@ export default function Personal() {
 
             <Typography fontSize={"18px"}>Cargo :</Typography>
             <Select
-              className="Custom_Select"
+              className='Custom_Select'
               options={Cargos}
               defaultValue={Cargos[Cargos.length - 1]}
               onChange={(e) => setNCargo(e.value)}
