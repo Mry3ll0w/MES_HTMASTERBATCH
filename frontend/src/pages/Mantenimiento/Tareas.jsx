@@ -605,8 +605,9 @@ export default function MantenimientoTareas() {
                       //Filtramos la lista de tareas
                       var l = [];
                       var [SelCod] = v.split("|");
-                      l = ListaTareas.filter((i) => i.Cod === SelCod);
-                      console.log({ Lista: l, Codigo: SelCod });
+                      SelCod = String(SelCod);
+                      l = ListaTareas.filter((i) => i.Cod === `${SelCod}`);
+                      SetListaTareas(l);
                     }}
                     renderInput={(e) => (
                       <TextField
@@ -623,7 +624,15 @@ export default function MantenimientoTareas() {
                     )}
                   />{" "}
                   <br />
-                  <Button variant='contained'>Limpiar Filtrado</Button>
+                  <Button
+                    variant='contained'
+                    onClick={() => {
+                      SetFiltroCOD2("");
+                      FetchTareas();
+                    }}
+                  >
+                    Limpiar Filtrado
+                  </Button>
                   <br /> <br />
                   <DataGrid
                     columns={ColsTareas}
