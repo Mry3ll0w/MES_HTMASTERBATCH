@@ -6,7 +6,6 @@ import axios from "axios";
 import { styles } from "../Style/styles";
 import { useNavigate } from "react-router-dom";
 import LoginLogo from "../img/LoginLogo.png";
-const bcrypt = require("bcryptjs");
 
 window.logged = "";
 

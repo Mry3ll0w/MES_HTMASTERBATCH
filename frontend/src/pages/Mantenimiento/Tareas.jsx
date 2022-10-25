@@ -54,8 +54,6 @@ export default function MantenimientoTareas() {
   const [IDSelectedRow, SetIDSelectedRow] = useState();
   const [MTarea, SetMTarea] = useState([]);
 
-  const [MEmpleados, SetMEmpleados] = useState([]);
-  const [MMateriales, SetMMateriales] = useState([]);
   const [MDescripcion, SetMDescripcion] = useState([]);
   const [MCodigo, SetMCodigo] = useState("-----");
   const [AgregaAcciones, SetAgregaAcciones] = useState(1);
@@ -127,8 +125,6 @@ export default function MantenimientoTareas() {
         }
         SetMAcciones(response.data.Accion);
         SetMTarea(response.data.Tarea);
-        SetMEmpleados(response.data.Empleados);
-        SetMMateriales(response.data.MaterialesAccion);
         SetMDescripcion(response.data.Tarea.Descripcion);
         SetMCodigo(response.data.Tarea.Codigo);
         SetCriticidadID(response.data.Tarea.CriticidadID);
@@ -325,9 +321,6 @@ export default function MantenimientoTareas() {
     }
   }
 
-  // CRUD Empleados Accion
-  function UpdateEmpleados() {}
-
   return (
     <Fragment>
       <div className='AccordionDiv'>
@@ -504,7 +497,7 @@ export default function MantenimientoTareas() {
                         options={MaquinasFiltradas}
                         onChange={(e, v) => {
                           //Comprobamos que formato tiene el codigo
-                          var [code, , , eqID] = v.split(" | ");
+                          var [code, , eqID] = v.split(" | ");
                           //Generado el codigo usando el formato de planta
                           SetCodigo(`TP${code}-${NextID}`);
                           SetSelMaquina(v);

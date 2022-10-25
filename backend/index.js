@@ -272,8 +272,6 @@ app.get("/Login", (request, res) => {
 
 app.post("/Login", (request, reply) => {
   async function f() {
-    console.table(request.body);
-
     var { Usuario, Pass } = request.body;
 
     var q_usuario = `
@@ -752,7 +750,7 @@ app.post("/Mantenimiento/Tareas", (request, reply) => {
             USE MES;
             SELECT
                 tbMaquina.ID, tbMaquina.Codigo AS Código,
-                tbCOD1.Cod AS COD1, tbCOD2.Cod AS COD2,
+                tbCOD1.Cod AS COD1, tbCOD2.id AS COD2,
                 tbCOD1.Nombre AS COD1Nombre, tbCOD2.Nombre AS COD2Nombre,
                 tbCOD2.COD1ID, tbMaquina.ID as MaquinaID
                 FROM tbCOD2 , tbCOD1, tbMaquina
