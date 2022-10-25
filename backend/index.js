@@ -901,7 +901,14 @@ app.get("/Mantenimiento/ListaTareas", (request, reply) => {
       `;
     var res_lista_tareas = await MES_query(q_lista_tareas);
 
-    reply.send({ ListaTareas: res_lista_tareas.query });
+    //Obtencion de los codigo 2 para filtrar el datagrid
+    var q_lista_COD2 = "use MES; SELECT nombre,cod FROM tbCOD2;";
+    var res_lista_COD2 = await MES_query(q_lista_COD2);
+
+    reply.send({
+      ListaTareas: res_lista_tareas.query,
+      ListaCOD2: res_lista_COD2.query,
+    });
   }
   f();
 });

@@ -17,6 +17,7 @@ import { DateTime } from "luxon";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
 import AccionTarea from "./AccionTarea";
+import { COLUMNS_DIMENSION_PROPERTIES } from "@mui/x-data-grid/hooks/features/columns/gridColumnsUtils";
 export default function MantenimientoTareas() {
   //Navigates
   const navigate = useNavigate();
@@ -37,7 +38,8 @@ export default function MantenimientoTareas() {
   //Acciones
   const [NAccionesAsociadas, SetNAccionesAsociadas] = useState(1);
   const [MAcciones, SetMAcciones] = useState([]);
-
+  const [FiltroCOD2, SetFiltroCOD2] = useState(""); //Si lo dejamos a vacio no tiene filtro
+  const [OpcionesCOD2, SetOpcionesCOD2] = useState([]);
   const [Empleados, SetEmpleados] = useState([]);
   const [OpEmpleados, SetOpcionesEmpleados] = useState([]);
 
@@ -174,7 +176,7 @@ export default function MantenimientoTareas() {
       .get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/ListaTareas`)
       .catch((e) => console.log(e))
       .then((response) => {
-        //console.log(response.data);
+        console.log(response.data);
         var l = [];
         var responsabilidades = ["1", "2", "3", "4", "7", "11", "13"];
         //No pueden ver todas las tareas
@@ -187,6 +189,11 @@ export default function MantenimientoTareas() {
           l = response.data.ListaTareas;
         }
         SetListaTareas(l);
+        l = []; //Vaciamos para guardar las opciones cod2
+        response.data.ListaCOD2.forEach((i) => {
+          l.push(`${i.cod}|${i.nombre}`);
+        });
+        SetOpcionesCOD2(l);
       });
     //console.log(RowsListaTareas);
   }
@@ -590,6 +597,34 @@ export default function MantenimientoTareas() {
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ textAlign: "center" }}>
+                  <Autocomplete
+                    value={FiltroCOD2}
+                    options={OpcionesCOD2}
+                    onChange={(e, v) => {
+                      SetFiltroCOD2(v);
+                      //Filtramos la lista de tareas
+                      var l = [];
+                      var [SelCod] = v.split("|");
+                      l = ListaTareas.filter((i) => i.Cod === SelCod);
+                      console.log({ Lista: l, Codigo: SelCod });
+                    }}
+                    renderInput={(e) => (
+                      <TextField
+                        {...e}
+                        value={FiltroCOD2}
+                        label='Filtrar por COD2'
+                        sx={{
+                          width: "390px",
+                          m: "3px",
+                          p: "3px",
+                          minWidth: 200,
+                        }}
+                      ></TextField>
+                    )}
+                  />{" "}
+                  <br />
+                  <Button variant='contained'>Limpiar Filtrado</Button>
+                  <br /> <br />
                   <DataGrid
                     columns={ColsTareas}
                     components={{ Toolbar: GridToolbar }}

@@ -5,6 +5,7 @@ import { Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import "./menu.css";
+import { useEffect } from "react";
 
 export default function HomePlanta() {
   const navigate = useNavigate();
@@ -13,12 +14,14 @@ export default function HomePlanta() {
     navigate(str);
   }
 
-  if (sessionStorage.getItem("logged") === null) {
-    handle_nav("/login");
-    alert(
-      "Para acceder a esta pagina necesita iniciar sesión, pida a un administrador que le de de alta o acceda con su usuario"
-    );
-  }
+  useEffect(() => {
+    if (sessionStorage.getItem("logged") === null) {
+      handle_nav("/login");
+      alert(
+        "Para acceder a esta pagina necesita iniciar sesión, pida a un administrador que le de de alta o acceda con su usuario"
+      );
+    }
+  }, []);
 
   const menu_planta = [
     {
