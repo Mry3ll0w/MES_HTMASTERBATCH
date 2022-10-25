@@ -890,10 +890,13 @@ app.get("/Mantenimiento/ListaTareas", (request, reply) => {
     var q_lista_tareas = `
       USE MES;  
       SELECT 
-          tbTareas.ID, Codigo, tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion
-        FROM tbTareas,tbTareasEstados
+          tbTareas.ID, Codigo, tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion,
+          tbCOD2.Cod as Cod
+        FROM tbTareas,tbTareasEstados,tbCOD2
       Where
           tbTareas.EstadoTareaID = tbTareasEstados.ID
+          AND
+          tbTareas.EquipoID = tbCOD2.ID
       order by ID desc;
       `;
     var res_lista_tareas = await MES_query(q_lista_tareas);

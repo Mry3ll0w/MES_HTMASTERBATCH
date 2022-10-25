@@ -192,8 +192,9 @@ export default function MantenimientoTareas() {
   }
   const ColsTareas = [
     { field: "ID", headerName: "ID", width: 150, hide: true },
-    { field: "Codigo", headerName: "Codigo", width: 150 },
-    { field: "Estado", headerName: "Estado", width: 150 },
+    { field: "Codigo", headerName: "Codigo Tarea", width: 150 },
+    { field: "Estado", headerName: "Estado Tarea", width: 150 },
+    { field: "Cod", headerName: "COD2", width: 150 },
     { field: "Descripcion", headerName: "Descripcion", width: 600 },
   ];
 
@@ -207,6 +208,7 @@ export default function MantenimientoTareas() {
           ID: i.ID,
           Codigo: i.Codigo,
           Estado: i.Estado,
+          Cod: i.Cod,
           Descripcion: i.Descripcion,
         },
       ];
