@@ -101,7 +101,12 @@ app.get("/RegEnsacado", (request, res) => {
   async function query() {
     try {
       let q_ensacados = await MES_query(
-        "select * from [WEB_API_TABLES].[dbo].[RegistroEnsacado] order by Fecha desc"
+        `use WEB_API_TABLES;
+        SELECT * FROM RegistroEnsacado
+        WHERE
+          FechaEliminacion IS NULL
+          AND 
+          EliminadoPor IS NULL;`
       );
       let q_prods = await MES_query(
         fs.readFileSync("Q_Lista_productos.sql").toString()
@@ -143,11 +148,18 @@ app.post("/RegistraEnsacado", (request, res) => {
 });
 
 app.post("/DelEns", (request, res) => {
-  console.log(request.body);
+  //console.log(request.body);
   const E = request.body;
   async function q() {
     var q_ins = await MES_query(
-      `DELETE FROM [WEB_API_TABLES].[dbo].[RegistroEnsacado] WHERE ID = ${E.ID};`
+      `
+      use WEB_API_TABLES;
+      UPDATE RegistroEnsacado
+      SET
+        FechaEliminacion = GETDATE(),
+        EliminadoPor = '${E.Iniciales}' 
+      WHERE
+        ID = ${E.ID};`
     );
     console.log(q_ins);
   }
@@ -890,7 +902,7 @@ app.get("/Mantenimiento/ListaTareas", (request, reply) => {
       SELECT 
           tbTareas.ID, tbTareas.Codigo, 
           tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion,
-          vwEquipos.Cod2Nombre as Cod
+          vwEquipos.Cod2Cod as Cod
         FROM tbTareas,tbTareasEstados,vwEquipos
       Where
           tbTareas.EstadoTareaID = tbTareasEstados.ID
