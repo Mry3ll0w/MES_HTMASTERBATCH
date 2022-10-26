@@ -747,19 +747,18 @@ app.post("/Mantenimiento/Tareas", (request, reply) => {
   async function f() {
     var q_maquinas = `
             USE MES;
-            SELECT
-                tbMaquina.ID, tbMaquina.Codigo AS Código,
-                tbCOD1.Cod AS COD1, tbCOD2.id AS COD2,
-                tbCOD1.Nombre AS COD1Nombre, tbCOD2.Nombre AS COD2Nombre,
-                tbCOD2.COD1ID, tbMaquina.ID as MaquinaID
-                FROM tbCOD2 , tbCOD1, tbMaquina
+
+                SELECT 
+                    id as EquipoID,
+                    Codigo,
+                    Cod2Nombre,
+                    COD2
+                FROM 
+                    vwEquipos
                 WHERE
-                    tbCOD1.ID = tbMaquina.COD1
-                    and
-                    tbCOD2.ID = tbMaquina.COD2
-                    and
-                    tbCOD1.Nombre = '${request.body.COD1}'
-                ;
+                    Cod1Nombre = '${request.body.COD1}'
+                order by id DESC;
+                
         `;
 
     try {
@@ -886,16 +885,17 @@ app.post("/Mantenimiento/ModificaAccion", (request, reply) => {
 
 app.get("/Mantenimiento/ListaTareas", (request, reply) => {
   async function f() {
-    var q_lista_tareas = `
+    var q_lista_tareas = `  
       USE MES;  
       SELECT 
-          tbTareas.ID, Codigo, tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion,
-          tbCOD2.Cod as Cod
-        FROM tbTareas,tbTareasEstados,tbCOD2
+          tbTareas.ID, tbTareas.Codigo, 
+          tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion,
+          vwEquipos.Cod2Nombre as Cod
+        FROM tbTareas,tbTareasEstados,vwEquipos
       Where
           tbTareas.EstadoTareaID = tbTareasEstados.ID
           AND
-          tbTareas.EquipoID = tbCOD2.ID
+          tbTareas.EquipoID = vwEquipos.ID
       order by ID desc;
       `;
     var res_lista_tareas = await MES_query(q_lista_tareas);

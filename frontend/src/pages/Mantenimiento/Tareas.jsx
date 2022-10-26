@@ -176,7 +176,7 @@ export default function MantenimientoTareas() {
       .get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/ListaTareas`)
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.ListaTareas);
         var l = [];
         var responsabilidades = ["1", "2", "3", "4", "7", "11", "13"];
         //No pueden ver todas las tareas
@@ -474,7 +474,7 @@ export default function MantenimientoTareas() {
                                   reply.data.FilteredMaquina.map((i) => {
                                     StrMaquinas = [
                                       ...StrMaquinas,
-                                      `${i.Código} | ${i.COD2Nombre} | ${i.COD2} | ${i.MaquinaID}`,
+                                      `${i.Codigo} | ${i.Cod2Nombre} | ${i.COD2} | ${i.EquipoID}`,
                                     ];
                                   });
                                   SetMaquinasFiltradas(StrMaquinas);
