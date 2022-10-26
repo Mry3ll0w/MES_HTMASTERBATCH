@@ -196,7 +196,7 @@ app.post("/calcEstadistico", (request, res) => {
             valor > 100
             AND
             FechaHora BETWEEN '${l_inf}' AND '${l_sup}'
-        order by FechaHora desc;`;
+        order by FechaHora asc;`;
 
         q_cal = `
             Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
@@ -220,7 +220,7 @@ app.post("/calcEstadistico", (request, res) => {
                 AND 
                 FechaHora BETWEEN '${l_inf}' and '${l_sup}'
             )
-            order by FechaHora desc;
+            order by FechaHora asc;
             `;
 
         q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
