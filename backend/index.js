@@ -101,7 +101,12 @@ app.get("/RegEnsacado", (request, res) => {
   async function query() {
     try {
       let q_ensacados = await MES_query(
-        "select * from [WEB_API_TABLES].[dbo].[RegistroEnsacado] order by Fecha desc"
+        `use WEB_API_TABLES;
+        SELECT * FROM RegistroEnsacado
+        WHERE
+          FechaEliminacion IS NULL
+          AND 
+          EliminadoPor IS NULL;`
       );
       let q_prods = await MES_query(
         fs.readFileSync("Q_Lista_productos.sql").toString()
@@ -143,11 +148,18 @@ app.post("/RegistraEnsacado", (request, res) => {
 });
 
 app.post("/DelEns", (request, res) => {
-  console.log(request.body);
+  //console.log(request.body);
   const E = request.body;
   async function q() {
     var q_ins = await MES_query(
-      `DELETE FROM [WEB_API_TABLES].[dbo].[RegistroEnsacado] WHERE ID = ${E.ID};`
+      `
+      use WEB_API_TABLES;
+      UPDATE RegistroEnsacado
+      SET
+        FechaEliminacion = GETDATE(),
+        EliminadoPor = '${E.Iniciales}' 
+      WHERE
+        ID = ${E.ID};`
     );
     console.log(q_ins);
   }
@@ -196,7 +208,7 @@ app.post("/calcEstadistico", (request, res) => {
             valor > 100
             AND
             FechaHora BETWEEN '${l_inf}' AND '${l_sup}'
-        order by FechaHora desc;`;
+        order by FechaHora asc;`;
 
         q_cal = `
             Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
@@ -220,7 +232,7 @@ app.post("/calcEstadistico", (request, res) => {
                 AND 
                 FechaHora BETWEEN '${l_inf}' and '${l_sup}'
             )
-            order by FechaHora desc;
+            order by FechaHora asc;
             `;
 
         q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
@@ -747,19 +759,18 @@ app.post("/Mantenimiento/Tareas", (request, reply) => {
   async function f() {
     var q_maquinas = `
             USE MES;
-            SELECT
-                tbMaquina.ID, tbMaquina.Codigo AS Código,
-                tbCOD1.Cod AS COD1, tbCOD2.id AS COD2,
-                tbCOD1.Nombre AS COD1Nombre, tbCOD2.Nombre AS COD2Nombre,
-                tbCOD2.COD1ID, tbMaquina.ID as MaquinaID
-                FROM tbCOD2 , tbCOD1, tbMaquina
+
+                SELECT 
+                    id as EquipoID,
+                    Codigo,
+                    Cod2Nombre,
+                    COD2
+                FROM 
+                    vwEquipos
                 WHERE
-                    tbCOD1.ID = tbMaquina.COD1
-                    and
-                    tbCOD2.ID = tbMaquina.COD2
-                    and
-                    tbCOD1.Nombre = '${request.body.COD1}'
-                ;
+                    Cod1Nombre = '${request.body.COD1}'
+                order by id DESC;
+                
         `;
 
     try {
@@ -886,16 +897,17 @@ app.post("/Mantenimiento/ModificaAccion", (request, reply) => {
 
 app.get("/Mantenimiento/ListaTareas", (request, reply) => {
   async function f() {
-    var q_lista_tareas = `
+    var q_lista_tareas = `  
       USE MES;  
       SELECT 
-          tbTareas.ID, Codigo, tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion,
-          tbCOD2.Cod as Cod
-        FROM tbTareas,tbTareasEstados,tbCOD2
+          tbTareas.ID, tbTareas.Codigo, 
+          tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion,
+          vwEquipos.Cod2Cod as Cod
+        FROM tbTareas,tbTareasEstados,vwEquipos
       Where
           tbTareas.EstadoTareaID = tbTareasEstados.ID
           AND
-          tbTareas.EquipoID = tbCOD2.ID
+          tbTareas.EquipoID = vwEquipos.ID
       order by ID desc;
       `;
     var res_lista_tareas = await MES_query(q_lista_tareas);
