@@ -182,13 +182,15 @@ app.get("/dataEstadistico", (request, res) => {
 });
 
 app.post("/calcEstadistico", (request, res) => {
-  var query;
-  var q_cal;
-  var l_inf = request.body.Lim_Inf;
-  var l_sup = request.body.Lim_Sup;
+  async function q() {
+    try {
+      var query;
+      var q_cal;
+      var l_inf = request.body.Lim_Inf;
+      var l_sup = request.body.Lim_Sup;
 
-  if (request.body.Tendencia == "19") {
-    query = `
+      if (request.body.Tendencia == "19") {
+        query = `
         Select * from Datos19.dbo.tb19
         WHere
             valor > 100
@@ -196,7 +198,7 @@ app.post("/calcEstadistico", (request, res) => {
             FechaHora BETWEEN '${l_inf}' AND '${l_sup}'
         order by FechaHora desc;`;
 
-    q_cal = `
+        q_cal = `
             Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
             from Datos19.dbo.Tb19
             WHERE 
@@ -204,8 +206,8 @@ app.post("/calcEstadistico", (request, res) => {
                 AND 
                 FechaHora BETWEEN '${l_inf}' and '${l_sup}'
             `;
-  } else {
-    query = `
+      } else {
+        query = `
             Select Valor,FechaHora from Datos${request.body.Tendencia}.dbo.tb${request.body.Tendencia} 
             WHERE 
             FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
@@ -221,7 +223,7 @@ app.post("/calcEstadistico", (request, res) => {
             order by FechaHora desc;
             `;
 
-    q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
+        q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
             WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
             and Valor > 0
             and FechaHora not IN (
@@ -232,10 +234,7 @@ app.post("/calcEstadistico", (request, res) => {
                     AND 
                     FechaHora BETWEEN '${l_inf}' and '${l_sup}'
         );`;
-  }
-
-  async function q() {
-    try {
+      }
       var datos_calculados = await MES_query(query);
       var media_min_max = await MES_query(q_cal);
       console.log(media_min_max.query);
