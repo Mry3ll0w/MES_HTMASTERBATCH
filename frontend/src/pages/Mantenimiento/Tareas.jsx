@@ -16,7 +16,7 @@ import { useState } from "react";
 import { DateTime } from "luxon";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
-import AccionTarea from "./AccionTarea";
+import AccionTarea from "./Components/AccionTarea";
 import { COLUMNS_DIMENSION_PROPERTIES } from "@mui/x-data-grid/hooks/features/columns/gridColumnsUtils";
 export default function MantenimientoTareas() {
   //Navigates

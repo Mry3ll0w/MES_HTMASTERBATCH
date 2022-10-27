@@ -1215,3 +1215,31 @@ app.post("/Mantenimiento/Tareas/UpdateMaterialAccion", (request, reply) => {
     console.log("Error en la inserción/actualización de la tarea");
   }
 });
+
+app.get("/Mantenimiento/RepuestosMaquina", (request, reply) => {
+  async function f() {
+    var q_get_maquinas = `
+      USE MES;
+      SELECT 
+          tbMaquina.ID,tbMaquina.Codigo,
+          tbCOD0.Cod as COD0,
+          tbCOD1.Cod as COD1,
+          tbCOD2.Cod as COD2,
+          tbMaquina.Descripcion
+      FROM tbMaquina INNER join tbCOD0 
+      ON
+          tbCOD0.id = tbMaquina.COD0
+      INNER JOIN tbCOD1 ON
+          tbCOD1.id = tbMaquina.COD1
+      INNER JOIN tbCOD2 ON
+          tbCOD2.id = tbMaquina.COD2
+      order by Codigo;`;
+    var res_maquinas = await MES_query(q_get_maquinas);
+    reply.send({ Maquinas: res_maquinas.query });
+  }
+  try {
+  } catch {
+    console.log("Fallo en la obtencion de los datos de la maquina");
+  }
+  f();
+});

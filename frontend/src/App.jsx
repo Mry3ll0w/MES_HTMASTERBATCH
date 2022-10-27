@@ -20,6 +20,7 @@ import HomeProduccion from "./pages/menu_departamentos/Produccion";
 import HomeMantenimiento from "./pages/menu_departamentos/Mantenimiento";
 import HomePlanta from "./pages/menu_departamentos/Planta";
 import MantenimientoTareas from "./pages/Mantenimiento/Tareas";
+import RepuestosMaquina from "./pages/Mantenimiento/RepuestosMaquina";
 let loggeduser = "";
 
 export function App() {
@@ -60,6 +61,10 @@ export function App() {
           <Route
             path='/Mantenimiento/Tareas'
             element={<MantenimientoTareas />}
+          />
+          <Route
+            path='/Mantenimiento/RepuestosMaquina'
+            element={<RepuestosMaquina />}
           />
         </Routes>
       </div>
