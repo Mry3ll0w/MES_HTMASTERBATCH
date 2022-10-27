@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
+import { Autocomplete, TextField, Button } from "@mui/material";
 import { Container } from "react-bootstrap";
 
 export default function RepuestosMaquina() {
@@ -69,7 +70,112 @@ export default function RepuestosMaquina() {
               }}
             />
           </div>
-          <div id='colCheckbox' className='col-4'></div>
+          <div id='colCheckbox' className='col-4'>
+            <div>
+              <h2>Filtrado de Máquinas</h2>
+            </div>
+            <div className='row border rounded'>
+              <br />
+              <div className='row'>
+                <div className='m-1'>
+                  <Autocomplete
+                    value={"ad"}
+                    //isOptionEqualToValue={(option, value) => option === value}
+                    options={["El Pepe"]}
+                    onChange={(e, v) => {
+                      console(v);
+                    }}
+                    renderInput={(e) => (
+                      <TextField
+                        {...e}
+                        value={"a"}
+                        sx={{
+                          width: "100%",
+                          m: "3px",
+                          p: "3px",
+                        }}
+                      ></TextField>
+                    )}
+                  ></Autocomplete>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='m-1'>
+                  <Autocomplete
+                    value={"ad"}
+                    //isOptionEqualToValue={(option, value) => option === value}
+                    options={["El Pepe"]}
+                    onChange={(e, v) => {
+                      console(v);
+                    }}
+                    renderInput={(e) => (
+                      <TextField
+                        {...e}
+                        value={"a"}
+                        sx={{
+                          width: "100%",
+                          m: "3px",
+                          p: "3px",
+                        }}
+                      ></TextField>
+                    )}
+                  ></Autocomplete>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='m-1'>
+                  <Autocomplete
+                    value={"ad"}
+                    //isOptionEqualToValue={(option, value) => option === value}
+                    options={["El Pepe"]}
+                    onChange={(e, v) => {
+                      console(v);
+                    }}
+                    renderInput={(e) => (
+                      <TextField
+                        {...e}
+                        value={"a"}
+                        sx={{
+                          width: "100%",
+                          m: "3px",
+                          p: "3px",
+                        }}
+                      ></TextField>
+                    )}
+                  ></Autocomplete>
+                </div>
+              </div>
+              <div className='row'>
+                <div className='m-1'>
+                  <Autocomplete
+                    value={"ad"}
+                    //isOptionEqualToValue={(option, value) => option === value}
+                    options={["El Pepe"]}
+                    onChange={(e, v) => {
+                      console(v);
+                    }}
+                    renderInput={(e) => (
+                      <TextField
+                        {...e}
+                        value={"a"}
+                        sx={{
+                          width: "100%",
+                          m: "3px",
+                          p: "3px",
+                        }}
+                      ></TextField>
+                    )}
+                  ></Autocomplete>
+                </div>
+              </div>
+              <div className='row'>
+                <Container className='d-flex justify-content-center mb-2'>
+                  <Button variant='outlined'>Limpiar Filtrado</Button>
+                  <br />
+                </Container>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Fragment>
