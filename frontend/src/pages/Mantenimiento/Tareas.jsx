@@ -599,6 +599,7 @@ export default function MantenimientoTareas() {
                 </AccordionSummary>
                 <AccordionDetails sx={{ textAlign: "center" }}>
                   <Autocomplete
+                    hidden={sessionStorage.getItem("Formulario") === "Planta"}
                     value={FiltroEstado}
                     options={["Pendiente", "Aprobado", "Oculto"]}
                     onChange={(e, v) => {
