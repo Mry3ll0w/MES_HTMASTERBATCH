@@ -98,23 +98,30 @@ export default function HomeProduccion() {
 
   return (
     <Fragment>
-      <div>
-        <h1>Bienvenido al Departamento de Producción</h1>
+      <div className='container'>
+        <div className='row' align='center'>
+          <h1>Departamento de Producción</h1>
+        </div>
+        <div>
+          <table>
+            <td style={styles.td_style}>
+              <DropDownMenu elements={menu_resumen} label={"Resumen"} />
+            </td>
+            <td style={styles.td_style}>
+              <DropDownMenu
+                elements={menu_RegistroPlanta}
+                label={"Registro de Planta"}
+              />
+            </td>
+            <td style={styles.td_style}>
+              <DropDownMenu
+                elements={menu_Personal}
+                label={"Personal De Planta"}
+              />
+            </td>
+          </table>
+        </div>
       </div>
-      <table>
-        <td style={styles.td_style}>
-          <DropDownMenu elements={menu_resumen} label={"Resumen"} />
-        </td>
-        <td style={styles.td_style}>
-          <DropDownMenu
-            elements={menu_RegistroPlanta}
-            label={"Registro de Planta"}
-          />
-        </td>
-        <td style={styles.td_style}>
-          <DropDownMenu elements={menu_Personal} label={"Personal De Planta"} />
-        </td>
-      </table>
     </Fragment>
   );
 }

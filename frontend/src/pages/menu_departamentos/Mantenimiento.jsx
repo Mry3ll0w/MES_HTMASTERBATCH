@@ -28,6 +28,8 @@ export default function HomeMantenimiento() {
         </Button>
       ),
     },
+  ];
+  const menu_maquinas = [
     {
       element: (
         <Button
@@ -42,15 +44,25 @@ export default function HomeMantenimiento() {
 
   return (
     <Fragment>
-      <div className='TitleDiv'>
-        <Typography fontSize={"25px"}>Departamento de Mantenimiento</Typography>
-      </div>
-      <br />
-      <div className='MenuDiv'>
-        <DropDownMenu
-          elements={menu_tareas}
-          label='Gestión de Tareas/Seguimientos'
-        />
+      <div className='container'>
+        <div className='row'>
+          <h1>Departamento de Mantenimiento</h1>
+        </div>
+        <br />
+        <div className='row'>
+          <div className='col'>
+            <DropDownMenu
+              elements={menu_tareas}
+              label='Gestión de Tareas/Seguimientos'
+            />
+          </div>
+          <div className='col'>
+            <DropDownMenu
+              elements={menu_maquinas}
+              label='Gestion de Maquinaria'
+            />
+          </div>
+        </div>
       </div>
     </Fragment>
   );

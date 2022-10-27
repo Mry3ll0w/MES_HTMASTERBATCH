@@ -751,7 +751,11 @@ app.get("/Mantenimiento/Tareas", (request, reply) => {
       Materiales: res_materiales.query,
     });
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error querying en tareas mantenimiento");
+  }
 });
 
 app.post("/Mantenimiento/Tareas", (request, reply) => {
