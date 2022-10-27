@@ -13,6 +13,15 @@ export default function RepuestosMaquina() {
   //UseStates
   const [aMaquina, SetaMaquina] = useState([]);
   const [SeleccionMaquina, SetSeleccionMaquina] = useState([]);
+  const [aOpcionesMaquina, SetaOpcionesMaquina] = useState([]);
+  const [SeleccionOpcionMaquina, SetSeleccionOpcionMaquina] = useState([]);
+  const [SeleccionOpcionCOD0, SetSeleccionOpcionCOD0] = useState([]);
+  const [SeleccionOpcionCOD1, SetSeleccionOpcionCOD1] = useState([]);
+  const [SeleccionOpcionCOD2, SetSeleccionOpcionCOD2] = useState([]);
+  const [aOpcionesCOD0, SetaOpcionesCOD0] = useState([]);
+  const [aOpcionesCOD1, SetaOpcionesCOD1] = useState([]);
+  const [aOpcionesCOD2, SetaOpcionesCOD2] = useState([]);
+
   //DataFetch
   useEffect(() => {
     axios
@@ -21,8 +30,21 @@ export default function RepuestosMaquina() {
       )
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response.data.Maquinas);
+        //console.log(response.data);
+        //Procesamos la lista de Maquinas
+        var _aops_maquinas = [];
+        try {
+          response.data.Maquinas.map((i) =>
+            _aops_maquinas.push(`${i.Codigo}|${i.Descripcion}`)
+          );
+        } catch {
+          console.log("Fallo procesando las opciones de las maquinas");
+        }
+        SetaOpcionesMaquina(_aops_maquinas);
         SetaMaquina(response.data.Maquinas);
+        SetaOpcionesCOD0(response.data.ListaCOD0);
+        SetaOpcionesCOD1(response.data.ListaCOD1);
+        SetaOpcionesCOD2(response.data.ListaCOD2);
       });
   }, []);
 
@@ -79,16 +101,17 @@ export default function RepuestosMaquina() {
               <div className='row'>
                 <div className='m-1'>
                   <Autocomplete
-                    value={"ad"}
+                    value={SeleccionOpcionMaquina}
                     //isOptionEqualToValue={(option, value) => option === value}
-                    options={["El Pepe"]}
+                    options={aOpcionesMaquina}
                     onChange={(e, v) => {
-                      console(v);
+                      SetSeleccionMaquina(v);
                     }}
                     renderInput={(e) => (
                       <TextField
                         {...e}
-                        value={"a"}
+                        value={SeleccionMaquina}
+                        label='Filtrado por Maquina'
                         sx={{
                           width: "100%",
                           m: "3px",
@@ -102,16 +125,17 @@ export default function RepuestosMaquina() {
               <div className='row'>
                 <div className='m-1'>
                   <Autocomplete
-                    value={"ad"}
+                    value={SeleccionOpcionCOD0}
                     //isOptionEqualToValue={(option, value) => option === value}
-                    options={["El Pepe"]}
+                    options={aOpcionesCOD0}
                     onChange={(e, v) => {
-                      console(v);
+                      SetSeleccionOpcionCOD0(v);
                     }}
                     renderInput={(e) => (
                       <TextField
                         {...e}
-                        value={"a"}
+                        label='Filtrado COD0'
+                        value={SeleccionOpcionCOD0}
                         sx={{
                           width: "100%",
                           m: "3px",
@@ -125,16 +149,17 @@ export default function RepuestosMaquina() {
               <div className='row'>
                 <div className='m-1'>
                   <Autocomplete
-                    value={"ad"}
+                    value={SeleccionOpcionCOD1}
                     //isOptionEqualToValue={(option, value) => option === value}
-                    options={["El Pepe"]}
+                    options={aOpcionesCOD1}
                     onChange={(e, v) => {
-                      console(v);
+                      SetSeleccionOpcionCOD1(v);
                     }}
                     renderInput={(e) => (
                       <TextField
                         {...e}
-                        value={"a"}
+                        label='Filtrado COD1'
+                        value={SeleccionOpcionCOD1}
                         sx={{
                           width: "100%",
                           m: "3px",
@@ -148,16 +173,17 @@ export default function RepuestosMaquina() {
               <div className='row'>
                 <div className='m-1'>
                   <Autocomplete
-                    value={"ad"}
+                    value={SeleccionOpcionCOD2}
                     //isOptionEqualToValue={(option, value) => option === value}
-                    options={["El Pepe"]}
+                    options={aOpcionesCOD2}
                     onChange={(e, v) => {
-                      console(v);
+                      SetSeleccionOpcionCOD2(v);
                     }}
                     renderInput={(e) => (
                       <TextField
                         {...e}
-                        value={"a"}
+                        label='Filtrado COD2'
+                        value={SeleccionOpcionCOD2}
                         sx={{
                           width: "100%",
                           m: "3px",
