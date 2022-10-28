@@ -14,10 +14,10 @@ export default function RepuestosMaquina() {
   const [aMaquina, SetaMaquina] = useState([]);
   const [SeleccionMaquina, SetSeleccionMaquina] = useState([]);
   const [aOpcionesMaquina, SetaOpcionesMaquina] = useState([]);
-  const [SeleccionOpcionMaquina, SetSeleccionOpcionMaquina] = useState([]);
-  const [SeleccionOpcionCOD0, SetSeleccionOpcionCOD0] = useState([]);
-  const [SeleccionOpcionCOD1, SetSeleccionOpcionCOD1] = useState([]);
-  const [SeleccionOpcionCOD2, SetSeleccionOpcionCOD2] = useState([]);
+  const [SeleccionOpcionMaquina, SetSeleccionOpcionMaquina] = useState("");
+  const [SeleccionOpcionCOD0, SetSeleccionOpcionCOD0] = useState("");
+  const [SeleccionOpcionCOD1, SetSeleccionOpcionCOD1] = useState("");
+  const [SeleccionOpcionCOD2, SetSeleccionOpcionCOD2] = useState("");
   const [aOpcionesCOD0, SetaOpcionesCOD0] = useState([]);
   const [aOpcionesCOD1, SetaOpcionesCOD1] = useState([]);
   const [aOpcionesCOD2, SetaOpcionesCOD2] = useState([]);
@@ -79,7 +79,7 @@ export default function RepuestosMaquina() {
               columns={ColsMaquinas}
               components={{ Toolbar: GridToolbar }}
               rows={RowsMaquinas}
-              sx={{ width: "100%", height: "400px" }}
+              sx={{ width: "100%", height: "100%" }}
               rowsPerPageOptions={[10]}
               pageSize={20}
               localeText={esES.components.MuiDataGrid.defaultProps.localeText}
