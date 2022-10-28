@@ -751,7 +751,11 @@ app.get("/Mantenimiento/Tareas", (request, reply) => {
       Materiales: res_materiales.query,
     });
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error querying en tareas mantenimiento");
+  }
 });
 
 app.post("/Mantenimiento/Tareas", (request, reply) => {
@@ -1214,4 +1218,81 @@ app.post("/Mantenimiento/Tareas/UpdateMaterialAccion", (request, reply) => {
   } catch {
     console.log("Error en la inserción/actualización de la tarea");
   }
+});
+
+app.get("/Mantenimiento/RepuestosMaquina", (request, reply) => {
+  async function f() {
+    var q_lista_COD0 = `
+    USE MES;
+    SELECT 
+      Cod,
+      ISNULL(Descripcion,'Sin descripción') as Descripcion
+    FROM 
+      tbCOD0;
+    `;
+
+    var q_lista_COD1 = `
+    USE MES;
+    SELECT 
+      Cod,
+      ISNULL(Descripcion,'Sin descripción') as Descripcion
+    FROM 
+      tbCOD1;
+    `;
+
+    var q_lista_COD2 = `
+    USE MES;
+    SELECT 
+      Cod,ISNULL(Descripcion,'Sin descripción') as Descripcion
+    FROM 
+    tbCOD2;
+    `;
+
+    var q_get_maquinas = `
+      USE MES;
+      SELECT 
+          tbMaquina.ID,tbMaquina.Codigo,
+          tbCOD0.Cod as COD0,
+          tbCOD1.Cod as COD1,
+          tbCOD2.Cod as COD2,
+          tbMaquina.Descripcion
+      FROM tbMaquina INNER join tbCOD0 
+      ON
+          tbCOD0.id = tbMaquina.COD0
+      INNER JOIN tbCOD1 ON
+          tbCOD1.id = tbMaquina.COD1
+      INNER JOIN tbCOD2 ON
+          tbCOD2.id = tbMaquina.COD2
+      order by Codigo;`;
+
+    var res_maquinas = await MES_query(q_get_maquinas);
+    var res_cod0 = await MES_query(q_lista_COD0);
+    var res_cod1 = await MES_query(q_lista_COD1);
+    var res_cod2 = await MES_query(q_lista_COD2);
+
+    var _aLCOD0 = [];
+    var _aLCOD1 = [];
+    var _aLCOD2 = [];
+    res_cod0.query.map((i) => {
+      _aLCOD0.push(`${i.Cod} | ${i.Descripcion}`);
+    });
+    res_cod1.query.map((i) => {
+      _aLCOD1.push(`${i.Cod} | ${i.Descripcion}`);
+    });
+    res_cod2.query.map((i) => {
+      _aLCOD2.push(`${i.Cod} | ${i.Descripcion}`);
+    });
+
+    reply.send({
+      Maquinas: res_maquinas.query,
+      ListaCOD0: _aLCOD0,
+      ListaCOD1: _aLCOD1,
+      ListaCOD2: _aLCOD2,
+    });
+  }
+  try {
+  } catch {
+    console.log("Fallo en la obtencion de los datos de la maquina");
+  }
+  f();
 });

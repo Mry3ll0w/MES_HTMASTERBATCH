@@ -10,14 +10,14 @@ import {
   AccordionSummary,
   MenuItem,
 } from "@mui/material";
-import "./Tareas.css";
+import "./css/Tareas.css";
 import axios from "axios";
 import { useState } from "react";
 import { DateTime } from "luxon";
 import { useNavigate } from "react-router-dom";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
-import AccionTarea from "./AccionTarea";
-import { COLUMNS_DIMENSION_PROPERTIES } from "@mui/x-data-grid/hooks/features/columns/gridColumnsUtils";
+import AccionTarea from "./Components/AccionTarea";
+
 export default function MantenimientoTareas() {
   //Navigates
   const navigate = useNavigate();
@@ -39,6 +39,7 @@ export default function MantenimientoTareas() {
   const [NAccionesAsociadas, SetNAccionesAsociadas] = useState(1);
   const [MAcciones, SetMAcciones] = useState([]);
   const [FiltroCOD2, SetFiltroCOD2] = useState(""); //Si lo dejamos a vacio no tiene filtro
+  const [FiltroEstado, SetFiltroEstado] = useState("");
   const [OpcionesCOD2, SetOpcionesCOD2] = useState([]);
   const [Empleados, SetEmpleados] = useState([]);
   const [OpEmpleados, SetOpcionesEmpleados] = useState([]);
@@ -598,6 +599,42 @@ export default function MantenimientoTareas() {
                 </AccordionSummary>
                 <AccordionDetails sx={{ textAlign: "center" }}>
                   <Autocomplete
+                    hidden={sessionStorage.getItem("Formulario") === "Planta"}
+                    value={FiltroEstado}
+                    options={["Pendiente", "Aprobado", "Oculto"]}
+                    onChange={(e, v) => {
+                      SetFiltroEstado(v);
+                      var l = [];
+                      var valor_filtro;
+
+                      if (v === "Pendiente") {
+                        valor_filtro = 1;
+                      } else if (v === "Realizado") {
+                        valor_filtro = 2;
+                      } else if (v === "Aprobado") {
+                        valor_filtro = 3;
+                      } else {
+                        valor_filtro = 4;
+                      }
+                      console.log(ListaTareas);
+                      l = ListaTareas.filter((i) => i.Estado === v);
+                      SetListaTareas(l);
+                    }}
+                    renderInput={(e) => (
+                      <TextField
+                        {...e}
+                        value={FiltroCOD2}
+                        label='Filtrar por Estado'
+                        sx={{
+                          width: "390px",
+                          m: "3px",
+                          p: "3px",
+                          minWidth: 200,
+                        }}
+                      ></TextField>
+                    )}
+                  />
+                  <Autocomplete
                     value={FiltroCOD2}
                     options={OpcionesCOD2}
                     onChange={(e, v) => {
@@ -628,6 +665,7 @@ export default function MantenimientoTareas() {
                     variant='contained'
                     onClick={() => {
                       SetFiltroCOD2("");
+                      SetFiltroEstado("");
                       FetchTareas();
                     }}
                   >
