@@ -21,6 +21,11 @@ import HomeMantenimiento from "./pages/menu_departamentos/Mantenimiento";
 import HomePlanta from "./pages/menu_departamentos/Planta";
 import MantenimientoTareas from "./pages/Mantenimiento/Tareas";
 import RepuestosMaquina from "./pages/Mantenimiento/RepuestosMaquina";
+
+// Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap Bundle JS
+import "bootstrap/dist/js/bootstrap.bundle.min";
 let loggeduser = "";
 
 export function App() {
