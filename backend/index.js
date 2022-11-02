@@ -1270,12 +1270,8 @@ app.get("/Mantenimiento/RepuestosMaquina", (request, reply) => {
     var res_cod1 = await MES_query(q_lista_COD1);
     var res_cod2 = await MES_query(q_lista_COD2);
 
-    var _aLCOD0 = [];
     var _aLCOD1 = [];
     var _aLCOD2 = [];
-    res_cod0.query.map((i) => {
-      _aLCOD0.push(`${i.Cod} | ${i.Descripcion}`);
-    });
     res_cod1.query.map((i) => {
       _aLCOD1.push(`${i.Cod} | ${i.Descripcion}`);
     });
@@ -1285,14 +1281,24 @@ app.get("/Mantenimiento/RepuestosMaquina", (request, reply) => {
 
     reply.send({
       Maquinas: res_maquinas.query,
-      ListaCOD0: _aLCOD0,
       ListaCOD1: _aLCOD1,
       ListaCOD2: _aLCOD2,
     });
   }
   try {
+    f();
   } catch {
     console.log("Fallo en la obtencion de los datos de la maquina");
   }
+});
+
+app.post("/Mantenimiento/RepuestosMaquina", (request, reply) => {
+  async function f() {
+    var { MaquinaID } = request.body;
+  }
   f();
+  try {
+  } catch {
+    console.log("Error obteniendo los repuestos de la máquina");
+  }
 });

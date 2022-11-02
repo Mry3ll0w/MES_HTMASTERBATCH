@@ -9,13 +9,6 @@ import { useState } from "react";
 import { Drawer } from "@mui/material";
 import { styles } from "../Style/styles";
 import { useNavigate } from "react-router-dom";
-import HomeProduccion from "../pages/menu_departamentos/Produccion";
-import HomeMantenimiento from "../pages/menu_departamentos/Mantenimiento";
-import HomePlanta from "../pages/menu_departamentos/Planta";
-// Bootstrap CSS
-import "bootstrap/dist/css/bootstrap.min.css";
-// Bootstrap Bundle JS
-import "bootstrap/dist/js/bootstrap.bundle.min";
 
 export function Header() {
   //Gestiona apertura o cierre del drawer
