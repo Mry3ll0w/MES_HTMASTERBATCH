@@ -119,7 +119,8 @@ export default function RegEnsacado({ LoggedUser }) {
     { field: "Cantidad", headerName: "Cantidad(KG)", width: "120" },
     { field: "Resto", headerName: "Resto (KG)", width: "110" },
     { field: "Ant", headerName: "Anterior (KG)", width: "100" },
-    { field: "Iniciales", headerName: "Imputado por", width: "100" },
+    { field: "Iniciales", headerName: "Imputado por", width: "120" },
+    { field: "ModificadoPor", headerName: "Modificado por", width: "120" },
     { field: "Observaciones", headerName: "Observaciones", width: "500" },
     { field: "ID", headerName: "ID", width: "30", hide: true },
   ];
@@ -143,6 +144,7 @@ export default function RegEnsacado({ LoggedUser }) {
           Iniciales: i.Iniciales,
           Observaciones: i.Observaciones,
           ID: i.ID,
+          ModificadoPor: i.ModificadoPor,
         },
       ]);
     });
@@ -222,6 +224,7 @@ export default function RegEnsacado({ LoggedUser }) {
           PaletOriginal: OldPalet,
           Observaciones: M_Observaciones,
           ID: M_ID,
+          iniciales: sessionStorage.getItem("iniciales"),
         })
         .then(() => {
           alert("Insercion realizada");

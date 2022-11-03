@@ -102,11 +102,14 @@ app.get("/RegEnsacado", (request, res) => {
     try {
       let q_ensacados = await MES_query(
         `use WEB_API_TABLES;
-        SELECT * FROM RegistroEnsacado
+        SELECT *
+        FROM RegistroEnsacado
         WHERE
-          FechaEliminacion IS NULL
-          AND 
-          EliminadoPor IS NULL;`
+            FechaEliminacion IS NULL
+            AND
+            EliminadoPor IS NULL
+        order by Fecha desc,Turno,ID
+        `
       );
       let q_prods = await MES_query(
         fs.readFileSync("Q_Lista_productos.sql").toString()
@@ -128,7 +131,9 @@ app.post("/UpdateEnsacado", (request, res) => {
       Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', 
       Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',
       Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', 
-      Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`
+      Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}',
+      ModificadoPor = '${request.body.iniciales}'
+      WHERE ID = ${request.body.ID};`
     );
     console.log(q_ins);
   }
@@ -140,8 +145,8 @@ app.post("/RegistraEnsacado", (request, res) => {
   const E = request.body;
   async function q() {
     var q_ins =
-      await MES_query(`INSERT INTO [WEB_API_TABLES].[dbo].[RegistroEnsacado] (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones) 
-        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}');`);
+      await MES_query(`INSERT INTO [WEB_API_TABLES].[dbo].[RegistroEnsacado] (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones,ModificadoPor) 
+        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}','${E.iniciales}');`);
     console.log(q_ins);
   }
   q();
