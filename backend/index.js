@@ -102,11 +102,14 @@ app.get("/RegEnsacado", (request, res) => {
     try {
       let q_ensacados = await MES_query(
         `use WEB_API_TABLES;
-        SELECT * FROM RegistroEnsacado
+        SELECT *
+        FROM RegistroEnsacado
         WHERE
-          FechaEliminacion IS NULL
-          AND 
-          EliminadoPor IS NULL;`
+            FechaEliminacion IS NULL
+            AND
+            EliminadoPor IS NULL
+        order by Fecha desc,Turno,ID
+        `
       );
       let q_prods = await MES_query(
         fs.readFileSync("Q_Lista_productos.sql").toString()
@@ -128,7 +131,9 @@ app.post("/UpdateEnsacado", (request, res) => {
       Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', 
       Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',
       Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', 
-      Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}' WHERE ID = ${request.body.ID};`
+      Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}',
+      ModificadoPor = '${request.body.iniciales}'
+      WHERE ID = ${request.body.ID};`
     );
     console.log(q_ins);
   }
@@ -140,8 +145,8 @@ app.post("/RegistraEnsacado", (request, res) => {
   const E = request.body;
   async function q() {
     var q_ins =
-      await MES_query(`INSERT INTO [WEB_API_TABLES].[dbo].[RegistroEnsacado] (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones) 
-        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}');`);
+      await MES_query(`INSERT INTO [WEB_API_TABLES].[dbo].[RegistroEnsacado] (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones,ModificadoPor) 
+        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}','${E.iniciales}');`);
     console.log(q_ins);
   }
   q();
@@ -1294,7 +1299,42 @@ app.get("/Mantenimiento/RepuestosMaquina", (request, reply) => {
 
 app.post("/Mantenimiento/RepuestosMaquina", (request, reply) => {
   async function f() {
-    var { MaquinaID } = request.body;
+    var { sCodigoMaquina } = request.body;
+
+    //Fetch de Datos del repuesto (primero los datos)
+    var sQDatosMaterial = `
+    use MES;
+    select 
+        MaterialID as Referencia, 
+        tbMaterial.Descripcion as Descripcion,
+        CONCAT(tbAlmacen.Nombre,tbPasillo.Nombre,tbEstanteria.Nombre,tbPiso.Nombre) as Ubicacion,
+        vwInventarioStock.MatStock as Stock
+    from tbMaquinaMaterial 
+    INNER JOIN tbMaquina ON
+        tbMaquina.ID = MaquinaID
+        and
+        tbMaquina.Codigo = '${sCodigoMaquina}'
+    INNER JOIN tbMaterial on
+        MaterialID = tbMaterial.ID
+    LEFT JOIN tbAlmacen ON /* Usamos left para incluir los resultados con campos null*/
+        tbMaterial.AlmacenID = tbAlmacen.ID
+    LEFT JOIN tbPasillo ON 
+        tbPasillo.ID = tbMaterial.PasilloID
+    LEFT JOIN tbEstanteria ON
+        tbEstanteria.ID = tbMaterial.EstanteriaID
+    LEFT JOIN tbPiso ON 
+        tbPiso.ID = tbMaterial.PisoID
+    LEFT JOIN vwInventarioStock ON
+        vwInventarioStock.MatID = tbMaterial.ID;
+    `;
+
+    var QDatosMaterial = await MES_query(sQDatosMaterial);
+
+    // ! Arreglar Foto del Material (pasar de ole a foto)
+
+    reply.send({
+      Materiales: QDatosMaterial.query,
+    });
   }
   f();
   try {
