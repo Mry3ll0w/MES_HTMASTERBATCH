@@ -5,7 +5,8 @@ import { useEffect } from "react";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
 import { Autocomplete, TextField, Button } from "@mui/material";
 import { Container } from "react-bootstrap";
-
+import HorizontalCard from "./Components/HorizontalCard";
+import "./css/RepuestosMaquina.css";
 export default function RepuestosMaquina() {
   //Hooks
   const navigate = useNavigate();
@@ -96,7 +97,7 @@ export default function RepuestosMaquina() {
               columns={ColsMaquinas}
               components={{ Toolbar: GridToolbar }}
               rows={RowsMaquinas}
-              sx={{ width: "100%", height: "115%" }}
+              sx={{ width: "100%", height: "100%" }}
               rowsPerPageOptions={[10]}
               pageSize={20}
               localeText={esES.components.MuiDataGrid.defaultProps.localeText}
@@ -223,6 +224,10 @@ export default function RepuestosMaquina() {
               </div>
             </div>
           </div>
+        </div>
+        <div className='row m-3'>
+          <h2 className='d-flex justify-content-center mt-2 mb-4'>Repuestos</h2>
+          <HorizontalCard />
         </div>
       </div>
     </Fragment>
