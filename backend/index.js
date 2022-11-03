@@ -1294,7 +1294,42 @@ app.get("/Mantenimiento/RepuestosMaquina", (request, reply) => {
 
 app.post("/Mantenimiento/RepuestosMaquina", (request, reply) => {
   async function f() {
-    var { MaquinaID } = request.body;
+    var { sCodigoMaquina } = request.body;
+
+    //Fetch de Datos del repuesto (primero los datos)
+    var sQDatosMaterial = `
+    use MES;
+    select 
+        MaterialID as Referencia, 
+        tbMaterial.Descripcion as Descripcion,
+        CONCAT(tbAlmacen.Nombre,tbPasillo.Nombre,tbEstanteria.Nombre,tbPiso.Nombre) as Ubicacion,
+        vwInventarioStock.MatStock as Stock
+    from tbMaquinaMaterial 
+    INNER JOIN tbMaquina ON
+        tbMaquina.ID = MaquinaID
+        and
+        tbMaquina.Codigo = '${sCodigoMaquina}'
+    INNER JOIN tbMaterial on
+        MaterialID = tbMaterial.ID
+    LEFT JOIN tbAlmacen ON /* Usamos left para incluir los resultados con campos null*/
+        tbMaterial.AlmacenID = tbAlmacen.ID
+    LEFT JOIN tbPasillo ON 
+        tbPasillo.ID = tbMaterial.PasilloID
+    LEFT JOIN tbEstanteria ON
+        tbEstanteria.ID = tbMaterial.EstanteriaID
+    LEFT JOIN tbPiso ON 
+        tbPiso.ID = tbMaterial.PisoID
+    LEFT JOIN vwInventarioStock ON
+        vwInventarioStock.MatID = tbMaterial.ID;
+    `;
+
+    var QDatosMaterial = await MES_query(sQDatosMaterial);
+
+    // ! Arreglar Foto del Material (pasar de ole a foto)
+
+    reply.send({
+      Materiales: QDatosMaterial.query,
+    });
   }
   f();
   try {

@@ -13,7 +13,7 @@ export default function RepuestosMaquina() {
 
   //UseStates
   const [aMaquina, SetaMaquina] = useState([]);
-
+  const [aMateriales, SetaMateriales] = useState([]);
   const [aOpcionesMaquina, SetaOpcionesMaquina] = useState([]);
   const [SeleccionOpcionMaquina, SetSeleccionOpcionMaquina] = useState("");
   const [SeleccionOpcionCOD0, SetSeleccionOpcionCOD0] = useState("");
@@ -48,15 +48,15 @@ export default function RepuestosMaquina() {
       });
   }
 
-  function FetchRepuestosMaquina(ID) {
+  function FetchRepuestosMaquina(Codigo) {
     axios
       .post(
         `http://${process.env.REACT_APP_SERVER}/Mantenimiento/RepuestosMaquina`,
-        { MaquinaID: ID }
+        { sCodigoMaquina: Codigo }
       )
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response);
+        SetaMateriales(response.data.Materiales);
       });
   }
 
@@ -108,7 +108,8 @@ export default function RepuestosMaquina() {
                 );
                 console.log(selectedRowData[0]);
                 if (selectedRowData.length > 0) {
-                  FetchRepuestosMaquina(selectedRowData[0].ID);
+                  SetaMateriales([]);
+                  FetchRepuestosMaquina(selectedRowData[0].Codigo);
                 }
               }}
             />
@@ -227,7 +228,16 @@ export default function RepuestosMaquina() {
         </div>
         <div className='row m-3'>
           <h2 className='d-flex justify-content-center mt-2 mb-4'>Repuestos</h2>
-          <HorizontalCard />
+          {aMateriales.map((i) => {
+            return (
+              <HorizontalCard
+                Reference={i.Referencia}
+                Description={i.Descripcion}
+                Stock={i.Stock}
+                Location={i.Ubicacion}
+              />
+            );
+          })}
         </div>
       </div>
     </Fragment>
