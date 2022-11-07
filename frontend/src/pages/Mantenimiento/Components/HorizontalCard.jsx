@@ -1,12 +1,21 @@
-import React, { Fragment } from "react";
-
+import React, { Fragment, useState } from "react";
+import { Button } from "@mui/material";
 export default function HorizontalCard({
   Reference,
   Description,
   Location,
   Stock,
   Photo,
+  StockMin,
 }) {
+  //UseStates
+  const [iStock, SetiStock] = useState(0);
+
+  /**
+   * Funcion encargada de actualizar y comprobar el stock del producto en cuestion
+   */
+  function UpdateStock() {}
+
   return (
     <Fragment>
       <div className='place-card mb-2'>
@@ -26,15 +35,24 @@ export default function HorizontalCard({
           </h4>
           <p>
             <i className='fa fa-map-marker'></i>{" "}
-            <span className='text-muted'>{Description}</span>
+            <span className='text-muted'>
+              Descripcion : <br />
+              {Description}
+            </span>
           </p>
           <p className='text-muted mb-0 d-none d-sm-block'>
             Ubicacion : {Location}
           </p>
           <p className='text-muted mb-0 d-none d-sm-block'>
-            Stock Disponible : {Stock}
+            Stock Disponible : {Stock}{" "}
           </p>
-          <div className='d-flex justify-content-center'></div>
+          <p className='text-muted mb-3 d-none d-sm-block mt-3'>
+            Sacar Stock: <input type='number' min={0} />{" "}
+          </p>
+
+          <Button variant='contained' size='small' onClick={UpdateStock}>
+            Actualizar Stock
+          </Button>
         </div>
       </div>
     </Fragment>
