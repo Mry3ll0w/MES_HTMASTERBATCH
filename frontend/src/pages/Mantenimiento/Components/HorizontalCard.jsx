@@ -19,9 +19,7 @@ export default function HorizontalCard({
         </div>
         <div className='place-card__content'>
           <h4 className='place-card__content_header'>
-            <a href='#!' className='text-dark place-title'>
-              {Reference}
-            </a>{" "}
+            <p className='text-dark place-title'>Referencia :{Reference}</p>{" "}
             <a href='#!' className='text-muted'>
               <i className='fa fa-heart-o'></i>
             </a>
@@ -36,6 +34,7 @@ export default function HorizontalCard({
           <p className='text-muted mb-0 d-none d-sm-block'>
             Stock Disponible : {Stock}
           </p>
+          <div className='d-flex justify-content-center'></div>
         </div>
       </div>
     </Fragment>

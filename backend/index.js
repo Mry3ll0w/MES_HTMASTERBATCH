@@ -108,7 +108,7 @@ app.get("/RegEnsacado", (request, res) => {
             FechaEliminacion IS NULL
             AND
             EliminadoPor IS NULL
-        order by Fecha desc,Turno,ID
+        order by ID desc
         `
       );
       let q_prods = await MES_query(
