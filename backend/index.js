@@ -1368,7 +1368,6 @@ app.get("/Mantenimiento/RepuestosMaquina/Stock/:iID", (request, reply) => {
       where MatID = ${iID};
     `;
     var qFetchStock = await MES_query(sQueryStringUpdate);
-    console.log(qFetchStock.query[0].MatStock);
     reply.send({ Stock: qFetchStock.query[0].MatStock });
   }
   f();
