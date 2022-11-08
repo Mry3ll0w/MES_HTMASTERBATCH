@@ -317,7 +317,11 @@ app.get("/Profile/:user", (request, res) => {
     //console.log(resultado.query)
     res.send({ user: resultado.query });
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.error("Error accediendo al perfil del usuario");
+  }
 });
 
 app.post("/Profile", (request, res) => {
@@ -329,7 +333,11 @@ app.post("/Profile", (request, res) => {
     console.log(resultado);
     //res.send({user : resultado.query})
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error en post de /Profile");
+  }
 });
 
 //*Registro de Planta
@@ -345,7 +353,11 @@ app.get("/RegPlanta", (request, res) => {
     }
     //console.log(resultado)
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("error en get de /RegPlanta");
+  }
 });
 
 /**
@@ -435,7 +447,11 @@ app.post("/RegPlanta", (request, res) => {
       ResumenTotal: resultado_query_resumen_total.query[0],
     });
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error post /RegPlanta");
+  }
 });
 
 app.get("/AdmUsers", (request, reply) => {
@@ -479,8 +495,11 @@ app.get("/AdmUsers", (request, reply) => {
       NextCode: `E${parseInt(numero) + 1}`,
     });
   }
-
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error en get /AdmUsers");
+  }
 });
 
 app.post("/UpdateAdmUsers", (request, reply) => {
@@ -500,11 +519,14 @@ app.post("/UpdateAdmUsers", (request, reply) => {
         `;
     var res_Update = await MES_query(q_update_user);
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error en post /UpdateAdmUsers");
+  }
 });
 
 app.post("/NewAdmUsers", (request, reply) => {
-  console.log(request.body);
   async function f() {
     //Tratamos el alias
     var [ap1, ap2] = request.body.Apellidos.split(" ");
@@ -519,7 +541,11 @@ app.post("/NewAdmUsers", (request, reply) => {
         `;
     let res_insercion = await MES_query(q_insercion);
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error en post /NewAdmUsers");
+  }
 });
 
 app.post("/EraseAdmUsers", (request, reply) => {
@@ -528,7 +554,11 @@ app.post("/EraseAdmUsers", (request, reply) => {
       `USE WEB_API_TABLES; DELETE FROM tbEmpleados WHERE ID = ${request.body.ID}`
     );
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error en post /EraseAdmUsers");
+  }
 });
 
 app.get("/RegistroPlanta/Trazabilidad/:OF", (request, res) => {
@@ -608,7 +638,11 @@ app.get("/RegistroPlanta/Trazabilidad/:OF", (request, res) => {
       console.log("Falla la lectura de la trazabilidad");
     }
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error en get trazabilidad");
+  }
 });
 
 app.post("/RegistroPlanta/UpdateTrazabilidad", (request, reply) => {
@@ -625,7 +659,11 @@ app.post("/RegistroPlanta/UpdateTrazabilidad", (request, reply) => {
         `;
     await MES_query(q_update);
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error en post regplanta/updateTraza");
+  }
 });
 
 app.post("/RegPlanta/Trazabilidad", (request, reply) => {
@@ -671,7 +709,11 @@ app.post("/RegPlanta/Trazabilidad", (request, reply) => {
       console.log("Error post en registro de planta (Trazabilidad)");
     }
   }
-  f();
+  try {
+    f();
+  } catch {
+    console.log("Error en RegPlanta trazabilidad post");
+  }
 });
 app.get("/RegistroPlanta/GestionDesperdicios/:OF", (request, reply) => {
   var OF = request.params.OF;
