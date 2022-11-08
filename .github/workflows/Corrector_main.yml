@@ -1,24 +1,14 @@
-name: find&replace strings
-
-on:
-  push:
-    branches:
-      - main
-      
+name: My Workflow
+on: [push, pull_request]
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
+      - uses: actions/checkout@v2
       - name: Find and Replace
-        uses: jacobtomlinson/gha-find-replace@master
+        uses: jacobtomlinson/gha-find-replace@v2
         with:
-          find: "192.168.0.118"
-          replace: "192.168.0.133"
-
-      
+          find: "Soy"
+          replace: "world"
+          include: "**p.jsx" # Will match all README.md files in any nested directory
