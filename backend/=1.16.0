@@ -1,0 +1,4 @@
+Collecting dnspython
+  Downloading dnspython-2.2.1-py3-none-any.whl (269 kB)
+Installing collected packages: dnspython
+Successfully installed dnspython-2.2.1

@@ -287,12 +287,12 @@ app.get("/Login", (request, res) => {
 app.post("/Login", (request, reply) => {
   async function f() {
     var { Usuario, Pass } = request.body;
-
+    console.log(Usuario);
     var q_usuario = `
       select Codigo,Pwd_Hashed 
       from WEB_API_TABLES.dbo.tbEmpleados 
       WHERE 
-        ID = ${request.body.Usuario[0].ID}
+        ID = ${Usuario[0].ID}
     `;
     var res_user = await MES_query(q_usuario);
 
