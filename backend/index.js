@@ -50,7 +50,6 @@ async function connectECIESA() {
   } catch (err) {
     console.table("NOMBRE SERVIDOR: " + config_ecisa.server);
     console.log("Database connection failed!", err);
-    return err;
   }
 }
 
@@ -78,7 +77,6 @@ async function connectDB() {
     return pool;
   } catch (err) {
     console.log("Database connection failed!", err);
-    return err;
   }
 }
 
@@ -1340,5 +1338,42 @@ app.post("/Mantenimiento/RepuestosMaquina", (request, reply) => {
   try {
   } catch {
     console.log("Error obteniendo los repuestos de la máquina");
+  }
+});
+
+app.post("/Mantenimiento/RepuestosMaquina/UpdateStock", (request, reply) => {
+  async function f() {
+    var { iMatID, iSubstract } = request.body;
+    var sQuery = `
+      use MES;
+      Insert Into tbMaterialAjustes (MatID,Ajuste)
+      VALUES (${iMatID},-${iSubstract});
+    `;
+    var qUpdateStock = await MES_query(sQuery);
+  }
+
+  try {
+    f();
+  } catch {
+    console.log("Error en la actualizacion del stock");
+  }
+});
+
+app.get("/Mantenimiento/RepuestosMaquina/Stock/:iID", (request, reply) => {
+  async function f() {
+    var { iID } = request.params;
+    var sQueryStringUpdate = `
+      use MES;
+      select MatStock from vwInventarioStock
+      where MatID = ${iID};
+    `;
+    var qFetchStock = await MES_query(sQueryStringUpdate);
+    console.log(qFetchStock.query[0].MatStock);
+    reply.send({ Stock: qFetchStock.query[0].MatStock });
+  }
+  f();
+  try {
+  } catch {
+    console.log("Error en la obtencion de datos del repuesto");
   }
 });

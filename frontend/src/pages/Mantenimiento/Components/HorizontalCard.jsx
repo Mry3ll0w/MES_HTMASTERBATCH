@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Button } from "@mui/material";
+import axios from "axios";
 export default function HorizontalCard({
   Reference,
   Description,
@@ -9,12 +10,37 @@ export default function HorizontalCard({
   StockMin,
 }) {
   //UseStates
-  const [iStock, SetiStock] = useState(0);
-
+  const [iStock, SetiStock] = useState(1);
+  const [iCurrentStock, SetiCurrentStock] = useState(Stock);
   /**
    * Funcion encargada de actualizar y comprobar el stock del producto en cuestion
    */
-  function UpdateStock() {}
+  function UpdateStock() {
+    axios
+      .post(
+        `http://${process.env.REACT_APP_SERVER}/Mantenimiento/RepuestosMaquina/UpdateStock`,
+        { iMatID: Reference, iSubstract: iStock }
+      )
+      .catch((e) => {
+        console.error(e);
+        alert(
+          "Error en la actualizacion, consulte el estado de la base de datos"
+        );
+      });
+    alert("Stock actualizado");
+    FetchMachineStock(Reference);
+  }
+
+  function FetchMachineStock(ID) {
+    axios
+      .get(
+        `http://${process.env.REACT_APP_SERVER}/Mantenimiento/RepuestosMaquina/Stock/${ID}`
+      )
+      .catch((e) => console.log(e))
+      .then((response) => {
+        SetiCurrentStock(response.data.Stock);
+      });
+  }
 
   return (
     <Fragment>
@@ -44,14 +70,21 @@ export default function HorizontalCard({
             Ubicacion : {Location}
           </p>
           <p className='text-muted mb-0 d-none d-sm-block'>
-            Stock Disponible : {Stock}{" "}
+            Stock Disponible : {iCurrentStock}{" "}
           </p>
           <p className='text-muted mb-3 d-none d-sm-block mt-3'>
-            Sacar Stock: <input type='number' min={0} />{" "}
+            Sacar Stock:{" "}
+            <input
+              type='number'
+              value={iStock}
+              style={{ textAlign: "center" }}
+              onChange={(e) => SetiStock(e.target.value)}
+              min='1'
+            />{" "}
           </p>
 
           <Button variant='contained' size='small' onClick={UpdateStock}>
-            Actualizar Stock
+            Actualizar Stock del repuesto
           </Button>
         </div>
       </div>
