@@ -47,9 +47,9 @@ export default function HorizontalCard({
       <div className='place-card mb-2'>
         <div className='place-card__img'>
           <img
-            src='https://c-3d.niceshops.com/upload/image/product/large/default/10312_46b5802a.256x256.jpg'
+            src='/materiales/repuesto.png'
             className='place-card__img-thumbnail'
-            alt='Thumbnail'
+            alt='Error al captar la imagen'
           />
         </div>
         <div className='place-card__content'>
