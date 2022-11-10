@@ -97,8 +97,10 @@ export default function Profile() {
   return (
     <Fragment>
       <div>
-        <h1>Bienvenido {sessionStorage.getItem("logged")}</h1>
-        <Box sx={{ border: "1px dashed grey", width: "60%" }}>
+        <h1 style={{ marginLeft: "5%" }}>
+          Bienvenido {sessionStorage.getItem("logged")}
+        </h1>
+        <Box sx={{ border: "1px dashed grey", width: "60%", marginLeft: "5%" }}>
           <div>
             <h2>¿ Quieres cambiar tu contraseña ?</h2>
             <TextField

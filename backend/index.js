@@ -81,18 +81,17 @@ async function connectDB() {
 }
 
 async function MES_query(q) {
-  const DB = await connectDB();
-
   try {
-    const result = await DB.request().query(q);
+    const DB = await connectDB();
 
+    const result = await DB.request().query(q);
+    DB.close();
     return { query: result.recordset };
   } catch (err) {
     console.log(`Error querying database, query usada ${q}`, err);
 
     //return {query :err, ok : false};
   }
-  DB.close();
 }
 
 app.get("/RegEnsacado", (request, res) => {
@@ -1392,8 +1391,8 @@ app.post("/Mantenimiento/RepuestosMaquina", (request, reply) => {
       Materiales: QDatosMaterial.query,
     });
   }
-  f();
   try {
+    f();
   } catch {
     console.log("Error obteniendo los repuestos de la máquina");
   }
@@ -1428,9 +1427,41 @@ app.get("/Mantenimiento/RepuestosMaquina/Stock/:iID", (request, reply) => {
     var qFetchStock = await MES_query(sQueryStringUpdate);
     reply.send({ Stock: qFetchStock.query[0].MatStock });
   }
-  f();
   try {
+    f();
   } catch {
     console.log("Error en la obtencion de datos del repuesto");
+  }
+});
+
+app.post("/Mantenimiento/RepuestosMaquina/UpdatePhoto", (request, reply) => {
+  async function f() {
+    console.log(request.body);
+  }
+  try {
+    f();
+  } catch {
+    console.log("Error post /Mantenimiento/RepuestosMaquina/UpdatePhoto");
+  }
+});
+
+app.get("/ServerState", (request, reply) => {
+  async function f() {
+    var sQueryStringServerState = `
+      use WEB_API_TABLES;
+      Select top 1 * from tbCargos;
+    `;
+    var qServerState = await MES_query(sQueryStringServerState);
+    try {
+      console.log(qServerState.query);
+      reply.send({ Status: true });
+    } catch {
+      reply.send({ Status: false });
+    }
+  }
+  try {
+    f();
+  } catch {
+    reply.send({ Status: false });
   }
 });

@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
+import PhotoUploader from "./PhotoUploader";
 import axios from "axios";
 export default function HorizontalCard({
   Reference,
@@ -7,11 +8,11 @@ export default function HorizontalCard({
   Location,
   Stock,
   Photo,
-  StockMin,
 }) {
   //UseStates
   const [iStock, SetiStock] = useState(1);
   const [iCurrentStock, SetiCurrentStock] = useState(Stock);
+  const [savUploadedPhoto, SetsavUploadedPhoto] = useState("");
   /**
    * Funcion encargada de actualizar y comprobar el stock del producto en cuestion
    */
@@ -47,44 +48,57 @@ export default function HorizontalCard({
       <div className='place-card mb-2'>
         <div className='place-card__img'>
           <img
-            src='/materiales/repuesto.png'
+            src={Photo} // /materiales/Photo.png
             className='place-card__img-thumbnail'
-            alt='Error al captar la imagen'
+            alt='Error al cargar la imagen'
           />
         </div>
         <div className='place-card__content'>
           <h4 className='place-card__content_header'>
-            <p className='text-dark place-title'>Referencia : {Reference}</p>{" "}
+            <span className='text-dark place-title'>
+              Referencia : {Reference}
+            </span>{" "}
             <a href='#!' className='text-muted'>
               <i className='fa fa-heart-o'></i>
             </a>
           </h4>
-          <p>
+          <span>
             <i className='fa fa-map-marker'></i>{" "}
             <span className='text-muted bold'>
               Descripcion : <span className='ml-2'>{Description}</span>
             </span>
-          </p>
-          <p className='text-muted mb-0 d-none d-sm-block'>
+          </span>
+          <span className='text-muted mb-0 d-none d-sm-block'>
             Ubicacion : {Location}
-          </p>
-          <p className='text-muted mb-0 d-none d-sm-block'>
+          </span>
+          <span className='text-muted mb-0 d-none d-sm-block'>
             Stock Disponible : {iCurrentStock}{" "}
-          </p>
-          <p className='text-muted mb-3 d-none d-sm-block mt-3'>
-            Sacar Stock:{" "}
-            <input
-              type='number'
-              value={iStock}
-              style={{ textAlign: "center", width: "80px" }}
-              onChange={(e) => SetiStock(e.target.value)}
-              min='1'
-            />{" "}
-          </p>
-
-          <Button variant='contained' size='small' onClick={UpdateStock}>
-            Actualizar Stock del repuesto
-          </Button>
+          </span>
+          <span className='text-muted mb-3 d-none d-sm-block mt-3'>
+            <div className='row d-flex'>
+              <div className='col-6'>
+                Sacar Stock:{" "}
+                <input
+                  type='number'
+                  value={iStock}
+                  style={{ textAlign: "center", width: "80px" }}
+                  onChange={(e) => SetiStock(e.target.value)}
+                  min='1'
+                />{" "}
+              </div>
+              <div className='col-6'>
+                <PhotoUploader url='/Mantenimiento/RepuestosMaquina/UpdatePhoto' />
+              </div>
+            </div>
+          </span>
+          <div className='row d-flex'>
+            <div className='col-6'>
+              <Button variant='contained' size='small' onClick={UpdateStock}>
+                Actualizar Stock del repuesto
+              </Button>
+            </div>
+            <div className='col-6'></div>
+          </div>
         </div>
       </div>
     </Fragment>

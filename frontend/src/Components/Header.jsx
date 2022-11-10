@@ -9,20 +9,35 @@ import { useState } from "react";
 import { Drawer } from "@mui/material";
 import { styles } from "../Style/styles";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 export function Header() {
   //Gestiona apertura o cierre del drawer
   const [OpenMenu, openmenu] = useState(false);
-
+  const [btnClass, SetbtnClass] = useState("btn btn-danger mt-4");
+  const [sPhrase, SetsPhrase] = useState("Comprobar Estado del Servidor");
   //Navegabilidad de los botones
   const navigate = useNavigate();
   const [On_Login, setOnLogin] = useState(() => {
-    if (window.location.href === "http://192.168.0.118:3000/Login") {
+    if (
+      window.location.href === `http://${process.env.REACT_APP_SERVER}/Login`
+    ) {
       return true;
     } else {
       return false;
     }
   });
+
+  function ButtonState() {
+    axios
+      .get(`http://${process.env.REACT_APP_SERVER}/ServerState`)
+      .catch((e) => console.log(e))
+      .then((r) => {
+        if (r.data.Status === true) {
+          SetsPhrase("Conexion Correcta");
+          SetbtnClass("btn btn-success mt-4");
+        }
+      });
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -37,7 +52,7 @@ export function Header() {
             color='inherit'
             aria-label='menu'
             sx={{ mr: 2 }}
-            disabled={On_Login}
+            disabled={false}
           >
             <MenuIcon />
           </IconButton>
@@ -45,6 +60,7 @@ export function Header() {
           <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
             MES UNNOX-HT
           </Typography>
+
           <Typography
             variant='h6'
             component='div'
@@ -74,6 +90,10 @@ export function Header() {
           }}
         >
           <Box sx={{ width: "400px", marginTop: "20px" }}>
+            <button type='button' className={btnClass} onClick={ButtonState}>
+              {sPhrase}
+            </button>
+            <br /> <br />
             <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
               Departamentos
             </Typography>
