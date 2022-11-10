@@ -47,23 +47,22 @@ export default function HorizontalCard({
       <div className='place-card mb-2'>
         <div className='place-card__img'>
           <img
-            src='https://media-exp1.licdn.com/dms/image/C4E12AQFtK24TMxJIcw/article-cover_image-shrink_720_1280/0/1549248731409?e=2147483647&v=beta&t=L-fz28DnZtaAwyj7PKo2jSQY4SGDfA4TjNUtplFti_E'
+            src='https://c-3d.niceshops.com/upload/image/product/large/default/10312_46b5802a.256x256.jpg'
             className='place-card__img-thumbnail'
             alt='Thumbnail'
           />
         </div>
         <div className='place-card__content'>
           <h4 className='place-card__content_header'>
-            <p className='text-dark place-title'>Referencia :{Reference}</p>{" "}
+            <p className='text-dark place-title'>Referencia : {Reference}</p>{" "}
             <a href='#!' className='text-muted'>
               <i className='fa fa-heart-o'></i>
             </a>
           </h4>
           <p>
             <i className='fa fa-map-marker'></i>{" "}
-            <span className='text-muted'>
-              Descripcion : <br />
-              {Description}
+            <span className='text-muted bold'>
+              Descripcion : <span className='ml-2'>{Description}</span>
             </span>
           </p>
           <p className='text-muted mb-0 d-none d-sm-block'>
@@ -77,7 +76,7 @@ export default function HorizontalCard({
             <input
               type='number'
               value={iStock}
-              style={{ textAlign: "center" }}
+              style={{ textAlign: "center", width: "80px" }}
               onChange={(e) => SetiStock(e.target.value)}
               min='1'
             />{" "}

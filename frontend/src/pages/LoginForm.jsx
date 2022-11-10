@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Fragment } from "react";
 import { TextField, Autocomplete, Button } from "@mui/material";
 import { useState } from "react";
@@ -15,6 +15,8 @@ export default function LoginForm() {
   function nav_home() {
     navigate("/home");
   }
+
+  const RefButtonLogin = useRef(null);
 
   const [Usuarios, setUsuarios] = useState([]);
   const [User, Setuser] = useState("");
@@ -111,6 +113,15 @@ export default function LoginForm() {
           sx={{ margin: 5 }}
           label='Contraseña'
           type='password'
+          inputRef={RefButtonLogin}
+          inputProps={{
+            onKeyPress: (event) => {
+              const { key } = event;
+              if (key === "Enter") {
+                send_data();
+              }
+            },
+          }}
         ></TextField>
 
         <Button onClick={send_data} variant='contained'>
