@@ -135,7 +135,11 @@ app.post("/UpdateEnsacado", (request, res) => {
     );
     console.log(q_ins);
   }
-  q();
+  try {
+    q();
+  } catch {
+    console.log("Error en UpdateEnsacado");
+  }
 });
 
 app.post("/RegistraEnsacado", (request, res) => {
@@ -147,7 +151,11 @@ app.post("/RegistraEnsacado", (request, res) => {
         VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}','${E.iniciales}');`);
     console.log(q_ins);
   }
-  q();
+  try {
+    q();
+  } catch {
+    console.log("Error en RegistraEnsacado");
+  }
 });
 
 app.post("/DelEns", (request, res) => {
@@ -166,7 +174,11 @@ app.post("/DelEns", (request, res) => {
     );
     console.log(q_ins);
   }
-  q();
+  try {
+    q();
+  } catch {
+    console.log("Error en DelEns");
+  }
 });
 
 //Estadistico
@@ -193,7 +205,11 @@ app.get("/dataEstadistico", (request, res) => {
       OFS: q_OFS.query,
     });
   }
-  query();
+  try {
+    query();
+  } catch {
+    console.log("Error en /dataEstadistico");
+  }
 });
 
 app.post("/calcEstadistico", (request, res) => {
