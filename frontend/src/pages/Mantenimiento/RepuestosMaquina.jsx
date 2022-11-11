@@ -259,6 +259,7 @@ export default function RepuestosMaquina() {
                       SetSeleccionOpcionRepuesto("");
                       SetSeleccionOpcionCOD1("");
                       SetSeleccionOpcionCOD2("");
+                      SetaMateriales([]);
                       FetchMaquinas();
                     }}
                   >
