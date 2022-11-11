@@ -14,9 +14,10 @@ export default function RepuestosMaquina() {
   //UseStates
   const [aMaquina, SetaMaquina] = useState([]);
   const [aMateriales, SetaMateriales] = useState([]);
+  const [aRepuestos, SetaRepuestos] = useState([]);
   const [aOpcionesMaquina, SetaOpcionesMaquina] = useState([]);
   const [SeleccionOpcionMaquina, SetSeleccionOpcionMaquina] = useState("");
-  const [SeleccionOpcionCOD0, SetSeleccionOpcionCOD0] = useState("");
+  const [SeleccionOpcionRepuesto, SetSeleccionOpcionRepuesto] = useState("");
   const [SeleccionOpcionCOD1, SetSeleccionOpcionCOD1] = useState("");
   const [SeleccionOpcionCOD2, SetSeleccionOpcionCOD2] = useState("");
   const [aOpcionesCOD1, SetaOpcionesCOD1] = useState([]);
@@ -31,7 +32,6 @@ export default function RepuestosMaquina() {
       )
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response.data);
         //Procesamos la lista de Maquinas
         var _aops_maquinas = [];
         try {
@@ -46,6 +46,7 @@ export default function RepuestosMaquina() {
 
         SetaOpcionesCOD1(response.data.ListaCOD1);
         SetaOpcionesCOD2(response.data.ListaCOD2);
+        SetaRepuestos(response.data.ListaRepuestos);
       });
   }
 
@@ -54,6 +55,18 @@ export default function RepuestosMaquina() {
       .post(
         `http://${process.env.REACT_APP_SERVER}/Mantenimiento/RepuestosMaquina`,
         { sCodigoMaquina: Codigo }
+      )
+      .catch((e) => console.log(e))
+      .then((response) => {
+        SetaMateriales(response.data.Materiales);
+      });
+  }
+
+  function FetchOneRepuesto(ID) {
+    axios
+      .post(
+        `http://${process.env.REACT_APP_SERVER}/Mantenimiento/RepuestosMaquina/Repuesto`,
+        { iMatID: ID }
       )
       .catch((e) => console.log(e))
       .then((response) => {
@@ -209,12 +222,41 @@ export default function RepuestosMaquina() {
                 </div>
               </div>
               <div className='row'>
+                <div className='m-1'>
+                  <Autocomplete
+                    value={SeleccionOpcionRepuesto}
+                    //isOptionEqualToValue={(option, value) => option === value}
+                    options={aRepuestos}
+                    onChange={(e, v) => {
+                      SetSeleccionOpcionRepuesto(v);
+                      if (v !== "") {
+                        const [ID] = v.split(" | ");
+
+                        FetchOneRepuesto(ID);
+                      }
+                    }}
+                    renderInput={(e) => (
+                      <TextField
+                        {...e}
+                        label='Filtrado Por Repuesto'
+                        value={SeleccionOpcionRepuesto}
+                        sx={{
+                          width: "100%",
+                          m: "3px",
+                          p: "3px",
+                        }}
+                      ></TextField>
+                    )}
+                  ></Autocomplete>
+                </div>
+              </div>
+              <div className='row'>
                 <Container className='d-flex justify-content-center mb-2'>
                   <Button
                     variant='outlined'
                     onClick={() => {
                       SetSeleccionOpcionMaquina("");
-                      SetSeleccionOpcionCOD0("");
+                      SetSeleccionOpcionRepuesto("");
                       SetSeleccionOpcionCOD1("");
                       SetSeleccionOpcionCOD2("");
                       FetchMaquinas();

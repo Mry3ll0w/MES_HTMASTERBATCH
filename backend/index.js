@@ -1296,15 +1296,6 @@ app.post("/Mantenimiento/Tareas/UpdateMaterialAccion", (request, reply) => {
 
 app.get("/Mantenimiento/RepuestosMaquina", (request, reply) => {
   async function f() {
-    var q_lista_COD0 = `
-    USE MES;
-    SELECT 
-      Cod,
-      ISNULL(Descripcion,'Sin descripción') as Descripcion
-    FROM 
-      tbCOD0;
-    `;
-
     var q_lista_COD1 = `
     USE MES;
     SELECT 
@@ -1339,24 +1330,39 @@ app.get("/Mantenimiento/RepuestosMaquina", (request, reply) => {
           tbCOD2.id = tbMaquina.COD2
       order by Codigo;`;
 
+    var sQueryListaRepuesto = `
+      USE MES;
+      SELECT 
+        tbMaterial.ID as ID, Descripcion
+      FROM 
+        tbMaterial,tbMaquinaMaterial
+      WHERE
+        MaterialID = tbMaterial.ID
+      GROUP by tbMaterial.ID, Descripcion
+    `;
+
     var res_maquinas = await MES_query(q_get_maquinas);
-    var res_cod0 = await MES_query(q_lista_COD0);
     var res_cod1 = await MES_query(q_lista_COD1);
     var res_cod2 = await MES_query(q_lista_COD2);
-
-    var _aLCOD1 = [];
-    var _aLCOD2 = [];
+    var qListaRepuesto = await MES_query(sQueryListaRepuesto);
+    var aLCOD1 = [];
+    var aLCOD2 = [];
+    var aLRepuestos = [];
     res_cod1.query.map((i) => {
-      _aLCOD1.push(`${i.Cod} | ${i.Descripcion}`);
+      aLCOD1.push(`${i.Cod} | ${i.Descripcion}`);
     });
     res_cod2.query.map((i) => {
-      _aLCOD2.push(`${i.Cod} | ${i.Descripcion}`);
+      aLCOD2.push(`${i.Cod} | ${i.Descripcion}`);
+    });
+    qListaRepuesto.query.map((i) => {
+      aLRepuestos.push(`${i.ID} | ${i.Descripcion}`);
     });
 
     reply.send({
       Maquinas: res_maquinas.query,
-      ListaCOD1: _aLCOD1,
-      ListaCOD2: _aLCOD2,
+      ListaCOD1: aLCOD1,
+      ListaCOD2: aLCOD2,
+      ListaRepuestos: aLRepuestos,
     });
   }
   try {
@@ -1398,8 +1404,6 @@ app.post("/Mantenimiento/RepuestosMaquina", (request, reply) => {
     `;
 
     var QDatosMaterial = await MES_query(sQDatosMaterial);
-
-    // ! Arreglar Foto del Material (pasar de ole a foto)
 
     reply.send({
       Materiales: QDatosMaterial.query,
@@ -1476,3 +1480,44 @@ app.post(
     console.log("Imagen de repuesto subida");
   }
 );
+
+app.post("/Mantenimiento/RepuestosMaquina/Repuesto", (request, reply) => {
+  async function f() {
+    console.table(request.body.iMatID);
+    var sQRepuesto = `
+    use MES;
+select top 1
+    MaterialID as Referencia,
+    tbMaterial.Descripcion as Descripcion,
+    CONCAT(tbAlmacen.Nombre,tbPasillo.Nombre,tbEstanteria.Nombre,tbPiso.Nombre) as Ubicacion,
+    vwInventarioStock.MatStock as Stock
+from tbMaquinaMaterial
+    INNER JOIN tbMaterial on
+        MaterialID = tbMaterial.ID
+        and
+        tbMaterial.ID = '${request.body.iMatID}'
+    LEFT JOIN tbAlmacen ON /* Usamos left para incluir los resultados con campos null*/
+        tbMaterial.AlmacenID = tbAlmacen.ID
+    LEFT JOIN tbPasillo ON 
+        tbPasillo.ID = tbMaterial.PasilloID
+    LEFT JOIN tbEstanteria ON
+        tbEstanteria.ID = tbMaterial.EstanteriaID
+    LEFT JOIN tbPiso ON 
+        tbPiso.ID = tbMaterial.PisoID
+    LEFT JOIN vwInventarioStock ON
+        vwInventarioStock.MatID = tbMaterial.ID
+    ;
+    `;
+
+    try {
+      var QDatosMaterial = await MES_query(sQRepuesto);
+      console.log(QDatosMaterial.query);
+      reply.send({
+        Materiales: QDatosMaterial.query,
+      });
+    } catch {
+      console.log("Error en /Mantenimiento/RepuestosMaquina/Repuesto");
+    }
+  }
+  f();
+});
