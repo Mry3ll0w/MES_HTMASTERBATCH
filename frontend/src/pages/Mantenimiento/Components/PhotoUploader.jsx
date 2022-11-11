@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import axios from "axios";
 export default function PhotoUploader({ url }) {
-  const [file, setFile] = useState();
+  const [file, setFile] = useState({ data: "" });
 
-  function handleChange(event) {
-    setFile(event.target.files[0]);
+  function handleChange(e) {
+    const img = {
+      data: e.target.files[0],
+    };
+    setFile(img);
   }
 
-  function handleSubmit(event) {
-    // `http://${process.env.REACT_APP_SERVER}${url}`
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append("file", file.data);
+    axios
+      .post(`http://${process.env.REACT_APP_SERVER}${url}`, formData)
+      .catch((e) => console.log(e));
+  };
 
   return (
     <div className='App'>

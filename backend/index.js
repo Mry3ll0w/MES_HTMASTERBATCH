@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const multer = require("multer");
 const sql = require("mssql");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -13,6 +14,19 @@ const { Console } = require("console");
 app.listen("4001", () => {
   console.log("listening in 4001");
 });
+
+//Multer Config
+let MulterStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "../frontend/public/materiales");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+let ImgUpload = multer({ storage: MulterStorage });
+
 //usando bodyparser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); //Permitir coger la info del front end como json
@@ -1434,17 +1448,6 @@ app.get("/Mantenimiento/RepuestosMaquina/Stock/:iID", (request, reply) => {
   }
 });
 
-app.post("/Mantenimiento/RepuestosMaquina/UpdatePhoto", (request, reply) => {
-  async function f() {
-    console.log(request.body);
-  }
-  try {
-    f();
-  } catch {
-    console.log("Error post /Mantenimiento/RepuestosMaquina/UpdatePhoto");
-  }
-});
-
 app.get("/ServerState", (request, reply) => {
   async function f() {
     var sQueryStringServerState = `
@@ -1453,7 +1456,7 @@ app.get("/ServerState", (request, reply) => {
     `;
     var qServerState = await MES_query(sQueryStringServerState);
     try {
-      console.log(qServerState.query);
+      console.log("Comprobación de conexion realizada");
       reply.send({ Status: true });
     } catch {
       reply.send({ Status: false });
@@ -1465,3 +1468,11 @@ app.get("/ServerState", (request, reply) => {
     reply.send({ Status: false });
   }
 });
+
+app.post(
+  "/Mantenimiento/RepuestosMaquina/UpdatePhoto",
+  ImgUpload.single("file"),
+  function (req, res) {
+    console.log("llego a file");
+  }
+);
