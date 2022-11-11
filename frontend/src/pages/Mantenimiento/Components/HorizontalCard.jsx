@@ -1,18 +1,53 @@
 import React, { Fragment, useState } from "react";
 import { Button, TextField } from "@mui/material";
-import PhotoUploader from "./PhotoUploader";
+import DropDownMenu from "../../../Components/DropDownMenu";
 import axios from "axios";
 export default function HorizontalCard({
   Reference,
   Description,
   Location,
   Stock,
-  Photo,
 }) {
   //UseStates
   const [iStock, SetiStock] = useState(1);
   const [iCurrentStock, SetiCurrentStock] = useState(Stock);
   const [savUploadedPhoto, SetsavUploadedPhoto] = useState("");
+
+  const [file, setFile] = useState({ data: "" });
+
+  function handleChange(e) {
+    const img = {
+      data: e.target.files[0],
+    };
+    setFile(img);
+  }
+
+  const handleSubmitImage = async (e) => {
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append("file", file.data);
+    axios
+      .post(
+        `http://${process.env.REACT_APP_SERVER}/Mantenimiento/RepuestosMaquina/UpdatePhoto`,
+        formData
+      )
+      .catch((e) => console.log(e));
+  };
+
+  const aDropElements = [
+    {
+      element: (
+        <form onSubmit={handleSubmitImage}>
+          <input type='file' onChange={handleChange} />
+          <br />
+          <Button variant='contained' type='submit' sx={{ marginTop: "2%" }}>
+            Subir Imagen
+          </Button>
+        </form>
+      ),
+    },
+  ];
+
   /**
    * Funcion encargada de actualizar y comprobar el stock del producto en cuestion
    */
@@ -48,7 +83,7 @@ export default function HorizontalCard({
       <div className='place-card mb-2'>
         <div className='place-card__img'>
           <img
-            src={Photo} // /materiales/Photo.png
+            src={`/materiales/${Reference}.png`} // /materiales/Photo.png
             className='place-card__img-thumbnail'
             alt='Error al cargar la imagen'
           />
@@ -59,7 +94,14 @@ export default function HorizontalCard({
               Referencia : {Reference}
             </span>{" "}
             <a href='#!' className='text-muted'>
-              <i className='fa fa-heart-o'></i>
+              <i className='fa fa-heart-o'>
+                <div>
+                  <DropDownMenu
+                    label={"Cambiar imagen del repuesto"}
+                    elements={aDropElements}
+                  />
+                </div>
+              </i>
             </a>
           </h4>
           <span>
@@ -85,9 +127,6 @@ export default function HorizontalCard({
                   onChange={(e) => SetiStock(e.target.value)}
                   min='1'
                 />{" "}
-              </div>
-              <div className='col-6'>
-                <PhotoUploader url='/Mantenimiento/RepuestosMaquina/UpdatePhoto' />
               </div>
             </div>
           </span>

@@ -21,6 +21,7 @@ export default function RepuestosMaquina() {
   const [SeleccionOpcionCOD2, SetSeleccionOpcionCOD2] = useState("");
   const [aOpcionesCOD1, SetaOpcionesCOD1] = useState([]);
   const [aOpcionesCOD2, SetaOpcionesCOD2] = useState([]);
+  const [sSelMaquina, SetsSelMaquina] = useState("");
 
   //Function
   function FetchMaquinas() {
@@ -110,6 +111,7 @@ export default function RepuestosMaquina() {
                 if (selectedRowData.length > 0) {
                   SetaMateriales([]);
                   FetchRepuestosMaquina(selectedRowData[0].Codigo);
+                  SetsSelMaquina(selectedRowData[0].Codigo);
                 }
               }}
             />

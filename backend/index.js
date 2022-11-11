@@ -1473,6 +1473,6 @@ app.post(
   "/Mantenimiento/RepuestosMaquina/UpdatePhoto",
   ImgUpload.single("file"),
   function (req, res) {
-    console.log("llego a file");
+    console.log("Imagen de repuesto subida");
   }
 );

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-export default function PhotoUploader({ url }) {
+import { Button } from "@mui/material";
+import DropDownMenu from "../../../Components/DropDownMenu";
+export default function PhotoUploader({ url, label, CallBackFunction }) {
   const [file, setFile] = useState({ data: "" });
 
   function handleChange(e) {
@@ -19,12 +21,23 @@ export default function PhotoUploader({ url }) {
       .catch((e) => console.log(e));
   };
 
+  const aDropElements = [
+    {
+      element: (
+        <form onSubmit={handleSubmit}>
+          <input type='file' onChange={handleChange} />
+          <br />
+          <Button variant='contained' type='submit' sx={{ marginTop: "2%" }}>
+            Subir Imagen
+          </Button>
+        </form>
+      ),
+    },
+  ];
+
   return (
     <div className='App'>
-      <form onSubmit={handleSubmit}>
-        <input type='file' onChange={handleChange} />
-        <button type='submit'>Upload</button>
-      </form>
+      <DropDownMenu label={label} elements={aDropElements} />
     </div>
   );
 }
