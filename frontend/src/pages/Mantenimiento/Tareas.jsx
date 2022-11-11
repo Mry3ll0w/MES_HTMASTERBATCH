@@ -682,6 +682,7 @@ export default function MantenimientoTareas() {
                         selectedIDs.has(row.id)
                       );
                       SetIDSelectedRow(selectedRowData[0].ID);
+                      SetMTarea(selectedRowData[0]);
                       fetchSelectedAction(selectedRowData[0].ID);
                     }}
                   />
