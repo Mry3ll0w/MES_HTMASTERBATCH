@@ -12,7 +12,9 @@ export default function HorizontalCard({
   const [iStock, SetiStock] = useState(1);
   const [iCurrentStock, SetiCurrentStock] = useState(Stock);
   const [savUploadedPhoto, SetsavUploadedPhoto] = useState("");
-
+  const [sImgUrl, SetsImgUrl] = useState(
+    `/materiales/${Reference}.png?random=` + new Date().getTime()
+  );
   const [file, setFile] = useState({ data: "" });
 
   function handleChange(e) {
@@ -32,6 +34,7 @@ export default function HorizontalCard({
         formData
       )
       .catch((e) => console.log(e));
+    SetsImgUrl(`/materiales/${Reference}.png?random=` + new Date().getTime());
   };
 
   const aDropElements = [
@@ -83,7 +86,7 @@ export default function HorizontalCard({
       <div className='place-card mb-2'>
         <div className='place-card__img'>
           <img
-            src={`/materiales/${Reference}.png`} // /materiales/Photo.png
+            src={sImgUrl} // /materiales/Photo.png
             className='place-card__img-thumbnail'
             alt='Error al cargar la imagen'
           />
