@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
 import { Autocomplete, TextField, Button } from "@mui/material";
 import { Container } from "react-bootstrap";
-import HorizontalCard from "./Components/HorizontalCard";
+import CardRepuesto from "./Components/CardRepuesto";
 import "./css/RepuestosMaquina.css";
 export default function RepuestosMaquina() {
   //Hooks
@@ -274,7 +274,7 @@ export default function RepuestosMaquina() {
           <h2 className='d-flex justify-content-center mt-2 mb-4'>Repuestos</h2>
           {aMateriales.map((i) => {
             return (
-              <HorizontalCard
+              <CardRepuesto
                 Reference={i.Referencia}
                 Description={i.Descripcion}
                 Stock={i.Stock}

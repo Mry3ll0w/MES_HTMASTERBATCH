@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { Button, TextField } from "@mui/material";
 import DropDownMenu from "../../../Components/DropDownMenu";
 import axios from "axios";
-export default function HorizontalCard({
+export default function CardRepuesto({
   Reference,
   Description,
   Location,

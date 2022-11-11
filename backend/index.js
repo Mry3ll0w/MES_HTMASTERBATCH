@@ -879,33 +879,9 @@ app.post("/Mantenimiento/CreateTarea", (request, reply) => {
                 '${DatosTarea.Abreviatura}',${DatosTarea.EquipoID},'${DatosTarea.Observaciones}')
             `;
       var res_insercion_tarea = await MES_query(q_insercion_tarea);
-      //Insertamos n acciones
-
-      var NextIDTarea = await MES_query(`use MES;
-                SELECT TOP 1 ID
-                FROM 
-                    tbTareas
-                ORDER BY ID DESC
-                ;
-            `);
 
       var i = parseInt(request.body.NAcciones);
-      var q_insercion_acciones = `
-            USE MES;
-            INSERT INTO tbAcciones
-                (TareasID,Accion,Notas,FechaHora)
-            VALUES
-            `;
-      console.log(i);
-      var values = "";
-      for (j = 0; j < i; ++j) {
-        q_insercion_acciones += `(${NextIDTarea.query[0].ID}, '-','-','${DatosTarea.FechaHora}'),`;
-      }
-      var corrected_query =
-        q_insercion_acciones.substring(0, q_insercion_acciones.length - 1) +
-        ";";
-      q_insercion_acciones = corrected_query;
-      var res_insertar_acciones = await MES_query(q_insercion_acciones);
+
       console.log("Tarea Insertada");
     } catch {
       console.log("Error en la creacion de la tarea");
@@ -976,16 +952,18 @@ app.post("/Mantenimiento/ModificaAccion", (request, reply) => {
 app.get("/Mantenimiento/ListaTareas", (request, reply) => {
   async function f() {
     var q_lista_tareas = `  
-      USE MES;  
-      SELECT 
-          tbTareas.ID, tbTareas.Codigo, 
-          tbTareasEstados.Nombre as Estado,tbTareas.Descripcion as Descripcion,
+      USE MES;
+      SELECT
+          tbTareas.ID, tbTareas.Codigo,
+          tbTareasEstados.Nombre as Estado, tbTareas.Descripcion as Descripcion,
           vwEquipos.Cod2Cod as Cod
-        FROM tbTareas,tbTareasEstados,vwEquipos
+      FROM tbTareas, tbTareasEstados, vwEquipos, tbMaquina
       Where
           tbTareas.EstadoTareaID = tbTareasEstados.ID
           AND
           tbTareas.EquipoID = vwEquipos.ID
+          and 
+          tbMaquina.COD2 = vwEquipos.COD2
       order by ID desc;
       `;
     var res_lista_tareas = await MES_query(q_lista_tareas);
@@ -1005,6 +983,7 @@ app.get("/Mantenimiento/ListaTareas", (request, reply) => {
 app.post("/Mantenimiento/Tarea", (request, reply) => {
   async function f() {
     try {
+      console.table(request.body);
       var q_get_tarea = `
         use MES;
         SELECT top 1 
@@ -1022,7 +1001,7 @@ app.post("/Mantenimiento/Tarea", (request, reply) => {
             use MES;
             SELECT 
                 ID,TareasID,Accion,
-                Notas,FechaHora
+                Notas,FORMAT(FechaHora, 'yyyy-MM-dd') as FechaHora
             FROM 
                 tbAcciones
             WHERE
@@ -1122,7 +1101,7 @@ app.post("/Mantenimiento/UpdateAccion", (request, reply) => {
     var q_update_accion = `
         USE MES;
         UPDATE tbAcciones
-        SET Accion = '${Accion.Accion}', Notas = '${Accion.Notas}'
+        SET Accion = '${Accion.Accion}', Notas = '${Accion.Notas}', FechaHora = '${Accion.FechaHora}'
         WHERE
             ID = ${Accion.ID};
         `;
@@ -1134,7 +1113,6 @@ app.post("/Mantenimiento/UpdateAccion", (request, reply) => {
 app.get("/Mantenimiento/Tareas/DatosAccion/:AccionID", (request, reply) => {
   async function f() {
     var AccionID = request.params.AccionID;
-    //var AccionID = 27072;
     try {
       var q_empleados_accion = `
             use MES;

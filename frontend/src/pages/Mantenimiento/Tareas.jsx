@@ -9,6 +9,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   MenuItem,
+  Menu,
 } from "@mui/material";
 import "./css/Tareas.css";
 import axios from "axios";
@@ -43,7 +44,7 @@ export default function MantenimientoTareas() {
   const [OpcionesCOD2, SetOpcionesCOD2] = useState([]);
   const [Empleados, SetEmpleados] = useState([]);
   const [OpEmpleados, SetOpcionesEmpleados] = useState([]);
-
+  const [dMFechaAccion, SetdMFechaAccion] = useState("");
   const [NFecha, SetNFecha] = useState("");
 
   //Consumo de materiales
@@ -126,6 +127,7 @@ export default function MantenimientoTareas() {
         } catch {
           SetNFecha(new Date.toISOString().slice(0, 10));
         }
+        console.table(response.data);
         SetMAcciones(response.data.Accion);
         SetMTarea(response.data.Tarea);
         SetMDescripcion(response.data.Tarea.Descripcion);
@@ -133,6 +135,7 @@ export default function MantenimientoTareas() {
         SetCriticidadID(response.data.Tarea.CriticidadID);
         SetCategoriaID(response.data.Tarea.CategoriaID);
         SetEstadoTareaID(response.data.Tarea.EstadoTareaID);
+        SetdMFechaAccion(response.data.Tarea.FechaHora);
       });
   }
 
@@ -177,7 +180,6 @@ export default function MantenimientoTareas() {
       .get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/ListaTareas`)
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response.data.ListaTareas);
         var l = [];
         var responsabilidades = ["1", "2", "3", "4", "7", "11", "13"];
         //No pueden ver todas las tareas
@@ -327,7 +329,7 @@ export default function MantenimientoTareas() {
           }
         )
         .catch((e) => console.table(e));
-      fetchSelectedAction();
+      //fetchSelectedAction();
     }
   }
 
@@ -375,7 +377,7 @@ export default function MantenimientoTareas() {
                         }}
                         sx={{ width: "165px" }}
                       >
-                        <MenuItem value={1}>Sin definir</MenuItem>
+                        <MenuItem value={1}>Obligatorio</MenuItem>
                         <MenuItem value={2}>Alta</MenuItem>
                         <MenuItem value={3}>Media</MenuItem>
                         <MenuItem value={4}>Baja</MenuItem>
@@ -557,15 +559,7 @@ export default function MantenimientoTareas() {
             </div>
 
             <div>
-              <Typography fontSize={"16px"} margin={"10px"}>
-                Numero Acciones Asociadas :{" "}
-                <input
-                  type={"number"}
-                  value={NAccionesAsociadas}
-                  onChange={(e) => SetNAccionesAsociadas(e.target.value)}
-                  style={{ textAlign: "center", width: "100px" }}
-                />
-              </Typography>
+              <br />
               <Button variant='contained' onClick={() => SendTarea()}>
                 Crear Tarea con Codigo : {Codigo}
               </Button>
@@ -727,7 +721,7 @@ export default function MantenimientoTareas() {
                           }}
                           sx={{ width: "165px" }}
                         >
-                          <MenuItem value={1}>Sin definir</MenuItem>
+                          <MenuItem value={1}>Obligatorio</MenuItem>
                           <MenuItem value={2}>Alta</MenuItem>
                           <MenuItem value={3}>Media</MenuItem>
                           <MenuItem value={4}>Baja</MenuItem>
@@ -930,35 +924,43 @@ export default function MantenimientoTareas() {
               <div className='OverflowDiv' style={{ overflowY: "auto" }}>
                 <br />
                 <div className='AgregaAcciones'>
-                  <Typography fontSize={"18px"}>
-                    Agregar Acciones :{" "}
-                    <input
-                      type={"number"}
-                      min='1'
-                      style={{ width: "100px" }}
-                      value={AgregaAcciones}
-                      onChange={(e) => SetAgregaAcciones(e.target.value)}
-                    />
-                    <Button
-                      variant='contained'
-                      size='small'
-                      sx={{ marginLeft: "10px" }}
-                      onClick={() => AddAccion(MTarea.ID)}
-                    >
-                      Agregar Acciones
-                    </Button>
-                  </Typography>
+                  <Button
+                    variant='contained'
+                    size='small'
+                    sx={{ marginLeft: "10px" }}
+                    onClick={() => AddAccion(MTarea.ID)}
+                  >
+                    Agregar Acción
+                  </Button>
                 </div>
                 {MAcciones.map((i) => {
                   return (
                     <div className='OverflowDiv'>
-                      <div className='TituloAcciones'>
-                        <Typography fontSize={"25px"}>Acciones</Typography>
+                      <div className='container d-flex'>
+                        <div className='row mt-2 mb-2'>
+                          <div className='col'>
+                            <Typography fontSize={"25px"}>Acciones</Typography>
+                            <input
+                              type='date'
+                              value={i.FechaHora}
+                              onChange={(e) => {
+                                SetMAcciones(
+                                  MAcciones.map((j) =>
+                                    j.ID === i.ID
+                                      ? { ...j, FechaHora: e.target.value }
+                                      : j
+                                  )
+                                );
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
                       <div className=''>
                         <textarea
                           className='DescripcionEmpleado'
                           value={i.Accion}
+                          onClick={(e) => e.target.select()}
                           onChange={(e) => {
                             SetMAcciones(
                               MAcciones.map((j) =>
@@ -976,6 +978,7 @@ export default function MantenimientoTareas() {
                         <textarea
                           className='ObservacionEmpleado'
                           value={i.Notas}
+                          onClick={(e) => e.target.select()}
                           onChange={(e) => {
                             SetMAcciones(
                               MAcciones.map((j) =>
