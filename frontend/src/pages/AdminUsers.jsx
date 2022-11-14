@@ -57,7 +57,7 @@ export default function Personal() {
    */
   function InsertaEmpleado() {
     axios
-      .post(`http://192.168.0.118:4001/NewAdmUsers`, {
+      .post(`http://${process.env.REACT_APP_SERVER}/NewAdmUsers`, {
         Codigo: NCodigo,
         Nombre: NNombre,
         Apellidos: NApellido,
@@ -73,7 +73,7 @@ export default function Personal() {
 
   useEffect(() => {
     axios
-      .get(`http://192.168.0.118:4001/AdmUsers`)
+      .get(`http://${process.env.REACT_APP_SERVER}/AdmUsers`)
       .catch((error) => console.log(error))
       .then((response) => {
         try {
@@ -273,7 +273,7 @@ export default function Personal() {
                           onClick={() => {
                             axios
                               .post(
-                                `http://192.168.0.118:4001/UpdateAdmUsers`,
+                                `http://${process.env.REACT_APP_SERVER}/UpdateAdmUsers`,
                                 {
                                   Usuario: i,
                                 }
@@ -298,9 +298,12 @@ export default function Personal() {
                         <button
                           onClick={() => {
                             axios
-                              .post(`http://192.168.0.118:4001/EraseAdmUsers`, {
-                                ID: i.ID,
-                              })
+                              .post(
+                                `http://${process.env.REACT_APP_SERVER}/EraseAdmUsers`,
+                                {
+                                  ID: i.ID,
+                                }
+                              )
                               .catch((e) => {
                                 console.log(e);
                               });
