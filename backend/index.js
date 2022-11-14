@@ -1218,6 +1218,7 @@ app.post("/Mantenimiento/Tareas/DelTarea", (request, reply) => {
 app.post("/Mantenimiento/Tareas/UpdateTarea", (request, reply) => {
   async function f() {
     try {
+      console.log(request.body.Tarea);
       var { Tarea, Descripcion } = request.body;
 
       var q_update_tarea = `

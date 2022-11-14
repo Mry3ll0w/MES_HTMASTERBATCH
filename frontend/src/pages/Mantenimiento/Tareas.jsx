@@ -409,7 +409,10 @@ export default function MantenimientoTareas() {
                           sx={{ background: "#FF5252", textAlign: "center" }}
                         >
                           <Typography
-                            sx={{ background: "#FF5252", textAlign: "center" }}
+                            sx={{
+                              background: "#FF5252",
+                              textAlign: "center",
+                            }}
                           >
                             Pendiente
                           </Typography>
@@ -419,18 +422,37 @@ export default function MantenimientoTareas() {
                           sx={{ background: "#7FCC72", textAlign: "center" }}
                         >
                           <Typography
-                            sx={{ background: "#7FCC72", textAlign: "center" }}
+                            sx={{
+                              background: "#7FCC72",
+                              textAlign: "center",
+                            }}
                           >
                             Realizada
                           </Typography>
                         </MenuItem>
-                        <MenuItem value={3} sx={{ textAlign: "center" }}>
-                          <Typography sx={{ textAlign: "center" }}>
+                        <MenuItem
+                          value={3}
+                          sx={{ textAlign: "center", background: "#bbcfdf" }}
+                        >
+                          <Typography
+                            sx={{
+                              textAlign: "center",
+                              background: "#bbcfdf",
+                            }}
+                          >
                             Aprobada
                           </Typography>
                         </MenuItem>
-                        <MenuItem value={4} sx={{ textAlign: "center" }}>
-                          <Typography sx={{ textAlign: "center" }}>
+                        <MenuItem
+                          value={4}
+                          sx={{ textAlign: "center", background: "#e7bdfb" }}
+                        >
+                          <Typography
+                            sx={{
+                              textAlign: "center",
+                              background: "#e7bdfb",
+                            }}
+                          >
                             Oculta
                           </Typography>
                         </MenuItem>
@@ -595,7 +617,7 @@ export default function MantenimientoTareas() {
                   <Autocomplete
                     hidden={sessionStorage.getItem("Formulario") === "Planta"}
                     value={FiltroEstado}
-                    options={["Pendiente", "Aprobado", "Oculto"]}
+                    options={["Pendiente", "Realizado", "Aprobado", "Oculto"]}
                     onChange={(e, v) => {
                       SetFiltroEstado(v);
                       var l = [];
@@ -775,13 +797,29 @@ export default function MantenimientoTareas() {
                               Realizada
                             </Typography>
                           </MenuItem>
-                          <MenuItem value={3} sx={{ textAlign: "center" }}>
-                            <Typography sx={{ textAlign: "center" }}>
+                          <MenuItem
+                            value={3}
+                            sx={{ textAlign: "center", background: "#bbcfdf" }}
+                          >
+                            <Typography
+                              sx={{
+                                textAlign: "center",
+                                background: "#bbcfdf",
+                              }}
+                            >
                               Aprobada
                             </Typography>
                           </MenuItem>
-                          <MenuItem value={4} sx={{ textAlign: "center" }}>
-                            <Typography sx={{ textAlign: "center" }}>
+                          <MenuItem
+                            value={4}
+                            sx={{ textAlign: "center", background: "#e7bdfb" }}
+                          >
+                            <Typography
+                              sx={{
+                                textAlign: "center",
+                                background: "#e7bdfb",
+                              }}
+                            >
                               Oculta
                             </Typography>
                           </MenuItem>
