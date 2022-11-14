@@ -54,9 +54,10 @@ export default function MantenimientoTareas() {
   //Datos Tareas
   const [ListaTareas, SetListaTareas] = useState([]);
 
-  //Seccion de Modificacion de ensacado
+  //Seccion de Modificacion de Tarea
   const [IDSelectedRow, SetIDSelectedRow] = useState();
   const [MTarea, SetMTarea] = useState([]);
+  const [MSelMaquina, SetMSelMaquina] = useState("");
 
   const [MDescripcion, SetMDescripcion] = useState([]);
   const [MCodigo, SetMCodigo] = useState("-----");
@@ -127,7 +128,6 @@ export default function MantenimientoTareas() {
         } catch {
           SetNFecha(new Date.toISOString().slice(0, 10));
         }
-        console.table(response.data);
         SetMAcciones(response.data.Accion);
         SetMTarea(response.data.Tarea);
         SetMDescripcion(response.data.Tarea.Descripcion);
@@ -153,6 +153,8 @@ export default function MantenimientoTareas() {
           CriticidadID: CriticidadID,
           CategoriaID: CategoriaID,
           EstadoTareaID: EstadoTareaID,
+          NewCodigo: MCodigo,
+          NewFecha: NFecha,
         }
       )
       .catch((e) => console.error(e));
@@ -851,7 +853,6 @@ export default function MantenimientoTareas() {
                           options={COD1Maquinas}
                           onChange={(e, v) => {
                             SetCOD1(v);
-                            SetSelMaquina(null);
                             SetCodigo("_____");
                             if (v !== null) {
                               axios
@@ -866,7 +867,7 @@ export default function MantenimientoTareas() {
                                     reply.data.FilteredMaquina.map((i) => {
                                       StrMaquinas = [
                                         ...StrMaquinas,
-                                        `${i.Código} | ${i.COD2Nombre} | ${i.COD2} | ${i.MaquinaID}`,
+                                        `${i.Codigo} | ${i.Cod2Nombre} | ${i.COD2} | ${i.EquipoID}`,
                                       ];
                                     });
                                     SetMaquinasFiltradas(StrMaquinas);
@@ -892,8 +893,8 @@ export default function MantenimientoTareas() {
                       </td>
                       <td>
                         <Autocomplete
-                          value={SelMaquina}
-                          key={SelMaquina === null}
+                          value={MSelMaquina}
+                          key={MSelMaquina === null}
                           //isOptionEqualToValue={(option, value) => option === value}
                           options={MaquinasFiltradas}
                           onChange={(e, v) => {
@@ -901,7 +902,7 @@ export default function MantenimientoTareas() {
                             var [code, , , eqID] = v.split(" | ");
                             //Generado el codigo usando el formato de planta
                             SetMCodigo(`TP${code}-${NextID}`);
-                            SetSelMaquina(v);
+                            SetMSelMaquina(v);
                             //Guardamos el EquipoID
                             SetNEquipoID(eqID);
                           }}

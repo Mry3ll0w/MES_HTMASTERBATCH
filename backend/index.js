@@ -1218,19 +1218,27 @@ app.post("/Mantenimiento/Tareas/DelTarea", (request, reply) => {
 app.post("/Mantenimiento/Tareas/UpdateTarea", (request, reply) => {
   async function f() {
     try {
-      console.log(request.body.Tarea);
-      var { Tarea, Descripcion } = request.body;
+      console.log(request.body);
+      var {
+        Tarea,
+        Descripcion,
+        CategoriaID,
+        CriticidadID,
+        EstadoTareaID,
+        NewCodigo,
+        NewFecha,
+      } = request.body;
 
       var q_update_tarea = `
       use MES;
       UPDATE tbTareas
       SET
-          CriticidadID =${Tarea.CriticidadID} ,
+          CriticidadID =${CriticidadID} ,
           Descripcion ='${Descripcion}',
-          CategoriaID=${Tarea.CategoriaID},
-          EstadoTareaID=${Tarea.EstadoTareaID},
-          FechaHora= '${Tarea.FechaHora}',
-          Codigo= '${Tarea.Codigo}'
+          CategoriaID=${CategoriaID},
+          EstadoTareaID=${EstadoTareaID},
+          FechaHora= '${NewFecha}',
+          Codigo= '${NewCodigo}'
       WHERE
           ID = ${Tarea.ID}
     `;
