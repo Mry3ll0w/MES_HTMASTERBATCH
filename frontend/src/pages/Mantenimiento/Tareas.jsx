@@ -694,7 +694,7 @@ export default function MantenimientoTareas() {
                     columns={ColsTareas}
                     components={{ Toolbar: GridToolbar }}
                     rows={RowsListaTareas}
-                    sx={{ width: "950px", height: "400px", marginLeft: "14%" }}
+                    sx={{ width: "100%", height: "400px" }}
                     rowsPerPageOptions={[10]}
                     pageSize={20}
                     localeText={
@@ -705,9 +705,13 @@ export default function MantenimientoTareas() {
                       const selectedRowData = RowsListaTareas.filter((row) =>
                         selectedIDs.has(row.id)
                       );
-                      SetIDSelectedRow(selectedRowData[0].ID);
-                      SetMTarea(selectedRowData[0]);
-                      fetchSelectedAction(selectedRowData[0].ID);
+                      try {
+                        SetIDSelectedRow(selectedRowData[0].ID);
+                        SetMTarea(selectedRowData[0]);
+                        fetchSelectedAction(selectedRowData[0].ID);
+                      } catch (e) {
+                        console.log(e);
+                      }
                     }}
                   />
                 </AccordionDetails>
