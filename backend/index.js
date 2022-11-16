@@ -866,7 +866,6 @@ app.post("/Mantenimiento/CreateTarea", (request, reply) => {
   async function f() {
     try {
       var DatosTarea = request.body.DatosTarea;
-      //console.log(DatosTarea.FechaHora)
       var q_insercion_tarea = `
             USE MES;
             INSERT INTO tbTareas
@@ -879,8 +878,6 @@ app.post("/Mantenimiento/CreateTarea", (request, reply) => {
                 '${DatosTarea.Abreviatura}',${DatosTarea.EquipoID},'${DatosTarea.Observaciones}')
             `;
       var res_insercion_tarea = await MES_query(q_insercion_tarea);
-
-      var i = parseInt(request.body.NAcciones);
 
       console.log("Tarea Insertada");
     } catch {
@@ -1506,5 +1503,10 @@ from tbMaquinaMaterial
       console.log("Error en /Mantenimiento/RepuestosMaquina/Repuesto");
     }
   }
+  f();
+});
+
+app.get("/Mantenimiento/AsignarTareas", (request, reply) => {
+  async function f() {}
   f();
 });

@@ -213,17 +213,19 @@ export default function MantenimientoTareas() {
   var RowsListaTareas = [];
   try {
     ListaTareas.map((i) => {
-      RowsListaTareas = [
-        ...RowsListaTareas,
-        {
-          id: i.ID,
-          ID: i.ID,
-          Codigo: i.Codigo,
-          Estado: i.Estado,
-          Cod: i.Cod,
-          Descripcion: i.Descripcion,
-        },
-      ];
+      if (!RowsListaTareas.some((e) => e.ID === i.ID)) {
+        RowsListaTareas = [
+          ...RowsListaTareas,
+          {
+            id: i.ID,
+            ID: i.ID,
+            Codigo: i.Codigo,
+            Estado: i.Estado,
+            Cod: i.Cod,
+            Descripcion: i.Descripcion,
+          },
+        ];
+      }
     });
   } catch {
     console.log("Error en la obtencion de la lista de tareas");
@@ -501,7 +503,7 @@ export default function MantenimientoTareas() {
                                   reply.data.FilteredMaquina.map((i) => {
                                     StrMaquinas = [
                                       ...StrMaquinas,
-                                      `${i.Codigo} | ${i.Cod2Nombre} | ${i.COD2} | ${i.EquipoID}`,
+                                      `${i.Codigo} | ${i.Cod2Nombre} | ${i.EquipoID}`,
                                     ];
                                   });
                                   SetMaquinasFiltradas(StrMaquinas);

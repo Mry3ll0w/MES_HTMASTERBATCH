@@ -28,6 +28,16 @@ export default function HomeMantenimiento() {
         </Button>
       ),
     },
+    {
+      element: (
+        <Button
+          onClick={() => navigate("/Mantenimiento/AsignarTareas")}
+          variant='contained'
+        >
+          Asignar Tareas
+        </Button>
+      ),
+    },
   ];
   const menu_maquinas = [
     {
