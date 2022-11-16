@@ -1507,6 +1507,36 @@ from tbMaquinaMaterial
 });
 
 app.get("/Mantenimiento/AsignarTareas", (request, reply) => {
-  async function f() {}
+  async function f() {
+    var sQGetTareasPendientes = `
+      use MES;
+      SELECT
+          tbTareas.Codigo as Codigo,
+          dbo.vwMaquinaCodigo.COD2,
+          tbTareas.Descripcion as Descripcion,
+          dbo.vwMaquinaCodigo.COD2Nombre,
+          tbTareas.Descripcion as Descripcion,
+          tbTareas.FechaProgramada as FechaProgramada,
+          tbTareas.EmpleadoNom as EmpleadoNom,
+          tbTareas.Activa as Activa,
+          tbTareas.Orden as Orden,
+          tbTareas.TiempoEstimado as TiempoEstimado,
+          tbTareas.ID as ID,
+          tbTareas.EmpleadoSec as EmpleadoSec,
+          tbTareas.EmpleadoUn as EmpeladoUn
+      FROM (
+          tbManSegMaquinas INNER JOIN tbTareas ON 
+          tbManSegMaquinas.ID = tbTareas.SegID)
+          INNER JOIN dbo.vwMaquinaCodigo ON tbManSegMaquinas.MaquinaID = dbo.vwMaquinaCodigo.[ID]
+      WHERE (((tbTareas.EstadoTareaID)=1))
+      ORDER BY tbTareas.FechaProgramada, tbTareas.EmpleadoNom DESC , tbTareas.Orden;
+    `;
+    try {
+      var qTareasPendientes = await MES_query(sQGetTareasPendientes);
+      reply.send({ Tareas: qTareasPendientes.query });
+    } catch {
+      console.log("Error en la obtencion de las tareas (get AsignarTareas)");
+    }
+  }
   f();
 });
