@@ -20,7 +20,6 @@ import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
 import AccionTarea from "./Components/AccionTarea";
 
 export default function MantenimientoTareas() {
-  //Navigates
   const navigate = useNavigate();
 
   //useStates
