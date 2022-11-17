@@ -1,13 +1,57 @@
 import React, { useEffect, useState, Fragment } from "react";
-import { Autocomplete, TextField } from "@mui/material";
+import Select from "react-select";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
 import axios from "axios";
+import { Button } from "@mui/material";
 export default function AsignaTareas() {
   //UseStates
   var [aTareas, SetaTareas] = useState([]);
   var [aRDGTareas, SetaRDGTareas] = useState([]);
   var [aTareasSeleccionadas, SetaTareasSeleccionadas] = useState([]);
-  var [tTiempoTotal, SettTiempoTotal] = useState("");
+  var [iTiempoTotal, SetiTiempoTotal] = useState(0);
+  var [aOpcionesEmpleados, SetaOpcionesEmpleados] = useState("");
+  var [sEmpleadoAsignadoID, SetsEmpleadoAsignadoID] = useState(-1);
+  var [dtFProgramada, SetdtFProgramada] = useState("");
+  //Functions
+  function AssignTask() {
+    //Comprobacion de Errores
+    var bErrores = false;
+
+    if (aTareasSeleccionadas.length === 0) {
+      bErrores = true;
+      alert("Antes de asignar las tareas seleccione las mismas");
+    }
+    if (sEmpleadoAsignadoID === -1) {
+      bErrores = true;
+      alert("Seleccione al trabajador antes de asignar las tareas");
+    }
+
+    if (dtFProgramada === "") {
+      bErrores = true;
+      alert("Debe seleccionar una fecha aproximada");
+    }
+
+    if (iTiempoTotal >= 480) {
+      alert("Va a asignar mas de 480 minutos a un empleado, tengalo en cuenta");
+    }
+
+    if (!bErrores) {
+      aTareasSeleccionadas.forEach((i) => {
+        axios
+          .post(
+            `http://${process.env.REACT_APP_SERVER}/Mantenimiento/AsignarTareas`,
+            {
+              TareaID: i.ID,
+              EmpleadoApoyo: i.iEmpleadoApoyoID,
+              FechaProgramada: dtFProgramada,
+              EmpleadoAsignado: sEmpleadoAsignadoID,
+            }
+          )
+          .catch((e) => console.log(e));
+      });
+    }
+  }
+
   //DataFetch
   useEffect(() => {
     axios
@@ -18,7 +62,7 @@ export default function AsignaTareas() {
           //console.log(response.data.Tareas);
           SetaTareas(response.data.Tareas);
           var taRDGTareas = [];
-          response.data.Tareas.map((i, n) => {
+          response.data.Tareas.forEach((i, n) => {
             taRDGTareas = [
               ...taRDGTareas,
               {
@@ -29,7 +73,7 @@ export default function AsignaTareas() {
                 Descripcion: i.Descripcion[0], //Esta duplicado
                 COD2Nombre: i.COD2Nombre,
                 TiempoEstimado: i.TiempoEstimado,
-                iIDEmpleadoApoyo: -1,
+                sEmpleadoApoyo: -1,
               },
             ];
           });
@@ -37,15 +81,23 @@ export default function AsignaTareas() {
         } catch {
           alert("Error obteniendo los datos, compruebe el estado del servidor");
         }
+        try {
+          var _aOpsEmp = [];
+          response.data.Empleados.forEach((i) => {
+            _aOpsEmp = [
+              ..._aOpsEmp,
+              {
+                value: i.Alias,
+                label: `${i.Alias} | ${i.Apellidos} | ${i.Nombre}`,
+              },
+            ];
+          });
+          SetaOpcionesEmpleados(_aOpsEmp);
+        } catch {
+          alert("Error obteniendo datos");
+        }
       });
   }, []);
-
-  //Funciones de apoyo
-  function toHoursAndMinutes(totalMinutes) {
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60; //Resto de esa division es el tiempo en minutos que sobra
-    return { hours, minutes };
-  }
 
   const colDGTareas = [
     { field: "ID", headerName: "ID", width: 150, hide: true },
@@ -62,6 +114,7 @@ export default function AsignaTareas() {
         <DataGrid
           columns={colDGTareas}
           components={{ Toolbar: GridToolbar }}
+          density='compact'
           rows={aRDGTareas}
           sx={{ width: "100%", height: "400px" }}
           rowsPerPageOptions={[10]}
@@ -75,22 +128,111 @@ export default function AsignaTareas() {
             );
             try {
               SetaTareasSeleccionadas(selectedRowData);
+              //Calculamos el tiempo total
+              var iMinutosTotales = 0;
+              selectedRowData.forEach((i) => {
+                iMinutosTotales += i.TiempoEstimado;
+              });
+              SetiTiempoTotal(iMinutosTotales);
             } catch (e) {
               console.log(e);
             }
           }}
         />
       </div>
-      <div id='TSel' className='row justify-content-center'>
-        <div className='col d-flex justify-content-center mt-3'>
-          <p className='h2'>Tareas Seleccionadas:</p>
+      <div id='TSel' className='row'>
+        <div className='col-4 d-flex'>
+          <h5 className='m-4'>Tiempo Total: {iTiempoTotal} minutos</h5>
+        </div>
+        <div className='col d-flex m-4 w-50 '>
+          <div className='container d-flex '>
+            <div className='col d-flex justify-content-end w-25'>
+              <h5 className='mt-1' style={{ marginRight: "1%" }}>
+                Asignar Empleado:{" "}
+              </h5>
+              <Select
+                className='basic-single w-50'
+                defaultValue={aOpcionesEmpleados[0]}
+                options={aOpcionesEmpleados}
+                onChange={(e) => {
+                  SetsEmpleadoAsignadoID(e.value);
+                }}
+                isSearchable={true}
+              />
+            </div>
+          </div>
+        </div>
+        <div className='col d-flex m-4'>
+          <div className='container d-flex'>
+            <p className='h5 mt-1'>F.Programada</p>
+            <input
+              className='ms-2'
+              type='date'
+              onChange={(e) => SetdtFProgramada(e.target.value)}
+            />
+          </div>
         </div>
       </div>
-      <div className='row justify-content-center'>
-        <table className='table'>
+      <div className='row'>
+        <div className='container d-flex ms-4'>
+          <Button variant='contained' onClick={() => AssignTask()}>
+            Asignar las Tareas
+          </Button>
+        </div>
+      </div>
+      <div className='row m-2 justify-content-center'>
+        <table
+          className='table m-4'
+          hidden={aTareasSeleccionadas.length === 0}
+          style={{ backgroundColor: "RGB(241, 248, 255)" }}
+        >
+          <thead>
+            <th className='text-center border-bottom border-start border-end'>
+              Orden
+            </th>
+            <th className='text-center border-bottom border-start border-end'>
+              Codigo
+            </th>
+            <th className='text-center border-bottom border-start border-end'>
+              COD2
+            </th>
+            <th className='text-center border-bottom border-start border-end'>
+              COD2Nombre
+            </th>
+            <th className='text-center border-bottom border-start border-end'>
+              Empleado De Apoyo
+            </th>
+          </thead>
           <tbody>
-            {aTareasSeleccionadas.map((i) => {
-              return <p>Borrame</p>;
+            {aTareasSeleccionadas.map((i, n) => {
+              return (
+                <Fragment>
+                  <tr style={{ height: "10px" }}>
+                    <td className='text-center border'>{n + 1}</td>
+                    <td className='text-center border'>{i.Codigo}</td>
+                    <td className='text-center border'>{i.COD2}</td>
+                    <td className='text-center border'>{i.COD2Nombre}</td>
+                    <td className='text-center border w-25'>
+                      <Select
+                        className='basic-single'
+                        //defaultValue={aOpcionesEmpleados[0]}
+                        options={aOpcionesEmpleados}
+                        isSearchable={true}
+                        onChange={(e) => {
+                          SetaTareasSeleccionadas(
+                            aTareasSeleccionadas.map((j) =>
+                              j.ID === i.ID
+                                ? { ...j, iEmpleadoApoyoID: e.value }
+                                : j
+                            )
+                          );
+                          console.log(i);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                </Fragment>
+              );
             })}
           </tbody>
         </table>

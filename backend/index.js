@@ -1518,24 +1518,71 @@ app.get("/Mantenimiento/AsignarTareas", (request, reply) => {
           tbTareas.Descripcion as Descripcion,
           tbTareas.FechaProgramada as FechaProgramada,
           tbTareas.EmpleadoNom as EmpleadoNom,
-          tbTareas.Activa as Activa,
           tbTareas.Orden as Orden,
           tbTareas.TiempoEstimado as TiempoEstimado,
           tbTareas.ID as ID,
           tbTareas.EmpleadoSec as EmpleadoSec,
           tbTareas.EmpleadoUn as EmpeladoUn
-      FROM (
-          tbManSegMaquinas INNER JOIN tbTareas ON 
-          tbManSegMaquinas.ID = tbTareas.SegID)
-          INNER JOIN dbo.vwMaquinaCodigo ON tbManSegMaquinas.MaquinaID = dbo.vwMaquinaCodigo.[ID]
+      FROM ( tbTareas INNER JOIN tbMaquina ON
+          tbMaquina.ID = tbTareas.EquipoID
+          INNER JOIN dbo.vwMaquinaCodigo ON
+          tbMaquina.Codigo = dbo.vwMaquinaCodigo.Código
+          )
       WHERE (((tbTareas.EstadoTareaID)=1))
-      ORDER BY tbTareas.FechaProgramada, tbTareas.EmpleadoNom DESC , tbTareas.Orden;
+      ORDER BY  tbTareas.ID desc,tbTareas.FechaProgramada, tbTareas.EmpleadoNom DESC , tbTareas.Orden;
     `;
+    var sQGetEmpleados = `
+      use WEB_API_TABLES;
+      select ID,Alias, Nombre, Apellidos
+      from dbo.tbEmpleados
+      WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;
+    `;
+
     try {
       var qTareasPendientes = await MES_query(sQGetTareasPendientes);
-      reply.send({ Tareas: qTareasPendientes.query });
+      var qEmpleados = await MES_query(sQGetEmpleados);
+      reply.send({
+        Tareas: qTareasPendientes.query,
+        Empleados: qEmpleados.query,
+      });
     } catch {
       console.log("Error en la obtencion de las tareas (get AsignarTareas)");
+    }
+  }
+  f();
+});
+
+app.post("/Mantenimiento/AsignarTareas", (request, reply) => {
+  async function f() {
+    console.table(request.body);
+    var { TareaID, EmpleadoApoyo, FechaProgramada, EmpleadoAsignado } =
+      request.body;
+    var sQUpdateTarea;
+    if (EmpleadoApoyo === -1) {
+      sQUpdateTarea = `
+        USE MES;
+        Update tbTareas SET
+            EmpleadoNom = '${EmpleadoAsignado}',
+            FechaProgramada ='${FechaProgramada}'
+        WHERE
+            tbTareas.ID = ${TareaID}
+      `;
+    } else {
+      //Existe un empleado de apoyo
+      sQUpdateTarea = `
+        USE MES;
+        Update tbTareas SET
+            EmpleadoNom = '${EmpleadoAsignado}',
+            FechaProgramada ='${FechaProgramada}',
+            EmpleadoSec ='${EmpleadoApoyo}'
+        WHERE
+            tbTareas.ID = ${TareaID}
+      `;
+    }
+    try {
+      await MES_query(sQUpdateTarea);
+    } catch {
+      console.log("Error en update de Mantenimiento/AsignacionTarea");
     }
   }
   f();
