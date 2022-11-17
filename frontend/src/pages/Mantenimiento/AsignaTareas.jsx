@@ -7,6 +7,7 @@ export default function AsignaTareas() {
   var [aTareas, SetaTareas] = useState([]);
   var [aRDGTareas, SetaRDGTareas] = useState([]);
   var [aTareasSeleccionadas, SetaTareasSeleccionadas] = useState([]);
+  var [tTiempoTotal, SettTiempoTotal] = useState("");
   //DataFetch
   useEffect(() => {
     axios
@@ -17,17 +18,18 @@ export default function AsignaTareas() {
           //console.log(response.data.Tareas);
           SetaTareas(response.data.Tareas);
           var taRDGTareas = [];
-          response.data.Tareas.map((i) => {
+          response.data.Tareas.map((i, n) => {
             taRDGTareas = [
               ...taRDGTareas,
               {
-                id: Math.random(),
+                id: n++,
                 ID: i.ID,
                 COD2: i.COD2,
                 Codigo: i.Codigo,
                 Descripcion: i.Descripcion[0], //Esta duplicado
                 COD2Nombre: i.COD2Nombre,
                 TiempoEstimado: i.TiempoEstimado,
+                iIDEmpleadoApoyo: -1,
               },
             ];
           });
@@ -38,12 +40,19 @@ export default function AsignaTareas() {
       });
   }, []);
 
+  //Funciones de apoyo
+  function toHoursAndMinutes(totalMinutes) {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60; //Resto de esa division es el tiempo en minutos que sobra
+    return { hours, minutes };
+  }
+
   const colDGTareas = [
     { field: "ID", headerName: "ID", width: 150, hide: true },
     { field: "Codigo", headerName: "Codigo", width: 150 },
-    { field: "COD2", headerName: "COD2", width: 100 },
-    { field: "COD2Nombre", headerName: "COD2Nombre", width: 100 },
-    { field: "TiempoEstimado", headerName: "Tiempo Estimado", width: 100 },
+    { field: "COD2", headerName: "COD2", width: 70 },
+    { field: "COD2Nombre", headerName: "COD2Nombre", width: 200 },
+    { field: "TiempoEstimado", headerName: "T.Estimado (min)", width: 120 },
     { field: "Descripcion", headerName: "Descripcion", width: 500 },
   ];
 
@@ -61,7 +70,7 @@ export default function AsignaTareas() {
           localeText={esES.components.MuiDataGrid.defaultProps.localeText}
           onSelectionModelChange={(r) => {
             const selectedIDs = new Set(r);
-            const selectedRowData = aTareas.filter((row) =>
+            const selectedRowData = aRDGTareas.filter((row) =>
               selectedIDs.has(row.id)
             );
             try {
@@ -72,8 +81,19 @@ export default function AsignaTareas() {
           }}
         />
       </div>
-      <div id='Filtros' className='row justify-content-center'>
-        <div className='col-6 ml-4'></div>
+      <div id='TSel' className='row justify-content-center'>
+        <div className='col d-flex justify-content-center mt-3'>
+          <p className='h2'>Tareas Seleccionadas:</p>
+        </div>
+      </div>
+      <div className='row justify-content-center'>
+        <table className='table'>
+          <tbody>
+            {aTareasSeleccionadas.map((i) => {
+              return <p>Borrame</p>;
+            })}
+          </tbody>
+        </table>
       </div>
     </Fragment>
   );

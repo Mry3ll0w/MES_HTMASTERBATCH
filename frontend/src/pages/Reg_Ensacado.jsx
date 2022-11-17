@@ -210,7 +210,6 @@ export default function RegEnsacado({ LoggedUser }) {
 
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
-      console.log("ENTRO OK");
       axios
         .post(`http://${process.env.REACT_APP_SERVER}/UpdateEnsacado`, {
           Fecha: dateFormat(M_Fecha, "yyyy-mm-dd"),
@@ -303,7 +302,6 @@ export default function RegEnsacado({ LoggedUser }) {
 
     //Si todo esta correcto enviamos el post para que el backend trate la query
     if (ok) {
-      console.log("ENTRO OK");
       console.log({
         Fecha: M_Fecha,
         Turno: M_Turno,

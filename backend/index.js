@@ -161,7 +161,7 @@ app.post("/RegistraEnsacado", (request, res) => {
   async function q() {
     var q_ins =
       await MES_query(`INSERT INTO [WEB_API_TABLES].[dbo].[RegistroEnsacado] (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones,ModificadoPor) 
-        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}','${E.iniciales}');`);
+        VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}','-');`);
     console.log(q_ins);
   }
   try {
