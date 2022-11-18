@@ -8,7 +8,6 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { useEffect } from "react";
 import axios from "axios";
 
 export default function AccionTarea({
@@ -28,7 +27,7 @@ export default function AccionTarea({
 
   function Update_Empleados(AccionID) {
     var empleados_seleccionados = [];
-    LocalEmpleados.map((i) => {
+    LocalEmpleados.forEach((i) => {
       if (LocalEmpSel.filter((j) => j.value === i.ID).length > 0) {
         empleados_seleccionados.push(i);
       }
@@ -36,7 +35,7 @@ export default function AccionTarea({
     //Update a cada uno de los empleados
 
     if (empleados_seleccionados.length > 0) {
-      empleados_seleccionados.map((i) => {
+      empleados_seleccionados.forEach((i) => {
         axios
           .post(
             `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateEmpleadoAccion`,
@@ -47,30 +46,22 @@ export default function AccionTarea({
           )
           .catch((e) => console.error(e));
       });
+      alert("Empleados actualizados");
     } else {
-      axios
-        .post(
-          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateEmpleadoAccion`,
-          {
-            Empleado: "VACIO",
-            AccionID: AccionID,
-          }
-        )
-        .catch((e) => console.error(e));
+      alert("No puedes actualizar la accion si no tienes empleados en ella");
     }
-    alert("Empleados actualizados");
   }
 
   function UpdateMaterial(AccionID) {
     var materiales_seleccionados = [];
-    LocalMateriales.map((i) => {
+    LocalMateriales.forEach((i) => {
       if (LocalMatSel.filter((j) => j.value === i.ID).length > 0) {
         materiales_seleccionados.push(i);
       }
     });
     //Update a cada uno de los empleados
     if (materiales_seleccionados.length > 0) {
-      materiales_seleccionados.map((i) => {
+      materiales_seleccionados.forEach((i) => {
         axios
           .post(
             `http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateMaterialAccion`,

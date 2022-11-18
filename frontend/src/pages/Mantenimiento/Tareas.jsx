@@ -32,7 +32,7 @@ export default function MantenimientoTareas() {
   const [Observacion, SetObservacion] = useState("Tarea creada en Planta:");
   const [NEquipoID, SetNEquipoID] = useState(0);
   const [NextID, SetNextID] = useState(0);
-  const [CriticidadID, SetCriticidadID] = useState(1);
+  const [CriticidadID, SetCriticidadID] = useState(4);
   const [CategoriaID, SetCategoriaID] = useState(3);
   const [EstadoTareaID, SetEstadoTareaID] = useState(1);
   const [tTiempoEstimado, SettTiempoEstimado] = useState(0);
@@ -76,7 +76,7 @@ export default function MantenimientoTareas() {
         //Preparamos las maquinas para el select
         var tCOD1 = [];
         var Empleados = [];
-        response.data.Maquinas.map((i, n) => {
+        response.data.Maquinas.forEach((i, n) => {
           tCOD1 = [...tCOD1, i.COD1NOMBRE];
         });
         SetCOD1Maquinas(tCOD1);
@@ -157,6 +157,7 @@ export default function MantenimientoTareas() {
         }
       )
       .catch((e) => console.error(e));
+    FetchTareas();
   }
   function DeleteTarea() {
     alert("Tarea Eliminada");
@@ -174,7 +175,7 @@ export default function MantenimientoTareas() {
   }
   //-------------------------------------------------------------- FUNCIONES TAREAS --------------------------------------
   function FetchTareas() {
-    SetCriticidadID(1);
+    SetCriticidadID(4);
     SetCategoriaID(3);
     SetEstadoTareaID(1);
     axios
@@ -211,7 +212,7 @@ export default function MantenimientoTareas() {
 
   var RowsListaTareas = [];
   try {
-    ListaTareas.map((i) => {
+    ListaTareas.forEach((i) => {
       if (!RowsListaTareas.some((e) => e.ID === i.ID)) {
         RowsListaTareas = [
           ...RowsListaTareas,
@@ -323,6 +324,8 @@ export default function MantenimientoTareas() {
   }
 
   function Update_Accion(Accion) {
+    //Comprobamos que tenga al menos un empleado asignado a la accion
+
     if (Accion !== undefined && Accion !== null) {
       axios
         .post(
@@ -380,10 +383,10 @@ export default function MantenimientoTareas() {
                         }}
                         sx={{ width: "165px" }}
                       >
-                        <MenuItem value={1}>Obligatorio</MenuItem>
-                        <MenuItem value={2}>Alta</MenuItem>
-                        <MenuItem value={3}>Media</MenuItem>
                         <MenuItem value={4}>Baja</MenuItem>
+                        <MenuItem value={3}>Media</MenuItem>
+                        <MenuItem value={2}>Alta</MenuItem>
+                        <MenuItem value={1}>Obligatorio</MenuItem>
                       </RSelect>
                     </td>
                     <td>
@@ -435,6 +438,9 @@ export default function MantenimientoTareas() {
                         </MenuItem>
                         <MenuItem
                           value={3}
+                          hidden={
+                            sessionStorage.getItem("Formulario") === "Planta"
+                          }
                           sx={{ textAlign: "center", background: "#bbcfdf" }}
                         >
                           <Typography
@@ -447,6 +453,9 @@ export default function MantenimientoTareas() {
                           </Typography>
                         </MenuItem>
                         <MenuItem
+                          hidden={
+                            sessionStorage.getItem("Formulario") === "Planta"
+                          }
                           value={4}
                           sx={{ textAlign: "center", background: "#e7bdfb" }}
                         >
@@ -767,10 +776,10 @@ export default function MantenimientoTareas() {
                           }}
                           sx={{ width: "165px" }}
                         >
-                          <MenuItem value={1}>Obligatorio</MenuItem>
-                          <MenuItem value={2}>Alta</MenuItem>
-                          <MenuItem value={3}>Media</MenuItem>
                           <MenuItem value={4}>Baja</MenuItem>
+                          <MenuItem value={3}>Media</MenuItem>
+                          <MenuItem value={2}>Alta</MenuItem>
+                          <MenuItem value={1}>Obligatorio</MenuItem>
                         </RSelect>
                       </td>
                       <td>
@@ -822,6 +831,9 @@ export default function MantenimientoTareas() {
                           </MenuItem>
                           <MenuItem
                             value={3}
+                            hidden={
+                              sessionStorage.getItem("Formulario") === "Planta"
+                            }
                             sx={{ textAlign: "center", background: "#bbcfdf" }}
                           >
                             <Typography
@@ -834,6 +846,9 @@ export default function MantenimientoTareas() {
                             </Typography>
                           </MenuItem>
                           <MenuItem
+                            hidden={
+                              sessionStorage.getItem("Formulario") === "Planta"
+                            }
                             value={4}
                             sx={{ textAlign: "center", background: "#e7bdfb" }}
                           >

@@ -31,13 +31,26 @@ export default function HomePlanta() {
         </Button>
       ),
     },
+  ];
+
+  const menu_tareas = [
     {
       element: (
         <Button
           onClick={() => navigate("/Mantenimiento/Tareas")}
           variant='contained'
         >
-          Tareas
+          Inputar/Modificar Tareas
+        </Button>
+      ),
+    },
+    {
+      element: (
+        <Button
+          onClick={() => navigate("/Planta/TareasAsignadas")}
+          variant='contained'
+        >
+          Tareas Asignadas (pendientes)
         </Button>
       ),
     },
@@ -49,8 +62,13 @@ export default function HomePlanta() {
         <Typography fontSize={"25px"}>Menú de Planta</Typography>
       </div>
       <br />
-      <div className='MenuDiv'>
-        <DropDownMenu elements={menu_planta} label='Registro de Planta' />
+      <div className='row d-flex ms-4'>
+        <div className='col d-flex'>
+          <DropDownMenu elements={menu_planta} label='Registro de Planta' />
+        </div>
+        <div className='col d-flex'>
+          <DropDownMenu elements={menu_tareas} label='Tareas' />
+        </div>
       </div>
     </Fragment>
   );

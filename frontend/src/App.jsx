@@ -27,6 +27,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // Bootstrap Bundle JS
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import AsignaTareas from "./pages/Mantenimiento/AsignaTareas";
+import TareasAsignadas from "./pages/Planta/TareasAsignadas";
 let loggeduser = "";
 
 export function App() {
@@ -82,6 +83,10 @@ export function App() {
             <Route
               path='/Mantenimiento/AsignarTareas'
               element={<AsignaTareas />}
+            />
+            <Route
+              path='/Planta/TareasAsignadas'
+              element={<TareasAsignadas />}
             />
           </Routes>
         </div>

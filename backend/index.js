@@ -1150,8 +1150,8 @@ app.post("/Mantenimiento/Tareas/UpdateEmpleadoAccion", (request, reply) => {
       //console.table(request.body);
       var { Empleado, AccionID } = request.body;
       var q_update_emp;
-      if (Empleado !== "VACIO") {
-        q_update_emp = `
+
+      q_update_emp = `
         use MES;
 
         DELETE FROM tbAccEmpleados
@@ -1163,9 +1163,6 @@ app.post("/Mantenimiento/Tareas/UpdateEmpleadoAccion", (request, reply) => {
         INSERT INTO tbAccEmpleados (AccionID, EmpleadoID,AccionTiempo)
           VALUES(${AccionID},${Empleado.ID},'${Empleado.tiempo}');
       `;
-      } else {
-        q_update_emp = `USE MES; DELETE FROM tbAccEmpleados WHERE AccionID = ${AccionID}`;
-      }
 
       let res_update_emp = await MES_query(q_update_emp);
     } catch {
@@ -1583,6 +1580,13 @@ app.post("/Mantenimiento/AsignarTareas", (request, reply) => {
     } catch {
       console.log("Error en update de Mantenimiento/AsignacionTarea");
     }
+  }
+  f();
+});
+
+app.post("/Planta/TareasAsignadas", (request, reply) => {
+  async function f() {
+    var { Codigo } = request.body;
   }
   f();
 });
