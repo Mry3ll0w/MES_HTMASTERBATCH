@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 export default function TareasAsignadas() {
   //UseStates
   const [aTareas, SetaTareas] = useState([]);
+  const [aRowsTareas, SetaRowsTareas] = useState([]);
+
   const navigate = useNavigate();
   useEffect(() => {
     if (
@@ -15,14 +17,30 @@ export default function TareasAsignadas() {
     ) {
       navigate("/Login");
     }
+
     axios
       .post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas`, {
         Codigo: sessionStorage.getItem("codigo"),
+        Iniciales: sessionStorage.getItem("iniciales"),
       })
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response);
+        SetaTareas(response.data.Tareas);
       });
+
+    var _aRowsTareas = [];
+    aTareas.forEach((i) => {
+      _aRowsTareas = [
+        ..._aRowsTareas,
+        {
+          Codigo: i.Codigo,
+          Criticidad: i.Criticidad,
+          FechaProgramada: i.FechaProgramada,
+          TiempoEstimado: i.TiempoEstimado,
+        },
+      ];
+    });
+    SetaRowsTareas(_aRowsTareas);
   }, []);
 
   return (

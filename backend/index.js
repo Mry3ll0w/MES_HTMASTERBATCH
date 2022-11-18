@@ -1153,7 +1153,6 @@ app.post("/Mantenimiento/Tareas/UpdateEmpleadoAccion", (request, reply) => {
 
       q_update_emp = `
         use MES;
-
         DELETE FROM tbAccEmpleados
         WHERE
           AccionID = ${AccionID}
@@ -1586,7 +1585,32 @@ app.post("/Mantenimiento/AsignarTareas", (request, reply) => {
 
 app.post("/Planta/TareasAsignadas", (request, reply) => {
   async function f() {
-    var { Codigo } = request.body;
+    var { Codigo, Iniciales } = request.body;
+    var sQTareas = `
+    use MES;
+    select 
+      tbTareas.Codigo, tbTareas.Descripcion,
+      tbTareasCriticidad.Nombre as Criticidad,
+      tbTareas.FechaProgramada,
+      tbTareas.TiempoEstimado
+    from tbTareas 
+    INNER JOIN WEB_API_TABLES.dbo.tbEmpleados ON
+    tbTareas.EmpleadoNom = '${Iniciales}'
+    AND
+    tbTareas.EstadoTareaID = 1
+    AND
+    WEB_API_TABLES.dbo.tbEmpleados.Codigo = '${Codigo}'
+    INNER JOIN tbTareasCriticidad ON
+    tbTareasCriticidad.ID = tbTareas.CriticidadID
+    order by tbTareas.id DESC
+    `;
+
+    try {
+      var qTareas = await MES_query(sQTareas);
+      reply.send({ Tareas: qTareas.query });
+    } catch {
+      console.log("Error obteniendo las Tareas asignadas");
+    }
   }
   f();
 });
