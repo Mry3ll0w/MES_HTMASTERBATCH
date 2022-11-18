@@ -5,7 +5,6 @@ import axios from "axios";
 import { Button } from "@mui/material";
 export default function AsignaTareas() {
   //UseStates
-  var [aTareas, SetaTareas] = useState([]);
   var [aRDGTareas, SetaRDGTareas] = useState([]);
   var [aTareasSeleccionadas, SetaTareasSeleccionadas] = useState([]);
   var [iTiempoTotal, SetiTiempoTotal] = useState(0);
@@ -47,8 +46,20 @@ export default function AsignaTareas() {
               EmpleadoAsignado: sEmpleadoAsignadoID,
             }
           )
-          .catch((e) => console.log(e));
+          .catch((e) => {
+            console.log(e);
+            bErrores = true;
+          });
       });
+
+      //Si existen errores de insercion de tareas se mostraran en la alerta
+      if (bErrores) {
+        alert(
+          "Error en la asignacion de tareas al empleado, por favor compruebe el estado del servidor"
+        );
+      } else {
+        alert("Tareas asignadas correctamente");
+      }
     }
   }
 
@@ -59,8 +70,6 @@ export default function AsignaTareas() {
       .catch((e) => console.log(e))
       .then((response) => {
         try {
-          //console.log(response.data.Tareas);
-          SetaTareas(response.data.Tareas);
           var taRDGTareas = [];
           response.data.Tareas.forEach((i, n) => {
             taRDGTareas = [

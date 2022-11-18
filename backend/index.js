@@ -871,14 +871,13 @@ app.post("/Mantenimiento/CreateTarea", (request, reply) => {
             INSERT INTO tbTareas
                 (Codigo, CriticidadID, Descripcion,
                 CategoriaID,EstadoTareaID,FechaHora,
-                EquipoID,Observaciones)
+                EquipoID,Observaciones,TiempoEstimado)
             VALUES
                 ('${DatosTarea.Codigo}', '${DatosTarea.CriticidadID}', '${DatosTarea.Descripcion}',
                 ${DatosTarea.CategoriaID},${DatosTarea.EstadoTareaID},'${DatosTarea.FechaHora}',
-                ${DatosTarea.EquipoID},'${DatosTarea.Observaciones}')
+                ${DatosTarea.EquipoID},'${DatosTarea.Observaciones}',${DatosTarea.TiempoEstimado})
             `;
       var res_insercion_tarea = await MES_query(q_insercion_tarea);
-
       console.log("Tarea Insertada");
     } catch {
       console.log("Error en la creacion de la tarea");

@@ -9,7 +9,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   MenuItem,
-  Menu,
 } from "@mui/material";
 import "./css/Tareas.css";
 import axios from "axios";
@@ -36,8 +35,8 @@ export default function MantenimientoTareas() {
   const [CriticidadID, SetCriticidadID] = useState(1);
   const [CategoriaID, SetCategoriaID] = useState(3);
   const [EstadoTareaID, SetEstadoTareaID] = useState(1);
+  const [tTiempoEstimado, SettTiempoEstimado] = useState(0);
   //Acciones
-  const [NAccionesAsociadas, SetNAccionesAsociadas] = useState(1);
   const [MAcciones, SetMAcciones] = useState([]);
   const [FiltroCOD2, SetFiltroCOD2] = useState(""); //Si lo dejamos a vacio no tiene filtro
   const [FiltroEstado, SetFiltroEstado] = useState("");
@@ -260,8 +259,8 @@ export default function MantenimientoTareas() {
         .post(
           `http://${process.env.REACT_APP_SERVER}/Mantenimiento/CreateTarea`,
           {
-            NAcciones: NAccionesAsociadas,
             DatosTarea: {
+              TiempoEstimado: tTiempoEstimado,
               ID: NextID,
               Codigo: Codigo,
               CriticidadID: CriticidadID,
@@ -586,10 +585,26 @@ export default function MantenimientoTareas() {
 
             <div>
               <br />
-              <Button variant='contained' onClick={() => SendTarea()}>
-                Crear Tarea con Codigo : {Codigo}
-              </Button>
+              <div className='row d-flex'>
+                <div className='col d-flex'>
+                  <p className='h5 mt-1'>Tiempo Estimado </p>
+                  <input
+                    className='ms-2 text-center ps-3'
+                    type='number'
+                    min='0'
+                    style={{ width: "60px", maxHeight: "35px" }}
+                    value={tTiempoEstimado}
+                    onChange={(e) => SettTiempoEstimado(e.target.value)}
+                  />
+                  <p className='h5 mt-1 ms-1'> minutos </p>
+                </div>
 
+                <div className='col d-flex'>
+                  <Button variant='contained' onClick={() => SendTarea()}>
+                    Crear Tarea Codigo : {Codigo}
+                  </Button>
+                </div>
+              </div>
               <Typography fontSize={"13px"} sx={{ marginTop: "10px" }}>
                 *Nota : La tarea será rellenada en la sección inferior de
                 modificar tareas y acciones
