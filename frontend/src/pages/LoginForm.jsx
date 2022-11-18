@@ -28,7 +28,6 @@ export default function LoginForm() {
     axios
       .get(`http://${process.env.REACT_APP_SERVER}/Login`)
       .then((response) => {
-        console.log(response.data.user);
         setUsuarios(response.data.user);
       })
       .catch((error) => console.log(error));

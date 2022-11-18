@@ -77,6 +77,12 @@ export default function RepuestosMaquina() {
   //DataFetch
 
   useEffect(() => {
+    if (
+      sessionStorage.getItem("codigo") === null ||
+      sessionStorage.getItem("iniciales") === null
+    ) {
+      navigate("/Login");
+    }
     FetchMaquinas();
   }, []);
 
