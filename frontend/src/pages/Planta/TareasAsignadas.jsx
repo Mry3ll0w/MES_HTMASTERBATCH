@@ -7,6 +7,7 @@ export default function TareasAsignadas() {
   //UseStates
   const [aTareas, SetaTareas] = useState([]);
   const [Tarea, SetTarea] = useState([]);
+  const [Accion, SetAccion] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     if (
@@ -22,7 +23,6 @@ export default function TareasAsignadas() {
       })
       .catch((e) => console.log(e))
       .then((response) => {
-        console.log(response.data.Tareas);
         SetaTareas(response.data.Tareas);
       });
   }, []);
@@ -37,11 +37,12 @@ export default function TareasAsignadas() {
       )
       .catch((e) => console.log(e))
       .then((response) => {
+        SetAccion(response.data.Accion);
         SetTarea(response.data.Tarea);
       });
   }
   function DispDetalles() {
-    if (Tarea.length !== 0) return <DetallesTarea Tarea={Tarea} />;
+    if (Tarea.length !== 0) return <DetallesTarea Tarea={Tarea} Accion={Accion} />;
   }
 
   return (

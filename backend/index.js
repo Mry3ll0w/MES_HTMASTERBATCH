@@ -1641,22 +1641,22 @@ app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
     `;
     const sAccionQuery = `
     use MES;
-    Select 
+    Select
         tbAcciones.Accion as AccionDescripcion,
         tbAcciones.FechaHora as AccionFechaCreacion,
         tbAcciones.Notas as AccionNotas,
-        tbEmpleado.Codigo as EmpleadoCodigo, 
+        tbEmpleado.Codigo as EmpleadoCodigo,
         tbEmpleado.Nombre as EmpleadoNombre,
         tbEmpleado.Apellidos as EmpleadoApellidos,
         tbAccEmpleados.AccionTiempo as EmpleadoTiempo,
         tbMaterial.Descripcion as MaterialDescripcion,
         tbAccMaterial.CantidadMaterial as MaterialCantidad
-    from 
-        tbAcciones LEFT JOIN tbAccEmpleados ON
+    from
+        tbAcciones INNER JOIN tbAccEmpleados ON
             tbAccEmpleados.AccionID = tbAcciones.ID
             AND
             tbAcciones.TareasID = ${TareaID}
-        LEFT JOIN tbEmpleado ON
+        INNER JOIN tbEmpleado ON
             tbAccEmpleados.EmpleadoID = tbEmpleado.ID
         LEFT JOIN tbAccMaterial ON 
             tbAccMaterial.AccionID = tbAcciones.ID
@@ -1667,6 +1667,7 @@ app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
     try {
       const qGetTarea = await mesQuery(sQuery);
       const qGetAccion = await mesQuery(sAccionQuery);
+      console.log(qGetAccion.query);
       reply.send({Tarea: qGetTarea.query[0], Accion: qGetAccion.query});
     } catch {
       console.log('Error obteniendo detalles de la tarea');

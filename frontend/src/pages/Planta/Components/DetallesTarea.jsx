@@ -11,7 +11,7 @@ export default function DetallesTarea({
   useEffect(() => {
     if (Tarea.EstadoTarea === "Pendiente") SetsEstadoTarea("Realizado");
     else if (Tarea.EstadoTarea === "Realizado") SetsEstadoTarea("Pendiente");
-  }, []);
+  }, [Tarea]);
   console.log(Tarea);
   return (
     <Fragment>
