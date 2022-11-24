@@ -12,6 +12,7 @@ const cors = require('cors');
 const fs = require('fs'); // Lectura de archivos para leer sql queries
 
 const bcrypt = require('bcryptjs');
+
 app.listen('4001', () => {
   console.log('listening in 4001');
 });
@@ -1618,7 +1619,6 @@ app.post('/Planta/TareasAsignadas', (request, reply) => {
 
 app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
   async function f() {
-    // ! TERMINAR QUERY
     const {TareaID} = request.body;
     const sQuery = `
     use MES;
@@ -1640,39 +1640,68 @@ app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
     	order by tbTareas.id desc;
     `;
     const sAccionQuery = `
-    use MES;
+    USE MES;
     Select
-        tbAcciones.Accion as AccionDescripcion,
-        tbAcciones.FechaHora as AccionFechaCreacion,
-        tbAcciones.Notas as AccionNotas,
-        tbEmpleado.Codigo as EmpleadoCodigo,
-        tbEmpleado.Nombre as EmpleadoNombre,
-        tbEmpleado.Apellidos as EmpleadoApellidos,
-        tbAccEmpleados.AccionTiempo as EmpleadoTiempo,
-        tbMaterial.Descripcion as MaterialDescripcion,
-        tbAccMaterial.CantidadMaterial as MaterialCantidad
+      tbAcciones.ID,
+      tbAcciones.Accion as Descripcion,
+      tbAcciones.FechaHora as FechaCreacion,
+      tbAcciones.Notas as Notas
     from
-        tbAcciones INNER JOIN tbAccEmpleados ON
-            tbAccEmpleados.AccionID = tbAcciones.ID
-            AND
-            tbAcciones.TareasID = ${TareaID}
-        INNER JOIN tbEmpleado ON
-            tbAccEmpleados.EmpleadoID = tbEmpleado.ID
-        LEFT JOIN tbAccMaterial ON 
-            tbAccMaterial.AccionID = tbAcciones.ID
-        LEFT JOIN tbMaterial ON
-            tbAccMaterial.MaterialID = tbMaterial.ID
+      tbAcciones 
+    WHERE
+      tbAcciones.TareasID = ${TareaID} 
     order by tbAcciones.ID DESC;
     `;
+
     try {
       const qGetTarea = await mesQuery(sQuery);
       const qGetAccion = await mesQuery(sAccionQuery);
-      console.log(qGetAccion.query);
+
       reply.send({Tarea: qGetTarea.query[0], Accion: qGetAccion.query});
     } catch {
       console.log('Error obteniendo detalles de la tarea');
     }
     console.log(request.body);
+  }
+  f();
+});
+
+app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
+  async function f() {
+    console.log(request.body);
+    const {AccionID} = request.body;
+    const sQueryEmpleadosAccion = `
+    use MES;
+    select
+        tbEmpleado.Codigo as Codigo,
+        tbEmpleado.Apellidos as Apellidos,
+        tbEmpleado.Nombre as Nombre,
+        tbAccEmpleados.AccionTiempo as AccionTiempo
+    from tbEmpleado INNER JOIN tbAccEmpleados ON 
+        tbAccEmpleados.EmpleadoID = tbEmpleado.ID
+        and
+        tbAccEmpleados.AccionID = ${AccionID} 
+    `;
+
+    const sQueryMaterialAccion = `
+    use MES;
+    SELECT 
+        tbMaterial.Descripcion,
+        tbAccMaterial.CantidadMaterial
+    from tbAccMaterial INNER JOIN tbMaterial
+    ON 
+        tbMaterial.ID = tbAccMaterial.MaterialID
+        and 
+        tbAccMaterial.AccionID = ${AccionID} 
+    `;
+
+    try {
+      const qGetEmpleadosAccion = await mesQuery(sQueryEmpleadosAccion);
+      const qGetMaterialAccion = await mesQuery(sQueryMaterialAccion);
+      reply.send({Empleados: qGetEmpleadosAccion.query, Materiales: qGetMaterialAccion.query});
+    } catch {
+      console.log('error en post /Planta/TareasAsignadas/DetallesTarea/Accion');
+    }
   }
   f();
 });
