@@ -28,7 +28,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import AsignaTareas from "./pages/Mantenimiento/AsignaTareas";
 import TareasAsignadas from "./pages/Planta/TareasAsignadas";
-let loggeduser = "";
 
 export function App() {
   useEffect(() => {
