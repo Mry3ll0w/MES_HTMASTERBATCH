@@ -1,9 +1,9 @@
 import React from "react";
 import DropDownMenu from "../../Components/DropDownMenu";
 import { Fragment } from "react";
-import { Button, Typography } from "@mui/material";
+import { Button} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { styles } from "../../Style/styles";
+
 import "./menu.css";
 
 export default function HomeMantenimiento() {
@@ -24,7 +24,17 @@ export default function HomeMantenimiento() {
           onClick={() => navigate("/Mantenimiento/Tareas")}
           variant='contained'
         >
-          Tareas
+          Gestionar Tareas
+        </Button>
+      ),
+    },
+    {
+      element: (
+        <Button
+          onClick={() => navigate("/Mantenimiento/TareasAsignadas")}
+          variant='contained'
+        >
+          Tareas Asignadas
         </Button>
       ),
     },

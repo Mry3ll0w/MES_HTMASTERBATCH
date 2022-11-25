@@ -28,6 +28,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import AsignaTareas from "./pages/Mantenimiento/AsignaTareas";
 import TareasAsignadas from "./pages/Planta/TareasAsignadas";
+import TareasAsignadasEmpleados from "./pages/Mantenimiento/TareasAsignadasPlanta";
 
 export function App() {
   useEffect(() => {
@@ -86,6 +87,10 @@ export function App() {
             <Route
               path='/Planta/TareasAsignadas'
               element={<TareasAsignadas />}
+            />
+            <Route
+              path='/Mantenimiento/TareasAsignadas'
+              element={<TareasAsignadasEmpleados />}
             />
           </Routes>
         </div>

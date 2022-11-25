@@ -1718,6 +1718,28 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea', (request, re
     try {
       await mesQuery(sQUpdateTarea);
     } catch (e) {
+      console.log('Error en /Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea');
+      console.log(e);
+    }
+  }
+  f();
+});
+
+app.get('/Mantenimiento/TareasAsignadas', (request, reply) => {
+  async function f() {
+    const sQueryEmpleados = `
+      USE WEB_API_TABLES;
+      select 
+        Codigo,Nombre,Apellidos 
+      from 
+        WEB_API_TABLES.dbo.tbEmpleados 
+      WHERE 
+        Pwd_Hashed is not NULL and ContratoEstadoID = 1;
+    `;
+    try {
+      const qEmpleados = await mesQuery(sQueryEmpleados);
+      reply.send({Empleados: qEmpleados.query});
+    } catch (e) {
       console.log(e);
     }
   }

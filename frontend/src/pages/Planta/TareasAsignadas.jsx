@@ -41,6 +41,7 @@ export default function TareasAsignadas() {
         SetTarea(response.data.Tarea);
       });
   }
+  
   function DispDetalles() {
     if (Tarea.length !== 0) return <DetallesTarea Tarea={Tarea} Accion={Accion} />;
   }
