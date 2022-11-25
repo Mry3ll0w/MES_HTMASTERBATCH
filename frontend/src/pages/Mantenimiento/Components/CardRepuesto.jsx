@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import DropDownMenu from "../../../Components/DropDownMenu";
 import axios from "axios";
 export default function CardRepuesto({
@@ -11,7 +11,6 @@ export default function CardRepuesto({
   //UseStates
   const [iStock, SetiStock] = useState(1);
   const [iCurrentStock, SetiCurrentStock] = useState(Stock);
-  const [savUploadedPhoto, SetsavUploadedPhoto] = useState("");
   const [sImgUrl, SetsImgUrl] = useState(
     `/materiales/${Reference}.png?random=` + new Date().getTime()
   );
@@ -87,6 +86,7 @@ export default function CardRepuesto({
         <div className='place-card__img'>
           <img
             src={sImgUrl} // /materiales/Photo.png
+            style={{maxWidth: '300px', maxHeight: '300px', minWidth: '200px', minHeight:'100px'}}
             className='place-card__img-thumbnail'
             alt='Error al cargar la imagen'
           />

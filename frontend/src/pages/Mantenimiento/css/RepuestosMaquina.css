@@ -25,13 +25,15 @@ body {
 }
 
 .place-card__img {
-    width: 30%;
+    width: auto;
 }
 
 .place-card__img-thumbnail {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
+    height: auto;
+    max-width: 300px;
+    max-height: 300px;
+    width: auto;
+    object-fit: fill;
 }
 
 .place-card__content {
