@@ -1623,6 +1623,7 @@ app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
     const sQuery = `
     use MES;
     select
+      tbTareas.ID,
 			tbTareas.Codigo as Codigo,
     	tbTareasCriticidad.Descripcion as Criticidad,
     	tbTareas.Descripcion,
@@ -1661,14 +1662,12 @@ app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
     } catch {
       console.log('Error obteniendo detalles de la tarea');
     }
-    console.log(request.body);
   }
   f();
 });
 
 app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
   async function f() {
-    console.log(request.body);
     const {AccionID} = request.body;
     const sQueryEmpleadosAccion = `
     use MES;
@@ -1701,6 +1700,25 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
       reply.send({Empleados: qGetEmpleadosAccion.query, Materiales: qGetMaterialAccion.query});
     } catch {
       console.log('error en post /Planta/TareasAsignadas/DetallesTarea/Accion');
+    }
+  }
+  f();
+});
+
+app.post('/Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea', (request, reply) => {
+  async function f() {
+    const {iTareaID} = request.body;
+    const sQUpdateTarea = `
+      use MES;
+      UPDATE tbTareas SET
+        EstadoTareaID = 2
+      WHERE
+        tbTareas.ID = ${iTareaID};
+    `;
+    try {
+      await mesQuery(sQUpdateTarea);
+    } catch (e) {
+      console.log(e);
     }
   }
   f();

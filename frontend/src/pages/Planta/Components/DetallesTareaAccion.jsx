@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useState } from 'react'
 
@@ -26,7 +26,6 @@ export default function DetallesTareaAccion({AccionID}) {
                     i.AccionTiempo = `No definido`
                 }
             })
-            console.log(_aEmpleados)
             try{
                 setEmpleados(_aEmpleados)
                 setMateriales(response.data.Materiales)
@@ -38,8 +37,42 @@ export default function DetallesTareaAccion({AccionID}) {
         })
     },[])
     
+    function dispMaterialesAccion(){
+        if(Materiales.length > 0){
+            return(
+                <div className='row d-flex'>
+                    <div className='table table-responsive-sm'>
+                    <table>
+                        <thead>
+                            <th scope='col' className='text-center p-2'>Cantidad utilizada</th>
+                            <th scope='col' className='text-center p-2' >Descripción</th>
+                        </thead>
+                        <tbody>
+                            {Materiales.map( (i,n) => {
+                                return(
+                                    <tr id={n++}>
+                                        <td className='p-2 border border-dark text-center'>{i.CantidadMaterial}</td>
+                                        <td className='p-2 border border-dark text-center'>{i.Descripcion}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            )
+        }else{
+            return(
+                <div className='row d-flex'>
+                    <p className='h5 mt-3 mb-2 mt-2 ms-3'> - No hay materiales implicados en la accion</p>
+                </div>
+            );
+        }
+        
+    }
+
     return (
-        <Fragment>
+        <Fragment >
             <div className='table table-responsive-sm'>
                 <table>
                     <thead>
@@ -75,26 +108,8 @@ export default function DetallesTareaAccion({AccionID}) {
                     Materiales usados en la accion
                 </p>
             </div>
-            <div className='row d-flex'>
-                <div className='table table-responsive-sm'>
-                <table>
-                    <thead>
-                        <th scope='col' className='text-center p-2'>Cantidad utilizada</th>
-                        <th scope='col' className='text-center p-2' >Descripción</th>
-                    </thead>
-                    <tbody>
-                        {Materiales.map( (i,n) => {
-                            return(
-                                <tr id={n++}>
-                                    <td className='p-2 border border-dark text-center'>{i.CantidadMaterial}</td>
-                                    <td className='p-2 border border-dark text-center'>{i.Descripcion}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-            </div>
+            {dispMaterialesAccion()}
+            <div className='row d-flex border-bottom border-dark mb-3 mt-3'></div>
         </Fragment>
     )
 }
