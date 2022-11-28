@@ -1471,7 +1471,6 @@ app.post('/Mantenimiento/RepuestosMaquina/Repuesto', (request, reply) => {
     from tbMaterial
         LEFT JOIN tbAlmacen ON /* Usamos left para incluir los resultados con campos null*/
             tbMaterial.AlmacenID = tbAlmacen.ID
-            and tbMaterial.ID = '${request.body.iMatID}'
         LEFT JOIN tbPasillo ON 
             tbPasillo.ID = tbMaterial.PasilloID
         LEFT JOIN tbEstanteria ON
@@ -1480,6 +1479,8 @@ app.post('/Mantenimiento/RepuestosMaquina/Repuesto', (request, reply) => {
             tbPiso.ID = tbMaterial.PisoID
         LEFT JOIN vwInventarioStock ON
             vwInventarioStock.MatID = tbMaterial.ID
+    WHERE
+      tbMaterial.ID = ${request.body.iMatID}
     ;
     `;
 
