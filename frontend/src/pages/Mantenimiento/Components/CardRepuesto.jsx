@@ -25,15 +25,23 @@ export default function CardRepuesto({
 
   const handleSubmitImage = async (e) => {
     e.preventDefault();
-    let formData = new FormData();
-    formData.append("file", file.data);
-    axios
+    
+    //Checking dataType
+    var [, sFileExtension] = file.data.name.split('.')
+    if(sFileExtension !== 'png'){
+      alert('Extension de archivo no permitida');
+    }else{
+      let formData = new FormData();
+      formData.append("file", file.data,`${Reference}.png`);
+      axios
       .post(
         `http://${process.env.REACT_APP_SERVER}/Mantenimiento/RepuestosMaquina/UpdatePhoto`,
         formData
       )
       .catch((e) => console.log(e));
-    SetsImgUrl(`/materiales/${Reference}.png?random=` + new Date().getTime());
+      SetsImgUrl(`/materiales/${Reference}.png?random=` + new Date().getTime());
+    }
+  
   };
 
   const aDropElements = [

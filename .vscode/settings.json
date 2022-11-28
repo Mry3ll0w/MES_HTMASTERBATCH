@@ -2,7 +2,4 @@
     "window.commandCenter": true,
     "window.title": "${dirty}${separator}${rootName}${separator}${activeEditorShort}",
     "workbench.editor.showTabs": true,
-    "customizeUI.stylesheet": {
-        ".fullscreen": "margin-top:30px"
-    }
 }

@@ -45,7 +45,7 @@ export default function TareasAsignadasEmpleados() {
                             options={aOpsEmpleados}
                             isSearchable={true}
                             onChange={(e) => {
-                               axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas`, {
+                              axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas`, {
                                   Codigo: e.value,
                                 })
                                 .catch((e) => console.log(e))
@@ -56,7 +56,7 @@ export default function TareasAsignadasEmpleados() {
                     />
                     <button className='btn btn-primary mt-4' onClick={()=> handlePrint()}> Imprimir Tabla de tareas</button> 
                 </div>
-               
+              
                 <div className='row'>
                     
                 </div>
