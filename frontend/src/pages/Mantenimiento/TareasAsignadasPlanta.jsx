@@ -4,8 +4,8 @@ import Select from 'react-select'
 import {useReactToPrint} from 'react-to-print'
 
 export default function TareasAsignadasEmpleados() {
-    const [bNotSelected, setbNotSelected] = useState(true);
-    const [aEmpleados, setaEmpleados] = useState([])
+    
+    
     const [sSelectedEmpleado, setsSelectedEmpleado] = useState('')
     const [aOpsEmpleados, setaOpsEmpleados] = useState([])
     const [aTareas, setaTareas] = useState([])
@@ -26,7 +26,7 @@ export default function TareasAsignadasEmpleados() {
                 ]
             })
             setaOpsEmpleados(_aEmpleados)
-            setaEmpleados(res.data.Empleados)
+            
         })
     });
 
