@@ -29,7 +29,7 @@ export default function CardRepuesto({
     //Checking dataType
     var [, sFileExtension] = file.data.name.split('.')
     if(sFileExtension !== 'png'){
-      alert('Extension de archivo no permitida');
+      alert('Extension de archivo no permitida, suba una imagen png');
     }else{
       let formData = new FormData();
       formData.append("file", file.data,`${Reference}.png`);
@@ -51,7 +51,7 @@ export default function CardRepuesto({
           <input type='file' onChange={handleChange} />
           <br />
           <Button variant='contained' type='submit' sx={{ marginTop: "2%" }}>
-            Subir Imagen
+            Subir Imagen (*.png)
           </Button>
         </form>
       ),

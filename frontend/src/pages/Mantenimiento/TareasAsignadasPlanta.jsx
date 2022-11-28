@@ -4,8 +4,9 @@ import Select from 'react-select'
 import {useReactToPrint} from 'react-to-print'
 
 export default function TareasAsignadasEmpleados() {
-
+    const [bNotSelected, setbNotSelected] = useState(true);
     const [aEmpleados, setaEmpleados] = useState([])
+    const [sSelectedEmpleado, setsSelectedEmpleado] = useState('')
     const [aOpsEmpleados, setaOpsEmpleados] = useState([])
     const [aTareas, setaTareas] = useState([])
     const refTaskTable = useRef();
@@ -51,19 +52,28 @@ export default function TareasAsignadasEmpleados() {
                                 .catch((e) => console.log(e))
                                 .then((response) => {
                                   setaTareas(response.data.Tareas);
+                                  setsSelectedEmpleado(e.label)
                                 });
                             }}
                     />
-                    <button className='btn btn-primary mt-4' onClick={()=> handlePrint()}> Imprimir Tabla de tareas</button> 
-                </div>
-              
-                <div className='row'>
+                    <button className='btn btn-primary mt-4' 
+                        onClick={()=> {
+                          handlePrint()
+                        }}
+                    > 
+                      Imprimir Tabla de tareas
+                    </button> 
                     
                 </div>
             </div>
-            <div ref={refTaskTable} className='container d-flex justify-content-center mt-5'>
+            
+            <div ref={refTaskTable} className='container d-flex justify-content-center mt-3'>
             <table className="table table-light">
                 <thead>
+                  <tr>
+                    <th scope='col' className='border border-dark text-center'>Empleado asignado</th>
+                    <th scope='col' className='border border-dark text-center'>{sSelectedEmpleado}</th>
+                  </tr>
                   <tr>
                     <th scope="col" className="border border-dark text-center">
                       #
