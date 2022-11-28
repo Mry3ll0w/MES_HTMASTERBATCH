@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 import { DataGrid, esES, GridToolbar } from "@mui/x-data-grid";
-import { Autocomplete, TextField, Button } from "@mui/material";
+import { Autocomplete, TextField, Button, createFilterOptions } from "@mui/material";
 import { Container } from "react-bootstrap";
 import CardRepuesto from "./Components/CardRepuesto";
 import "./css/RepuestosMaquina.css";
@@ -23,6 +23,12 @@ export default function RepuestosMaquina() {
   const [aOpcionesCOD1, SetaOpcionesCOD1] = useState([]);
   const [aOpcionesCOD2, SetaOpcionesCOD2] = useState([]);
   const [sSelMaquina, SetsSelMaquina] = useState("");
+
+  //FilterOptions to avoid lag in rendering the web
+  const filterOptionsRepuestos = createFilterOptions({
+    matchFrom: 'any',
+    limit : 200,
+  });
 
   //Function
   function FetchMaquinas() {
@@ -233,6 +239,7 @@ export default function RepuestosMaquina() {
                     value={SeleccionOpcionRepuesto}
                     //isOptionEqualToValue={(option, value) => option === value}
                     options={aRepuestos}
+                    filterOptions={filterOptionsRepuestos}
                     onChange={(e, v) => {
                       SetSeleccionOpcionRepuesto(v);
                       if (v !== "") {

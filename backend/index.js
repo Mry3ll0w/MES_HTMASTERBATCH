@@ -1315,10 +1315,7 @@ app.get('/Mantenimiento/RepuestosMaquina', (request, reply) => {
       SELECT 
         tbMaterial.ID as ID, Descripcion
       FROM 
-        tbMaterial,tbMaquinaMaterial
-      WHERE
-        MaterialID = tbMaterial.ID
-      GROUP by tbMaterial.ID, Descripcion
+        tbMaterial;
     `;
 
     const res_maquinas = await mesQuery(q_get_maquinas);
@@ -1466,32 +1463,29 @@ app.post('/Mantenimiento/RepuestosMaquina/Repuesto', (request, reply) => {
     console.table(request.body.iMatID);
     const sQRepuesto = `
     use MES;
-select top 1
-    MaterialID as Referencia,
-    tbMaterial.Descripcion as Descripcion,
-    CONCAT(tbAlmacen.Nombre,tbPasillo.Nombre,tbEstanteria.Nombre,tbPiso.Nombre) as Ubicacion,
-    vwInventarioStock.MatStock as Stock
-from tbMaquinaMaterial
-    INNER JOIN tbMaterial on
-        MaterialID = tbMaterial.ID
-        and
-        tbMaterial.ID = '${request.body.iMatID}'
-    LEFT JOIN tbAlmacen ON /* Usamos left para incluir los resultados con campos null*/
-        tbMaterial.AlmacenID = tbAlmacen.ID
-    LEFT JOIN tbPasillo ON 
-        tbPasillo.ID = tbMaterial.PasilloID
-    LEFT JOIN tbEstanteria ON
-        tbEstanteria.ID = tbMaterial.EstanteriaID
-    LEFT JOIN tbPiso ON 
-        tbPiso.ID = tbMaterial.PisoID
-    LEFT JOIN vwInventarioStock ON
-        vwInventarioStock.MatID = tbMaterial.ID
+    select top 1
+        tbMaterial.ID as Referencia,
+        tbMaterial.Descripcion as Descripcion,
+        CONCAT(tbAlmacen.Nombre,tbPasillo.Nombre,tbEstanteria.Nombre,tbPiso.Nombre) as Ubicacion,
+        vwInventarioStock.MatStock as Stock
+    from tbMaterial
+        LEFT JOIN tbAlmacen ON /* Usamos left para incluir los resultados con campos null*/
+            tbMaterial.AlmacenID = tbAlmacen.ID
+            and tbMaterial.ID = '${request.body.iMatID}'
+        LEFT JOIN tbPasillo ON 
+            tbPasillo.ID = tbMaterial.PasilloID
+        LEFT JOIN tbEstanteria ON
+            tbEstanteria.ID = tbMaterial.EstanteriaID
+        LEFT JOIN tbPiso ON 
+            tbPiso.ID = tbMaterial.PisoID
+        LEFT JOIN vwInventarioStock ON
+            vwInventarioStock.MatID = tbMaterial.ID
     ;
     `;
 
     try {
       const QDatosMaterial = await mesQuery(sQRepuesto);
-      console.log(QDatosMaterial.query);
+      // console.log(QDatosMaterial.query);
       reply.send({
         Materiales: QDatosMaterial.query,
       });
