@@ -1,13 +1,15 @@
 import React, { Fragment, useEffect} from 'react'
 import axios from 'axios'
 import { useState } from 'react'
+import Select from 'react-select'
 
-export default function DetallesTareaAccion({AccionID}) {
+export default function DetallesTareaAccion({AccionID,}) {
     // useStates 
     const [Empleados, setEmpleados] = useState([]);
     const [Materiales, setMateriales] = useState([])
-
-    useEffect(() => {
+    const [aMateriales, setaMateriales] = useState([])
+    const [aEmpleados, setaEmpleados] = useState([])
+    function fetchAccionData(){
         axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas/DetallesTarea/Accion`,
             {AccionID: AccionID}
         ).catch( e => console.log(e))
@@ -29,12 +31,20 @@ export default function DetallesTareaAccion({AccionID}) {
             try{
                 setEmpleados(_aEmpleados)
                 setMateriales(response.data.Materiales)
+                setaEmpleados(response.data.aEmpleados)
+                setaMateriales(response.data.aMateriales);
             }
             catch{
                 console.log('Error obteniendo datos de la accion')
             }
             
         })
+    }
+
+    
+
+    useEffect(() => {
+        fetchAccionData();
     },[])
     
     function dispMaterialesAccion(){
@@ -100,6 +110,11 @@ export default function DetallesTareaAccion({AccionID}) {
                                 </tr>
                             )
                         })}
+                        <tr>
+                            <td className='p-2 border border-dark text-center'>
+
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -109,7 +124,7 @@ export default function DetallesTareaAccion({AccionID}) {
                 </p>
             </div>
             {dispMaterialesAccion()}
-            <div className='row d-flex border-bottom border-dark mb-3 mt-3'></div>
+           
         </Fragment>
     )
 }

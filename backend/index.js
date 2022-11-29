@@ -1664,6 +1664,28 @@ app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
 app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
   async function f() {
     const {AccionID} = request.body;
+
+    const sQGetTrabajadores = `
+      use WEB_API_TABLES;
+      Select 
+        ID, Codigo, Nombre, Apellidos, '00:00' as Tiempo
+      from tbEmpleados 
+      WHERE 
+        FechaBaja is NULL
+        AND 
+        ContratoEstadoID = 1
+      ;`;
+
+    const sQGetMateriales = `
+      use MES;
+      Select 
+          ID, Descripcion, 0 as Cantidad
+      from tbMaterial
+      WHERE
+          ID > 3
+      ;
+    `;
+
     const sQueryEmpleadosAccion = `
     use MES;
     select
@@ -1690,10 +1712,18 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
     `;
 
     try {
+      const qGetMateriales = await mesQuery(sQGetMateriales);
+      const qGetTrabajadores = await mesQuery(sQGetTrabajadores);
       const qGetEmpleadosAccion = await mesQuery(sQueryEmpleadosAccion);
       const qGetMaterialAccion = await mesQuery(sQueryMaterialAccion);
-      reply.send({Empleados: qGetEmpleadosAccion.query, Materiales: qGetMaterialAccion.query});
-    } catch {
+      reply.send({
+        Empleados: qGetEmpleadosAccion.query,
+        Materiales: qGetMaterialAccion.query,
+        aMateriales: qGetMateriales.query,
+        aTrabajadores: qGetTrabajadores.query,
+      });
+    } catch (e) {
+      console.log(e);
       console.log('error en post /Planta/TareasAsignadas/DetallesTarea/Accion');
     }
   }

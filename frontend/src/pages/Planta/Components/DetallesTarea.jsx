@@ -1,10 +1,36 @@
 import axios from "axios";
 import React, { Fragment, useState, useEffect} from "react";
+import luxon, { DateTime } from 'luxon'
 import DetallesTareaAccion from "./DetallesTareaAccion";
 export default function DetallesTarea({
   Tarea,
   Accion,
 }) {
+
+  //Funciones
+  function addAction(){
+        var dNow = DateTime.now();
+        axios.post(
+          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/NewAccion`,
+          {
+            TAREAID: Tarea.ID,
+            FechaHora: dNow.toISODate().toString(),
+          }
+        ).catch(e => alert('Error en la agregacion a la base de datos'))
+        window.location.reload(false)
+        
+    }
+
+  function eraseAction(ID){
+    axios.post(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/DelAccion`,{AccionID: ID})
+    .catch(e =>{
+      alert('Error en el borrado de la accion, comprueba el estado del servidor')
+      console.log(e)
+    })
+    window.location.reload(false)
+    ;
+  }
+
   //UseStates
   const [sEstadoTarea, SetsEstadoTarea] = useState("");
   useEffect(() => {
@@ -88,6 +114,9 @@ export default function DetallesTarea({
             {" "}
             Cambiar a {sEstadoTarea}{" "}
           </button>
+          <button className="btn btn-primary ms-3 d-print-none" onClick={()=> addAction()}>
+            Agregar Accion
+          </button>
         </div>
       </div>
       <div className="row d-flex mt-2 ms-1" style={{pageBreakAfter : 'always'}}>
@@ -101,6 +130,11 @@ export default function DetallesTarea({
             <div id={n+1} className='printDiv'>
               <div className="container d-flex" style={{pageBreakBefore : 'always'}}>
                 <div className="row d-flex">
+                  <div className="row">
+                    <button className="btn btn-primary ms-3 d-print-none mb-3" style={{width: '200px'}} onClick={()=> eraseAction(i.ID)}>
+                    Eliminar Accion
+                    </button>
+                  </div>
                   <div className="input-group w-75">
                     <span className="input-group-text w-25 justify-content-center h-100">
                       Accion Nº {n+1}{" "}
