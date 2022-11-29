@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { Fragment, useState, useEffect} from "react";
 import luxon, { DateTime } from 'luxon'
-import DetallesTareaAccion from "./DetallesTareaAccion";
+import DetallesTareaEmpleados from "./DetallesTareaEmpleados";
 export default function DetallesTarea({
   Tarea,
   Accion,
@@ -151,7 +151,7 @@ export default function DetallesTarea({
                     <p className="h3">Empleados Implicados en la Acción</p>
                   </div>
                   <div className="row d-flex">
-                    <DetallesTareaAccion AccionID={i.ID} />
+                    <DetallesTareaEmpleados AccionID={i.ID} />
                   </div>
                 </div>
               </div>

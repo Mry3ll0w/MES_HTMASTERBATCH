@@ -1665,39 +1665,6 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
   async function f() {
     const {AccionID} = request.body;
 
-    const sQGetTrabajadores = `
-      use WEB_API_TABLES;
-      Select 
-        ID, Codigo, Nombre, Apellidos, '00:00' as Tiempo
-      from tbEmpleados 
-      WHERE 
-        FechaBaja is NULL
-        AND 
-        ContratoEstadoID = 1
-      ;`;
-
-    const sQGetMateriales = `
-      use MES;
-      Select 
-          ID, Descripcion, 0 as Cantidad
-      from tbMaterial
-      WHERE
-          ID > 3
-      ;
-    `;
-
-    const sQueryEmpleadosAccion = `
-    use MES;
-    select
-        tbEmpleado.Codigo as Codigo,
-        tbEmpleado.Apellidos as Apellidos,
-        tbEmpleado.Nombre as Nombre,
-        tbAccEmpleados.AccionTiempo as AccionTiempo
-    from tbEmpleado INNER JOIN tbAccEmpleados ON 
-        tbAccEmpleados.EmpleadoID = tbEmpleado.ID
-        and
-        tbAccEmpleados.AccionID = ${AccionID} 
-    `;
 
     const sQueryMaterialAccion = `
     use MES;
@@ -1720,6 +1687,47 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
         Empleados: qGetEmpleadosAccion.query,
         Materiales: qGetMaterialAccion.query,
         aMateriales: qGetMateriales.query,
+        aTrabajadores: qGetTrabajadores.query,
+      });
+    } catch (e) {
+      console.log(e);
+      console.log('error en post /Planta/TareasAsignadas/DetallesTarea/Accion');
+    }
+  }
+  f();
+});
+
+app.post('/Planta/TareasAsignadas/DetallesTarea/Accion/Empleados', (request, reply) =>{
+  async function f() {
+    const {AccionID} = request.body;
+    const sQueryEmpleadosAccion = `
+    use MES;
+    select
+        tbEmpleado.Codigo as Codigo,
+        tbEmpleado.Apellidos as Apellidos,
+        tbEmpleado.Nombre as Nombre,
+        tbAccEmpleados.AccionTiempo as AccionTiempo
+    from tbEmpleado INNER JOIN tbAccEmpleados ON 
+        tbAccEmpleados.EmpleadoID = tbEmpleado.ID
+        and
+        tbAccEmpleados.AccionID = ${AccionID} 
+    `;
+    const sQGetTrabajadores = `
+      use WEB_API_TABLES;
+      Select 
+        ID, Codigo, Nombre, Apellidos, '00:00' as Tiempo
+      from tbEmpleados 
+      WHERE 
+        FechaBaja is NULL
+        AND 
+        ContratoEstadoID = 1
+      ;`;
+
+    try {
+      const qGetImplicadosAccion = await mesQuery(sQueryEmpleadosAccion);
+      const qGetTrabajadores = await mesQuery(sQGetTrabajadores);
+      reply.send({
+        Empleados: qGetImplicadosAccion.query,
         aTrabajadores: qGetTrabajadores.query,
       });
     } catch (e) {

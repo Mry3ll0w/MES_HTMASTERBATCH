@@ -3,14 +3,12 @@ import axios from 'axios'
 import { useState } from 'react'
 import Select from 'react-select'
 
-export default function DetallesTareaAccion({AccionID,}) {
+export default function DetallesTareaEmpleados({AccionID,}) {
     // useStates 
     const [Empleados, setEmpleados] = useState([]);
-    const [Materiales, setMateriales] = useState([])
-    const [aMateriales, setaMateriales] = useState([])
     const [aEmpleados, setaEmpleados] = useState([])
     function fetchAccionData(){
-        axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas/DetallesTarea/Accion`,
+        axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas/DetallesTarea/Accion/Empleados`,
             {AccionID: AccionID}
         ).catch( e => console.log(e))
         .then(response => {
@@ -30,9 +28,7 @@ export default function DetallesTareaAccion({AccionID,}) {
             })
             try{
                 setEmpleados(_aEmpleados)
-                setMateriales(response.data.Materiales)
                 setaEmpleados(response.data.aEmpleados)
-                setaMateriales(response.data.aMateriales);
             }
             catch{
                 console.log('Error obteniendo datos de la accion')
@@ -46,10 +42,16 @@ export default function DetallesTareaAccion({AccionID,}) {
     useEffect(() => {
         fetchAccionData();
     },[])
-    
+    /*
     function dispMaterialesAccion(){
         if(Materiales.length > 0){
             return(
+                <Fragment>
+                    <div className='row d-flex'>
+                <p className='h3 mt-3 mb-3'>
+                    Materiales usados en la accion
+                </p>
+                </div>
                 <div className='row d-flex'>
                     <div className='table table-responsive-sm'>
                     <table>
@@ -70,6 +72,7 @@ export default function DetallesTareaAccion({AccionID,}) {
                     </table>
                 </div>
                 </div>
+                </Fragment>
             )
         }else{
             return(
@@ -80,7 +83,7 @@ export default function DetallesTareaAccion({AccionID,}) {
         }
         
     }
-
+    */
     return (
         <Fragment >
             <div className='table table-responsive-sm'>
@@ -118,13 +121,7 @@ export default function DetallesTareaAccion({AccionID,}) {
                     </tbody>
                 </table>
             </div>
-            <div className='row d-flex'>
-                <p className='h3 mt-3 mb-3'>
-                    Materiales usados en la accion
-                </p>
-            </div>
-            {dispMaterialesAccion()}
-           
+            
         </Fragment>
     )
 }
