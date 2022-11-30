@@ -12,6 +12,7 @@ const cors = require('cors');
 const fs = require('fs'); // Lectura de archivos para leer sql queries
 
 const bcrypt = require('bcryptjs');
+const {request} = require('http');
 
 app.listen('4001', () => {
   console.log('listening in 4001');
@@ -1754,6 +1755,27 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea', (request, re
     } catch (e) {
       console.log('Error en /Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea');
       console.log(e);
+    }
+  }
+  f();
+});
+
+app.post('/Mantenimiento/TareasAsignadas', (request, reply) =>{
+  async function f() {
+    const {iTareaID} = request.body;
+    const sqUnassingnTask = `
+      use MES;
+      Update tbTareas 
+      SET 
+        EmpleadoNom = null
+      WHERE
+        ID = ${iTareaID}
+    `;
+    try {
+      await mesQuery(sqUnassingnTask);
+    } catch (e) {
+      console.log(e);
+      console.log('Error en /Mantenimiento/TareasAsignadas');
     }
   }
   f();

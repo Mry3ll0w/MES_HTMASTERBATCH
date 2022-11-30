@@ -7,6 +7,7 @@ export default function TareasAsignadasEmpleados() {
     
     
     const [sSelectedEmpleado, setsSelectedEmpleado] = useState('')
+    const [sCodigoEmpleadoSeleccionado, setsCodigoEmpleadoSeleccionado] = useState('');
     const [aOpsEmpleados, setaOpsEmpleados] = useState([])
     const [aTareas, setaTareas] = useState([])
     const toPrintRef = useRef();
@@ -40,6 +41,17 @@ export default function TareasAsignadasEmpleados() {
       }
     }
 
+    function fetchTareasVinculadas(sCodigo, slabel){
+      axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas`, {
+        Codigo: sCodigo,
+      })
+      .catch((e) => console.log(e))
+      .then((response) => {
+        //console.log(response.data.Tareas);
+        setaTareas(response.data.Tareas);
+      });
+    }
+
     return (
         <div>
             <div className='container d-flex justify-content-center'>
@@ -56,15 +68,9 @@ export default function TareasAsignadasEmpleados() {
                             options={aOpsEmpleados}
                             isSearchable={true}
                             onChange={(e) => {
-                              axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas`, {
-                                  Codigo: e.value,
-                                })
-                                .catch((e) => console.log(e))
-                                .then((response) => {
-                                  //console.log(response.data.Tareas);
-                                  setaTareas(response.data.Tareas);
-                                  setsSelectedEmpleado(e.label)
-                                });
+                              setsCodigoEmpleadoSeleccionado(e.value)
+                              setsSelectedEmpleado(e.label)
+                              fetchTareasVinculadas(e.value);
                             }}
                     />
                     <button className='btn btn-primary mt-4' 
@@ -130,8 +136,21 @@ export default function TareasAsignadasEmpleados() {
                         <td className="border-start border-end border-dark text-center">
                           {i.FechaProgramada}
                         </td>
-                        <td className="border-start border-end border-dark    text-center">
+                        <td className="border-start border-end border-dark text-center">
                           {i.TiempoEstimado}
+                        </td>
+                        <td 
+                          className="border-start border-end border-top border-dark text-center d-print-none"
+                          onClick={()=>{
+                            axios.post(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/TareasAsignadas`, {
+                              iTareaID: i.ID,
+                            }).catch(e => console.log(e))
+                            .then(
+                              window.location.reload(false)
+                            )
+                          }}
+                        >
+                          <button className='btn btn-primary p-3'>Desasignar Tarea</button>
                         </td>
                       </tr>
                     );
