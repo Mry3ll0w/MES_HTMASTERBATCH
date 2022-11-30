@@ -1,9 +1,28 @@
 import React, { Fragment, useEffect} from 'react'
 import axios from 'axios'
-import { useState } from 'react'
+import { useState,useRef,useReducer } from 'react'
 import Select from 'react-select'
 
 export default function DetallesTareaEmpleados({AccionID,}) {
+
+    //Reducers
+    const [aReducerEmpleados, dispatchReducerEmpleados] = useReducer((state = [{ID: 0}], action) =>{
+        switch(action.type){
+            case 'add_empleado':{
+                return [...state, {
+                    ID: state.ID, //Codigo: state.Codigo, Nombre: state.Nombre,
+                    //Apellidos: state.Apellidos, AccionTiempo: state.AccionTiempo
+                }]
+            }
+            default:{
+                return state;
+            }
+        }
+    })
+
+    //Refs
+    const formRef = useRef();
+
     // useStates 
     const [Empleados, setEmpleados] = useState([]);
     const [aEmpleados, setaEmpleados] = useState([])
@@ -37,7 +56,10 @@ export default function DetallesTareaEmpleados({AccionID,}) {
         })
     }
 
-    
+    //Functions
+    function handleSubmit(){
+
+    }
 
     useEffect(() => {
         fetchAccionData();
@@ -87,39 +109,49 @@ export default function DetallesTareaEmpleados({AccionID,}) {
     return (
         <Fragment >
             <div className='table table-responsive-sm'>
-                <table>
-                    <thead>
-                        <th scope='col' className='text-center p-2'>Codigo Empleado</th>
-                        <th scope='col' className='text-center p-2' >Apellidos</th>
-                        <th scope='col' className='text-center p-2' >Nombre</th>
-                        <th scope='col' className='text-center p-2' >Duracion</th>
-                    </thead>
-                    <tbody>
-                        {Empleados.map( (i, n) => {
-                            return(
-                                <tr id = {n++}>
-                                    <td className='p-2 border border-dark text-center'>
-                                        {i.Codigo}
-                                    </td>
-                                    <td className='p-2 border border-dark text-center'>
-                                        {i.Apellidos}
-                                    </td>
-                                    <td className='p-2 border border-dark text-center'>
-                                        {i.Nombre}
-                                    </td>
-                                    <td className='p-2 border border-dark text-center'>
-                                        {i.AccionTiempo}
-                                    </td>
-                                </tr>
-                            )
-                        })}
-                        <tr>
-                            <td className='p-2 border border-dark text-center'>
-
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <form ref={formRef} onSubmit={()=> handleSubmit()}>
+                    <table>
+                        <thead>
+                            <th scope='col' className='text-center p-2'>Codigo Empleado</th>
+                            <th scope='col' className='text-center p-2' >Apellidos</th>
+                            <th scope='col' className='text-center p-2' >Nombre</th>
+                            <th scope='col' className='text-center p-2' >Duracion</th>
+                        </thead>
+                        <tbody>
+                            {Empleados.map( (i, n) => {
+                                return(
+                                    <tr id = {n++}>
+                                        <td className='p-2 border border-dark text-center'>
+                                            {i.Codigo}
+                                        </td>
+                                        <td className='p-2 border border-dark text-center'>
+                                            {i.Apellidos}
+                                        </td>
+                                        <td className='p-2 border border-dark text-center'>
+                                            {i.Nombre}
+                                        </td>
+                                        <td className='p-2 border border-dark text-center'>
+                                            {i.AccionTiempo}
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                            <tr>
+                                <td className='p-2 border border-dark text-center'>
+                                    <button 
+                                        className='btn btn-primary' 
+                                        onClick={()=>{dispatchReducerEmpleados({type: 'add_empleado',ID: 1 })}}
+                                    >
+                                            Add
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                {aReducerEmpleados && aReducerEmpleados.map(i =>{
+                    return <h1>{i.ID}</h1>
+                })}
             </div>
             
         </Fragment>

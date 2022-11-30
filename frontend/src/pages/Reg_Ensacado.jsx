@@ -164,6 +164,11 @@ export default function RegEnsacado({ LoggedUser }) {
       );
     } else ferr(false);
 
+    if (M_Peso_Saco === '') {
+      ok = false;
+      alert('No puedes dejar el peso del saco vacio, si no tiene nada ponga - o 0 en su lugar');
+    }
+
     if (M_Turno === "") {
       ok = false;
       terror(true);
@@ -246,7 +251,12 @@ export default function RegEnsacado({ LoggedUser }) {
         "La Fecha no puede estar en blanco, o el formato de la fecha no es el correcto"
       );
     } else ferr(false);
-
+    
+    if (M_Peso_Saco === '') {
+      ok = false;
+      alert('No puedes dejar el peso del saco vacio, si no tiene nada ponga - o 0 en su lugar');
+    }
+    
     if (M_Turno === "") {
       ok = false;
       terror(true);

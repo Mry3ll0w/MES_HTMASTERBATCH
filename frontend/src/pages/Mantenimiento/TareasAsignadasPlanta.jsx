@@ -9,8 +9,8 @@ export default function TareasAsignadasEmpleados() {
     const [sSelectedEmpleado, setsSelectedEmpleado] = useState('')
     const [aOpsEmpleados, setaOpsEmpleados] = useState([])
     const [aTareas, setaTareas] = useState([])
-    const refTaskTable = useRef();
-    const handlePrint = useReactToPrint({content : () => refTaskTable.current,});
+    const toPrintRef = useRef();
+    const handlePrint = useReactToPrint({content : () => toPrintRef.current,});
     useEffect(() => {
         axios.get(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/TareasAsignadas`)
         .catch( e => console.log(e))
@@ -21,7 +21,7 @@ export default function TareasAsignadasEmpleados() {
                 _aEmpleados = [..._aEmpleados, 
                     {
                         value: i.Codigo,
-                        label: `${i.Codigo} | ${i.Nombre} | ${i.Apellidos}`,
+                        label: `${i.Alias} | ${i.Nombre} | ${i.Apellidos}`,
                     },
                 ]
             })
@@ -29,6 +29,16 @@ export default function TareasAsignadasEmpleados() {
             
         })
     });
+
+    function dispEmpApoyo(sAlias){
+      if(sAlias === null){
+        return 'No se requieren empleados de apoyo'
+      }
+      else{
+        var empleado = aOpsEmpleados.filter(i => i.label.includes(sAlias));
+        return empleado[0].label
+      }
+    }
 
     return (
         <div>
@@ -51,6 +61,7 @@ export default function TareasAsignadasEmpleados() {
                                 })
                                 .catch((e) => console.log(e))
                                 .then((response) => {
+                                  //console.log(response.data.Tareas);
                                   setaTareas(response.data.Tareas);
                                   setsSelectedEmpleado(e.label)
                                 });
@@ -66,14 +77,21 @@ export default function TareasAsignadasEmpleados() {
                     
                 </div>
             </div>
-            
-            <div ref={refTaskTable} className='container d-flex justify-content-center mt-3'>
-            <table className="table table-light">
+            <div ref={toPrintRef}>
+              <div className='row d-flex justify-content-center mt-3'>
+              <table className="table table-light w-50">
                 <thead>
                   <tr>
-                    <th scope='col' className='border border-dark text-center'>Empleado asignado</th>
-                    <th scope='col' className='border border-dark text-center'>{sSelectedEmpleado}</th>
+                    <th scope='col' className='border border-dark text-center w-25'>Empleado asignado</th>
+                    <th scope='col' className='border border-dark text-center w-50'>{sSelectedEmpleado}</th>
                   </tr>
+                </thead>
+              </table>
+            </div>
+
+            <div className='container d-flex justify-content-center mt-3'>
+              <table className="table table-light">
+                <thead>
                   <tr>
                     <th scope="col" className="border border-dark text-center">
                       #
@@ -119,8 +137,40 @@ export default function TareasAsignadasEmpleados() {
                     );
                   })}
                 </tbody>
-            </table>
+              </table>
             </div>
+            <div className='container d-flex justify-content-center mt-3'>
+              <p className='h3'>Empleados de Apoyo</p>
+            </div>
+            <div className='container d-flex justify-content-center mt-3'>
+              <table className="table table-light">
+                <thead>
+                  <tr>
+                    <th scope="col" className="border border-dark text-center">
+                      N° tarea
+                    </th>
+                    <th scope="col" className="border border-dark text-center">
+                      Nombre
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {aTareas.map((i, n) => {
+                    return (
+                      <tr>
+                        <td className="border-start border-end border-dark text-center">
+                          {n + 1}
+                        </td>
+                        <td className='border-start border-end border-dark text-center'>
+                          {dispEmpApoyo(i.EmpleadoSec)}
+                        </td>                       
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
     );
 }

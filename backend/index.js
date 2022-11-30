@@ -1588,6 +1588,7 @@ app.post('/Planta/TareasAsignadas', (request, reply) => {
         tbTareas.ID,
         tbTareas.Codigo, tbTareas.Descripcion,
         tbTareasCriticidad.Nombre as Criticidad,
+        tbTareas.EmpleadoSec as EmpleadoSec,
         FORMAT(tbTareas.FechaProgramada, 'yyyy-MM-dd') as FechaProgramada,
         tbTareas.TiempoEstimado
     from tbTareas
@@ -1715,7 +1716,7 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/Accion/Empleados', (request, rep
     const sQGetTrabajadores = `
       use WEB_API_TABLES;
       Select 
-        ID, Codigo, Nombre, Apellidos, '00:00' as Tiempo
+        ID, Codigo, Nombre, Apellidos, '00:00' as AccionTiempo
       from tbEmpleados 
       WHERE 
         FechaBaja is NULL
@@ -1763,7 +1764,7 @@ app.get('/Mantenimiento/TareasAsignadas', (request, reply) => {
     const sQueryEmpleados = `
       USE WEB_API_TABLES;
       select 
-        Codigo,Nombre,Apellidos 
+        Codigo,Nombre,Apellidos,Alias
       from 
         WEB_API_TABLES.dbo.tbEmpleados 
       WHERE 
