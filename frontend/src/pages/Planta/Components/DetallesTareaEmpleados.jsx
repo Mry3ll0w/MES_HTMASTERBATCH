@@ -30,7 +30,7 @@ export default function DetallesTareaEmpleados({ AccionID }) {
           return [
             ...state,
             {
-              index: state.length +1,
+              index: state.length,
               Codigo: "Ejemplo",
               Nombre: "saas",
               Apellidos: "adada",
@@ -46,8 +46,11 @@ export default function DetallesTareaEmpleados({ AccionID }) {
             )
         }
 
-        case "modEmpleadoAccionTiempo": {
-          
+        case "modAccionTiempo": {
+          return state.map((item, i) => i === action.index 
+                ? {...item, AccionTiempo: action.AccionTiempo}
+                : item
+            )
         }
 
         default: {
@@ -182,7 +185,11 @@ export default function DetallesTareaEmpleados({ AccionID }) {
                     </td>
                     
                     <td key={Math.random()} className='p-2 border border-dark text-center'>
-                      {i.AccionTiempo}
+                        <input type='time' value={i.AccionTiempo} 
+                            onChange={(e)=> 
+                                dispatchReducerEmpleados({type: 'modAccionTiempo', index: i.index, AccionTiempo: e.target.value})
+                            } 
+                        />
                     </td>
                   </tr>
                 );
