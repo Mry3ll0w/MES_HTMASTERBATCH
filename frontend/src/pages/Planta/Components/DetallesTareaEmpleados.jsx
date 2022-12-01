@@ -6,15 +6,40 @@ import Select from 'react-select'
 export default function DetallesTareaEmpleados({AccionID,}) {
 
     //Reducers
-    const [aReducerEmpleados, dispatchReducerEmpleados] = useReducer((state = {ID: 1}, action) =>{
+    const [aReducerEmpleados, dispatchReducerEmpleados] = useReducer((state = [], action) =>{
+        
         switch(action.type){
-            case 'add_empleado':{
-                
-                return {...state, 
-                    ID: state.ID + 1, //Codigo: state.Codigo, Nombre: state.Nombre,
-                    //Apellidos: state.Apellidos, AccionTiempo: state.AccionTiempo
+            case 'initialize_empleados':{
+                console.log(action.payload.Codigo)
+                if(state.filter(i => i.Codigo === action.payload.Codigo) !== 0)
+                    return [...state, {
+                        Codigo : action.payload.Codigo,
+                        Nombre: action.payload.Nombre,
+                        Apellidos: action.payload.Apellidos,
+                        AccionTiempo: action.payload.AccionTiempo
+                    }]
+                else{
+                    return state;
                 }
             }
+            case 'add_empleado':{
+                
+                return state;
+            }
+            
+            case 'mod_empleado_cantidad': {
+                var _aReducerEmpleados = state;
+                
+                _aReducerEmpleados.forEach(i => {
+                    if(i.Empleado.Codigo === action.payload.Codigo){
+                        i.Empleado.AccionTiempo = action.payload.AccionTiempo
+                    }
+                })
+                state = _aReducerEmpleados;
+                return state;
+
+            }
+            
             default:{
                 return state;
             }
@@ -45,6 +70,8 @@ export default function DetallesTareaEmpleados({AccionID,}) {
                 else{
                     i.AccionTiempo = `No definido`
                 }
+                
+                dispatchReducerEmpleados({type: 'initialize_empleados', payload: i})
             })
             try{
                 setEmpleados(_aEmpleados)
@@ -151,7 +178,10 @@ export default function DetallesTareaEmpleados({AccionID,}) {
                         </tbody>
                     </table>
                 
-                {aReducerEmpleados && aReducerEmpleados.ID}
+                {aReducerEmpleados && aReducerEmpleados.map(i => {
+                    
+                    return <h1> {i.Codigo} </h1>
+                })}
             </div>
             
         </Fragment>
