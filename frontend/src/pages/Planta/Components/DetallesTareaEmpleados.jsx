@@ -6,13 +6,14 @@ import Select from 'react-select'
 export default function DetallesTareaEmpleados({AccionID,}) {
 
     //Reducers
-    const [aReducerEmpleados, dispatchReducerEmpleados] = useReducer((state = [{ID: 0}], action) =>{
+    const [aReducerEmpleados, dispatchReducerEmpleados] = useReducer((state = {ID: 1}, action) =>{
         switch(action.type){
             case 'add_empleado':{
-                return [...state, {
-                    ID: state.ID, //Codigo: state.Codigo, Nombre: state.Nombre,
+                
+                return {...state, 
+                    ID: state.ID + 1, //Codigo: state.Codigo, Nombre: state.Nombre,
                     //Apellidos: state.Apellidos, AccionTiempo: state.AccionTiempo
-                }]
+                }
             }
             default:{
                 return state;
@@ -109,7 +110,7 @@ export default function DetallesTareaEmpleados({AccionID,}) {
     return (
         <Fragment >
             <div className='table table-responsive-sm'>
-                <form ref={formRef} onSubmit={()=> handleSubmit()}>
+                
                     <table>
                         <thead>
                             <th scope='col' className='text-center p-2'>Codigo Empleado</th>
@@ -145,13 +146,12 @@ export default function DetallesTareaEmpleados({AccionID,}) {
                                             Add
                                     </button>
                                 </td>
+                                
                             </tr>
                         </tbody>
                     </table>
-                </form>
-                {aReducerEmpleados && aReducerEmpleados.map(i =>{
-                    return <h1>{i.ID}</h1>
-                })}
+                
+                {aReducerEmpleados && aReducerEmpleados.ID}
             </div>
             
         </Fragment>

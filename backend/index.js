@@ -12,7 +12,7 @@ const cors = require('cors');
 const fs = require('fs'); // Lectura de archivos para leer sql queries
 
 const bcrypt = require('bcryptjs');
-const {request} = require('http');
+
 
 app.listen('4001', () => {
   console.log('listening in 4001');
@@ -1589,18 +1589,20 @@ app.post('/Planta/TareasAsignadas', (request, reply) => {
         tbTareas.ID,
         tbTareas.Codigo, tbTareas.Descripcion,
         tbTareasCriticidad.Nombre as Criticidad,
-        tbTareas.EmpleadoSec as EmpleadoSec,
+        CONCAT(ISNULL(E2.Nombre,'No se necesitan'),' ',ISNULL(E2.Apellidos, 'empleados de apoyo')) EmpleadoSec,
         FORMAT(tbTareas.FechaProgramada, 'yyyy-MM-dd') as FechaProgramada,
         tbTareas.TiempoEstimado
     from tbTareas
         INNER JOIN WEB_API_TABLES.dbo.tbEmpleados ON
-        tbTareas.EmpleadoNom = WEB_API_TABLES.dbo.tbEmpleados.Alias
+            tbTareas.EmpleadoNom = WEB_API_TABLES.dbo.tbEmpleados.Alias
             AND
             tbTareas.EstadoTareaID = 1
             AND
             WEB_API_TABLES.dbo.tbEmpleados.Codigo = '${Codigo}'
         INNER JOIN tbTareasCriticidad ON
-        tbTareasCriticidad.ID = tbTareas.CriticidadID
+            tbTareasCriticidad.ID = tbTareas.CriticidadID
+        LEFT JOIN WEB_API_TABLES.dbo.tbEmpleados as E2 on
+            tbTareas.EmpleadoSec = E2.Alias
     order by tbTareas.id DESC;
     `;
 

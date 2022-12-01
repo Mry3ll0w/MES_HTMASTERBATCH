@@ -26,20 +26,11 @@ export default function TareasAsignadasEmpleados() {
                     },
                 ]
             })
+            
             setaOpsEmpleados(_aEmpleados)
             
         })
     });
-
-    function dispEmpApoyo(sAlias){
-      if(sAlias === null){
-        return 'No se requieren empleados de apoyo'
-      }
-      else{
-        var empleado = aOpsEmpleados.filter(i => i.label.includes(sAlias));
-        return empleado[0].label
-      }
-    }
 
     function fetchTareasVinculadas(sCodigo, slabel){
       axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas`, {
@@ -99,22 +90,22 @@ export default function TareasAsignadasEmpleados() {
               <table className="table table-light">
                 <thead>
                   <tr>
-                    <th scope="col" className="border border-dark text-center">
+                    <th id={Math.random()} scope="col" className="border border-dark text-center">
                       #
                     </th>
-                    <th scope="col" className="border border-dark text-center">
+                    <th  id={Math.random()}scope="col" className="border border-dark text-center">
                       Codigo
                     </th>
-                    <th scope="col" className="border border-dark text-center">
+                    <th id={Math.random()}scope="col" className="border border-dark text-center">
                       Criticidad
                     </th>
-                    <th scope="col" className="border border-dark text-center">
+                    <th id={Math.random()}scope="col" className="border border-dark text-center">
                       Descripcion
                     </th>
-                    <th scope="col" className="border border-dark text-center">
+                    <th id={Math.random()}scope="col" className="border border-dark text-center">
                       F.Programada
                     </th>
-                    <th scope="col" className="border border-dark text-center">
+                    <th id={Math.random()}scope="col" className="border border-dark text-center">
                       T.Estimado
                     </th>
                   </tr>
@@ -123,23 +114,24 @@ export default function TareasAsignadasEmpleados() {
                   {aTareas.map((i, n) => {
                     return (
                       <tr>
-                        <td className="border-start border-end border-dark text-center">
+                        <td id={Math.random()} className="border-start border-end border-dark text-center">
                           {n + 1}
                         </td>
-                        <td className="border-start border-end border-dark text-center">
+                        <td id={Math.random()} className="border-start border-end border-dark text-center">
                           {i.Codigo}
                         </td>
-                        <td className="border-start border-end border-dark text-center">
+                        <td id={Math.random()} className="border-start border-end border-dark text-center">
                           {i.Criticidad}
                         </td>
                         <td className="border-start border-end border-dark">{i.Descripcion}</td>
                         <td className="border-start border-end border-dark text-center">
                           {i.FechaProgramada}
                         </td>
-                        <td className="border-start border-end border-dark text-center">
+                        <td id={Math.random()} className="border-start border-end border-dark text-center">
                           {i.TiempoEstimado}
                         </td>
                         <td 
+                          id={Math.random()}
                           className="border-start border-end border-top border-dark text-center d-print-none"
                           onClick={()=>{
                             axios.post(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/TareasAsignadas`, {
@@ -165,10 +157,10 @@ export default function TareasAsignadasEmpleados() {
               <table className="table table-light">
                 <thead>
                   <tr>
-                    <th scope="col" className="border border-dark text-center">
+                    <th id={Math.random()}scope="col" className="border border-dark text-center">
                       N° tarea
                     </th>
-                    <th scope="col" className="border border-dark text-center">
+                    <th id={Math.random()}scope="col" className="border border-dark text-center">
                       Nombre
                     </th>
                   </tr>
@@ -177,11 +169,11 @@ export default function TareasAsignadasEmpleados() {
                   {aTareas.map((i, n) => {
                     return (
                       <tr>
-                        <td className="border-start border-end border-dark text-center">
+                        <td id={n} className="border-start border-end border-dark text-center">
                           {n + 1}
                         </td>
-                        <td className='border-start border-end border-dark text-center'>
-                          {dispEmpApoyo(i.EmpleadoSec)}
+                        <td id={n+1} className='border-start border-end border-dark text-center'>
+                          {i.EmpleadoSec}
                         </td>                       
                       </tr>
                     );
