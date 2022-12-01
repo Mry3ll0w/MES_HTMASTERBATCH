@@ -1,3 +1,6 @@
+/* eslint-disable comma-dangle */
+/* eslint-disable object-curly-spacing */
+/* eslint-disable indent */
 /* eslint-disable camelcase */
 /* eslint-disable max-len */
 /* eslint-disable no-tabs */
@@ -13,36 +16,35 @@ const fs = require('fs'); // Lectura de archivos para leer sql queries
 
 const bcrypt = require('bcryptjs');
 
-
 app.listen('4001', () => {
-  console.log('listening in 4001');
+	console.log('listening in 4001');
 });
 
 // Multer Config
 const MulterStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, '../frontend/public/materiales');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
+	destination: (req, file, cb) => {
+		cb(null, '../frontend/public/materiales');
+	},
+	filename: (req, file, cb) => {
+		cb(null, file.originalname);
+	},
 });
 
-const ImgUpload = multer({storage: MulterStorage});
+const ImgUpload = multer({ storage: MulterStorage });
 
 // usando bodyparser
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // Permitir coger la info del front end como json
 app.use(cors());
 // DB credentials
 const config = {
-  user: 'WEBAPI',
-  password: process.env.htm_auth,
-  server: 'marketing',
-  database: 'master',
-  options: {
-    trustServerCertificate: true, // Hace falta para que podamos acceder al servidor
-  },
+	user: 'WEBAPI',
+	password: process.env.htm_auth,
+	server: 'marketing',
+	database: 'master',
+	options: {
+		trustServerCertificate: true, // Hace falta para que podamos acceder al servidor
+	},
 };
 /*
 const config_ecisa = {
@@ -83,37 +85,37 @@ async function query_ECIESA(q) {
 */
 // QUERYS PARA MES
 async function connectDB() {
-  const pool = new sql.ConnectionPool(config);
+	const pool = new sql.ConnectionPool(config);
 
-  try {
-    await pool.connect();
-    // console.log('Connected to database');
+	try {
+		await pool.connect();
+		// console.log('Connected to database');
 
-    return pool;
-  } catch (err) {
-    console.log('Database connection failed!', err);
-  }
+		return pool;
+	} catch (err) {
+		console.log('Database connection failed!', err);
+	}
 }
 
 async function mesQuery(q) {
-  try {
-    const DB = await connectDB();
+	try {
+		const DB = await connectDB();
 
-    const result = await DB.request().query(q);
-    DB.close();
-    return {query: result.recordset};
-  } catch (err) {
-    console.log(`Error querying database, query usada ${q}`, err);
+		const result = await DB.request().query(q);
+		DB.close();
+		return { query: result.recordset };
+	} catch (err) {
+		console.log(`Error querying database, query usada ${q}`, err);
 
-    // return {query :err, ok : false};
-  }
+		// return {query :err, ok : false};
+	}
 }
 
 app.get('/RegEnsacado', (request, res) => {
-  async function query() {
-    try {
-      const q_ensacados = await mesQuery(
-          `use WEB_API_TABLES;
+	async function query() {
+		try {
+			const q_ensacados = await mesQuery(
+				`use WEB_API_TABLES;
         SELECT *
         FROM RegistroEnsacado
         WHERE
@@ -121,124 +123,124 @@ app.get('/RegEnsacado', (request, res) => {
             AND
             EliminadoPor IS NULL
         order by ID desc
-        `,
-      );
-      const q_prods = await mesQuery(
-          fs.readFileSync('Q_Lista_productos.sql').toString(),
-      );
+        `
+			);
+			const q_prods = await mesQuery(
+				fs.readFileSync('Q_Lista_productos.sql').toString()
+			);
 
-      res.send({
-        Productos: q_prods.query,
-        Ensacados: q_ensacados.query,
-      });
-    } catch {
-      res.send('Fallo al hacer la query');
-    }
-  }
-  query();
+			res.send({
+				Productos: q_prods.query,
+				Ensacados: q_ensacados.query,
+			});
+		} catch {
+			res.send('Fallo al hacer la query');
+		}
+	}
+	query();
 });
 
 app.post('/UpdateEnsacado', (request, res) => {
-  console.log(request.body);
-  async function q() {
-    const q_ins = await mesQuery(
-        `Update [WEB_API_TABLES].[dbo].[RegistroEnsacado] SET Fecha = '${request.body.Fecha}' , 
+	console.log(request.body);
+	async function q() {
+		const q_ins = await mesQuery(
+			`Update [WEB_API_TABLES].[dbo].[RegistroEnsacado] SET Fecha = '${request.body.Fecha}' , 
       Turno ='${request.body.Turno}', Producto ='${request.body.Producto}', 
       Palet = '${request.body.Palet}', Peso_Saco='${request.body.Peso_Saco}',
       Cantidad = ${request.body.Cantidad}, Resto = '${request.body.Resto}', 
       Ant = ${request.body.Ant}, Observaciones = '${request.body.Observaciones}',
       ModificadoPor = '${request.body.iniciales}'
-      WHERE ID = ${request.body.ID};`,
-    );
-    console.log(q_ins);
-  }
-  try {
-    q();
-  } catch {
-    console.log('Error en UpdateEnsacado');
-  }
+      WHERE ID = ${request.body.ID};`
+		);
+		console.log(q_ins);
+	}
+	try {
+		q();
+	} catch {
+		console.log('Error en UpdateEnsacado');
+	}
 });
 
 app.post('/RegistraEnsacado', (request, res) => {
-  console.log(request.body);
-  const E = request.body;
-  async function q() {
-    const q_ins =
-      await mesQuery(`INSERT INTO [WEB_API_TABLES].[dbo].[RegistroEnsacado] (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones,ModificadoPor) 
+	console.log(request.body);
+	const E = request.body;
+	async function q() {
+		const q_ins =
+			await mesQuery(`INSERT INTO [WEB_API_TABLES].[dbo].[RegistroEnsacado] (Fecha, Turno, Producto, Palet, Peso_Saco,Cantidad, Resto, Ant, iniciales, Observaciones,ModificadoPor) 
         VALUES('${E.Fecha}','${E.Turno}', '${E.Producto}','${E.Palet}', '${E.Peso_Saco}',${E.Cantidad},'${E.Resto}',${E.Ant},'${E.iniciales}', '${E.Observaciones}','-');`);
-    console.log(q_ins);
-  }
-  try {
-    q();
-  } catch {
-    console.log('Error en RegistraEnsacado');
-  }
+		console.log(q_ins);
+	}
+	try {
+		q();
+	} catch {
+		console.log('Error en RegistraEnsacado');
+	}
 });
 
 app.post('/DelEns', (request, res) => {
-  // console.log(request.body);
-  const E = request.body;
-  async function q() {
-    const q_ins = await mesQuery(
-        `
+	// console.log(request.body);
+	const E = request.body;
+	async function q() {
+		const q_ins = await mesQuery(
+			`
       use WEB_API_TABLES;
       UPDATE RegistroEnsacado
       SET
         FechaEliminacion = GETDATE(),
         EliminadoPor = '${E.Iniciales}' 
       WHERE
-        ID = ${E.ID};`,
-    );
-    console.log(q_ins);
-  }
-  try {
-    q();
-  } catch {
-    console.log('Error en DelEns');
-  }
+        ID = ${E.ID};`
+		);
+		console.log(q_ins);
+	}
+	try {
+		q();
+	} catch {
+		console.log('Error en DelEns');
+	}
 });
 
 // Estadistico
 
 app.get('/dataEstadistico', (request, res) => {
-  async function query() {
-    // Lista de Productos
-    const sql_q = fs.readFileSync('Q_Lista_productos.sql').toString();
-    const q_prods = await mesQuery(sql_q);
+	async function query() {
+		// Lista de Productos
+		const sql_q = fs.readFileSync('Q_Lista_productos.sql').toString();
+		const q_prods = await mesQuery(sql_q);
 
-    // Lista de Tendencias
-    const sql_tendecias = await mesQuery(
-        fs.readFileSync('Q_Get_TotalTendencias.sql').toString(),
-    );
-    // Lista de OFS
-    const q_OFS = await mesQuery(
-        fs.readFileSync('OF_PROD_Fechas.sql').toString(),
-    );
+		// Lista de Tendencias
+		const sql_tendecias = await mesQuery(
+			fs.readFileSync('Q_Get_TotalTendencias.sql').toString()
+		);
+		// Lista de OFS
+		const q_OFS = await mesQuery(
+			fs.readFileSync('OF_PROD_Fechas.sql').toString()
+		);
 
-    // console.log(q_ensacados)
-    res.send({
-      Productos: q_prods.query,
-      Tendencias: sql_tendecias.query,
-      OFS: q_OFS.query,
-    });
-  }
-  try {
-    query();
-  } catch {
-    console.log('Error en /dataEstadistico');
-  }
+		// console.log(q_ensacados)
+		res.send({
+			Productos: q_prods.query,
+			Tendencias: sql_tendecias.query,
+			OFS: q_OFS.query,
+		});
+	}
+	try {
+		query();
+	} catch {
+		console.log('Error en /dataEstadistico');
+	}
 });
 
 app.post('/calcEstadistico', (request, res) => {
-  async function q() {
-    try {
-      let query;
-      let q_cal;
-      const l_inf = request.body.Lim_Inf;
-      const l_sup = request.body.Lim_Sup;
+	async function q() {
+		try {
+			let query;
+			let q_cal;
+			const l_inf = request.body.Lim_Inf;
+			const l_sup = request.body.Lim_Sup;
 
-      if (request.body.Tendencia == '19') {
-        query = `
+			if (request.body.Tendencia == '19') {
+				query = `
         Select * from Datos19.dbo.tb19
         WHere
             valor > 100
@@ -246,7 +248,7 @@ app.post('/calcEstadistico', (request, res) => {
             FechaHora BETWEEN '${l_inf}' AND '${l_sup}'
         order by FechaHora asc;`;
 
-        q_cal = `
+				q_cal = `
             Select AVG(valor) as media, MAX(VALOR) as max, MIN(VALOR) as min
             from Datos19.dbo.Tb19
             WHERE 
@@ -254,8 +256,8 @@ app.post('/calcEstadistico', (request, res) => {
                 AND 
                 FechaHora BETWEEN '${l_inf}' and '${l_sup}'
             `;
-      } else {
-        query = `
+			} else {
+				query = `
             Select Valor,FechaHora from Datos${request.body.Tendencia}.dbo.tb${request.body.Tendencia} 
             WHERE 
             FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
@@ -271,7 +273,7 @@ app.post('/calcEstadistico', (request, res) => {
             order by FechaHora asc;
             `;
 
-        q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
+				q_cal = `select AVG(Valor) as media, MAX(Valor) as max, MIN(Valor) as min from Datos${request.body.Tendencia}.dbo.Tb${request.body.Tendencia} 
             WHERE FechaHora Between '${request.body.Lim_Inf}' AND '${request.body.Lim_Sup}'
             and Valor > 0
             and FechaHora not IN (
@@ -282,124 +284,124 @@ app.post('/calcEstadistico', (request, res) => {
                     AND 
                     FechaHora BETWEEN '${l_inf}' and '${l_sup}'
         );`;
-      }
-      const datos_calculados = await mesQuery(query);
-      const media_min_max = await mesQuery(q_cal);
-      console.log(media_min_max.query);
-      res.send({
-        Datos_Calculados: datos_calculados.query,
-        Resultado: media_min_max.query,
-      });
-    } catch {
-      console.log('Error calculo en estadistico');
-    }
-  }
-  q();
+			}
+			const datos_calculados = await mesQuery(query);
+			const media_min_max = await mesQuery(q_cal);
+			console.log(media_min_max.query);
+			res.send({
+				Datos_Calculados: datos_calculados.query,
+				Resultado: media_min_max.query,
+			});
+		} catch {
+			console.log('Error calculo en estadistico');
+		}
+	}
+	q();
 });
 
 // LOGIN FORM
 
 app.get('/Login', (request, res) => {
-  // const salt = bcrypt.genSaltSync(10)
-  // console.log(`pwd : ${bcrypt.hashSync('1234',salt)}`)
+	// const salt = bcrypt.genSaltSync(10)
+	// console.log(`pwd : ${bcrypt.hashSync('1234',salt)}`)
 
-  async function f() {
-    try {
-      const query =
-        'select ID,Formulario,CargoID,Codigo,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;';
-      const resultado = await mesQuery(query);
-      res.send({user: resultado.query});
-    } catch {
-      console.log('Error de obtención de datos');
-    }
-  }
+	async function f() {
+		try {
+			const query =
+				'select ID,Formulario,CargoID,Codigo,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;';
+			const resultado = await mesQuery(query);
+			res.send({ user: resultado.query });
+		} catch {
+			console.log('Error de obtención de datos');
+		}
+	}
 
-  f();
+	f();
 });
 
 app.post('/Login', (request, reply) => {
-  async function f() {
-    const {Usuario, Pass} = request.body;
-    console.log(Usuario);
-    const q_usuario = `
+	async function f() {
+		const { Usuario, Pass } = request.body;
+		console.log(Usuario);
+		const q_usuario = `
       select Codigo,Pwd_Hashed 
       from WEB_API_TABLES.dbo.tbEmpleados 
       WHERE 
         ID = ${Usuario[0].ID}
     `;
-    const res_user = await mesQuery(q_usuario);
+		const res_user = await mesQuery(q_usuario);
 
-    console.table(res_user.query[0]);
+		console.table(res_user.query[0]);
 
-    const token = bcrypt.compareSync(Pass, res_user.query[0].Pwd_Hashed);
-    console.table(token);
-    reply.send({token: token});
-  }
-  try {
-    f();
-  } catch {
-    console.error('Error obteniendo la contraseña y/o el usuario de l');
-  }
+		const token = bcrypt.compareSync(Pass, res_user.query[0].Pwd_Hashed);
+		console.table(token);
+		reply.send({ token: token });
+	}
+	try {
+		f();
+	} catch {
+		console.error('Error obteniendo la contraseña y/o el usuario de l');
+	}
 });
 
 app.get('/Profile/:user', (request, res) => {
-  const user = request.params.user;
-  async function f() {
-    const query = `select * from WEB_API_TABLES.dbo.tbEmpleados where Codigo = '${user}';`;
-    const resultado = await mesQuery(query);
-    // console.log(resultado.query)
-    res.send({user: resultado.query});
-  }
-  try {
-    f();
-  } catch {
-    console.error('Error accediendo al perfil del usuario');
-  }
+	const user = request.params.user;
+	async function f() {
+		const query = `select * from WEB_API_TABLES.dbo.tbEmpleados where Codigo = '${user}';`;
+		const resultado = await mesQuery(query);
+		// console.log(resultado.query)
+		res.send({ user: resultado.query });
+	}
+	try {
+		f();
+	} catch {
+		console.error('Error accediendo al perfil del usuario');
+	}
 });
 
 app.post('/Profile', (request, res) => {
-  const Codigo = request.body.Codigo;
-  const Pwd_Hashed = request.body.NewPass;
-  async function f() {
-    const query = `update WEB_API_TABLES.dbo.tbEmpleados set Pwd_Hashed = '${Pwd_Hashed}' where Codigo = '${Codigo}';`;
-    const resultado = await mesQuery(query);
-    console.log(resultado);
-    // res.send({user : resultado.query})
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en post de /Profile');
-  }
+	const Codigo = request.body.Codigo;
+	const Pwd_Hashed = request.body.NewPass;
+	async function f() {
+		const query = `update WEB_API_TABLES.dbo.tbEmpleados set Pwd_Hashed = '${Pwd_Hashed}' where Codigo = '${Codigo}';`;
+		const resultado = await mesQuery(query);
+		console.log(resultado);
+		// res.send({user : resultado.query})
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en post de /Profile');
+	}
 });
 
 //* Registro de Planta
 app.get('/RegPlanta', (request, res) => {
-  async function f() {
-    try {
-      const resultado = await mesQuery(
-          fs.readFileSync('OF_UNIDAS.sql').toString(),
-      );
-      res.send({Datos: resultado.query});
-    } catch {
-      console.log('Fallo obtención de datos en Registro de Planta');
-    }
-    // console.log(resultado)
-  }
-  try {
-    f();
-  } catch {
-    console.log('error en get de /RegPlanta');
-  }
+	async function f() {
+		try {
+			const resultado = await mesQuery(
+				fs.readFileSync('OF_UNIDAS.sql').toString()
+			);
+			res.send({ Datos: resultado.query });
+		} catch {
+			console.log('Fallo obtención de datos en Registro de Planta');
+		}
+		// console.log(resultado)
+	}
+	try {
+		f();
+	} catch {
+		console.log('error en get de /RegPlanta');
+	}
 });
 
 /**
 ----------------------------------------REGISTRO DE PLANTA -----------------------------------------
 */
 app.post('/RegPlanta', (request, res) => {
-  console.log(request.body);
-  async function f() {
-    const query = `
+	console.log(request.body);
+	async function f() {
+		const query = `
         use MES; 
         Select 
             *
@@ -407,18 +409,18 @@ app.post('/RegPlanta', (request, res) => {
         WHERE OrdenFabricacionID = '${request.body.OF}'
         
         `;
-    const resultado_planta = await mesQuery(query);
+		const resultado_planta = await mesQuery(query);
 
-    const q_comun = `
+		const q_comun = `
             use MES;
             Select * from tbRegPlantaComun
             WHERE OrdenFabricacionID = '${request.body.OF}'
         `;
-    const resultado_comun = await mesQuery(q_comun);
+		const resultado_comun = await mesQuery(q_comun);
 
-    // UNA VEZ OBTENIDO LOS ELEMENTOS DE REGPLANTACOMUN => SACAMOS LA OF PARA CALCULO DE RESUMEN
+		// UNA VEZ OBTENIDO LOS ELEMENTOS DE REGPLANTACOMUN => SACAMOS LA OF PARA CALCULO DE RESUMEN
 
-    const q_resultado_resumen = `
+		const q_resultado_resumen = `
         use MES;
         select 
             Sum(COALESCE(ArrS1,0)) - Sum(COALESCE(RetS1,0)) as S1,
@@ -439,11 +441,11 @@ app.post('/RegPlanta', (request, res) => {
         where 
             OrdenFabricacionID = '${request.body.OF}'
         `;
-    const resultado_resumen = await mesQuery(q_resultado_resumen);
-    console.log(resultado_resumen.query[0]);
+		const resultado_resumen = await mesQuery(q_resultado_resumen);
+		console.log(resultado_resumen.query[0]);
 
-    // Calculamos los datos del resumen
-    const query_resumen_total = `
+		// Calculamos los datos del resumen
+		const query_resumen_total = `
         use MES;
         Select *,
             ISNULL(Seleccion,0) - ISNULL(Ensacado,0) As SelEns
@@ -452,7 +454,7 @@ app.post('/RegPlanta', (request, res) => {
             OrdenFabricacion = '${request.body.OF}'
         ;
         `;
-    /*
+		/*
     const q_eciesa_derecha = `
         use HTM;
         SELECT
@@ -472,24 +474,24 @@ app.post('/RegPlanta', (request, res) => {
             console.debug("FALLA LA CONSULTA DE ECIESA")
         }
         */
-    const resultado_query_resumen_total = await mesQuery(query_resumen_total);
-    res.send({
-      DatosRegPlanta: resultado_planta.query,
-      DatosRegPlantaComun: resultado_comun.query,
-      Resumen: resultado_resumen.query[0],
-      ResumenTotal: resultado_query_resumen_total.query[0],
-    });
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error post /RegPlanta');
-  }
+		const resultado_query_resumen_total = await mesQuery(query_resumen_total);
+		res.send({
+			DatosRegPlanta: resultado_planta.query,
+			DatosRegPlantaComun: resultado_comun.query,
+			Resumen: resultado_resumen.query[0],
+			ResumenTotal: resultado_query_resumen_total.query[0],
+		});
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error post /RegPlanta');
+	}
 });
 
 app.get('/AdmUsers', (request, reply) => {
-  async function f() {
-    const q_usuarios = `
+	async function f() {
+		const q_usuarios = `
         use WEB_API_TABLES;
         SELECT 
             ID, Codigo,
@@ -506,9 +508,9 @@ app.get('/AdmUsers', (request, reply) => {
         ORDER BY Codigo
         ;`;
 
-    const res_usuarios = await mesQuery(q_usuarios);
+		const res_usuarios = await mesQuery(q_usuarios);
 
-    const q_last_code = `
+		const q_last_code = `
         use WEB_API_TABLES;
         SELECT top 1
              Codigo
@@ -519,27 +521,27 @@ app.get('/AdmUsers', (request, reply) => {
             ID <> '2062' /*Esa ID corresponde a un temporal*/
         order by ID desc;
         `;
-    const res_last_code = await mesQuery(q_last_code);
-    const str_cod = String(res_last_code.query[0].Codigo);
-    const [, numero] = str_cod.split('E');
+		const res_last_code = await mesQuery(q_last_code);
+		const str_cod = String(res_last_code.query[0].Codigo);
+		const [, numero] = str_cod.split('E');
 
-    reply.send({
-      Usuarios: res_usuarios.query,
-      NextCode: `E${parseInt(numero) + 1}`,
-    });
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en get /AdmUsers');
-  }
+		reply.send({
+			Usuarios: res_usuarios.query,
+			NextCode: `E${parseInt(numero) + 1}`,
+		});
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en get /AdmUsers');
+	}
 });
 
 app.post('/UpdateAdmUsers', (request, reply) => {
-  console.log(request.body.Usuario);
-  async function f() {
-    const User = request.body.Usuario;
-    const q_update_user = `
+	console.log(request.body.Usuario);
+	async function f() {
+		const User = request.body.Usuario;
+		const q_update_user = `
         use WEB_API_TABLES;
         UPDATE
         tbEmpleados
@@ -550,54 +552,54 @@ app.post('/UpdateAdmUsers', (request, reply) => {
         WHERE
             ID = ${User.ID}
         `;
-    await mesQuery(q_update_user);
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en post /UpdateAdmUsers');
-  }
+		await mesQuery(q_update_user);
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en post /UpdateAdmUsers');
+	}
 });
 
 app.post('/NewAdmUsers', (request, reply) => {
-  async function f() {
-    // Tratamos el alias
-    const [ap1, ap2] = request.body.Apellidos.split(' ');
-    const alias = request.body.Nombre[0] + ap1[0] + ap2[0];
-    console.log(`ALIAS :${alias}`);
-    const q_insercion = `
+	async function f() {
+		// Tratamos el alias
+		const [ap1, ap2] = request.body.Apellidos.split(' ');
+		const alias = request.body.Nombre[0] + ap1[0] + ap2[0];
+		console.log(`ALIAS :${alias}`);
+		const q_insercion = `
         use WEB_API_TABLES;
         INSERT INTO tbEmpleados (Codigo,Apellidos,Nombre,TratamientoID,CargoID,ContratoEstadoID)
         VALUES('${request.body.Codigo}', '${request.body.Apellidos}','${request.body.Nombre}',
         ${request.body.TratamientoID}, ${request.body.CargoID}, ${request.body.ContratoEstadoID}
         )
         `;
-    await mesQuery(q_insercion);
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en post /NewAdmUsers');
-  }
+		await mesQuery(q_insercion);
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en post /NewAdmUsers');
+	}
 });
 
 app.post('/EraseAdmUsers', (request, reply) => {
-  async function f() {
-    await mesQuery(
-        `USE WEB_API_TABLES; DELETE FROM tbEmpleados WHERE ID = ${request.body.ID}`,
-    );
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en post /EraseAdmUsers');
-  }
+	async function f() {
+		await mesQuery(
+			`USE WEB_API_TABLES; DELETE FROM tbEmpleados WHERE ID = ${request.body.ID}`
+		);
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en post /EraseAdmUsers');
+	}
 });
 
 app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
-  async function f() {
-    const OF = request.params.OF;
-    const q_get_trace_data = `
+	async function f() {
+		const OF = request.params.OF;
+		const q_get_trace_data = `
         use MES;
         SELECT
             Fecha, Turno, Producto,ID,
@@ -608,7 +610,7 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
             [OF] = '${OF}'
         ;
         `;
-    const q_resultado_resumen = `
+		const q_resultado_resumen = `
         use MES;
         select *
         from 
@@ -617,7 +619,7 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
             OrdenFabricacion = '${OF}';
         ;
         `;
-    const q_fechas = `
+		const q_fechas = `
         use MES;
         SELECT 
             FechaInicio, FechaFin,ProductoID,Observacion as Observaciones
@@ -626,14 +628,14 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
         WHERE
             OrdenFabricacionID = '${OF}'
         `;
-    const q_env_p = `
+		const q_env_p = `
         use MES;
         Select EnPor,Comentario
         from OFEnviado
         WHERE
             [OF] = '${OF}'
         `;
-    const q_total_ensacado = `
+		const q_total_ensacado = `
         use MES;
         SELECT
             SUM(Cantidad) as TotalEnsacado
@@ -641,7 +643,7 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
         where
             [OF] = '${OF}';
         `;
-    const q_resto = `
+		const q_resto = `
         use MES;
         SELECT
             REPLACE(Resto,',','.') as Resto
@@ -650,38 +652,38 @@ app.get('/RegistroPlanta/Trazabilidad/:OF', (request, res) => {
             [OF] = '${OF}'
             and Resto <> ''
         `;
-    try {
-      const resultado_resumen = await mesQuery(q_resultado_resumen);
-      const resultado_fechas = await mesQuery(q_fechas);
-      const res_trace_data = await mesQuery(q_get_trace_data);
-      const res_env_p = await mesQuery(q_env_p);
-      const res_total_ensacado = await mesQuery(q_total_ensacado);
-      const res_resto = await mesQuery(q_resto);
+		try {
+			const resultado_resumen = await mesQuery(q_resultado_resumen);
+			const resultado_fechas = await mesQuery(q_fechas);
+			const res_trace_data = await mesQuery(q_get_trace_data);
+			const res_env_p = await mesQuery(q_env_p);
+			const res_total_ensacado = await mesQuery(q_total_ensacado);
+			const res_resto = await mesQuery(q_resto);
 
-      res.send({
-        Trazabilidad: res_trace_data.query,
-        DatosResumen: resultado_resumen.query[0],
-        Fechas: resultado_fechas.query[0],
-        EnPor: res_env_p.query[0].EnPor,
-        Comentario: res_env_p.query[0].Comentario,
-        TotalEnsacado: res_total_ensacado.query[0].TotalEnsacado,
-        Resto: res_resto.query[0].Resto,
-      });
-    } catch {
-      console.log('Falla la lectura de la trazabilidad');
-    }
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en get trazabilidad');
-  }
+			res.send({
+				Trazabilidad: res_trace_data.query,
+				DatosResumen: resultado_resumen.query[0],
+				Fechas: resultado_fechas.query[0],
+				EnPor: res_env_p.query[0].EnPor,
+				Comentario: res_env_p.query[0].Comentario,
+				TotalEnsacado: res_total_ensacado.query[0].TotalEnsacado,
+				Resto: res_resto.query[0].Resto,
+			});
+		} catch {
+			console.log('Falla la lectura de la trazabilidad');
+		}
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en get trazabilidad');
+	}
 });
 
 app.post('/RegistroPlanta/UpdateTrazabilidad', (request, reply) => {
-  async function f() {
-    const T = request.body.Trazabilidad;
-    const q_update = `
+	async function f() {
+		const T = request.body.Trazabilidad;
+		const q_update = `
             use MES;
                 Update TablaAuxiliar4
                     SET 
@@ -690,23 +692,23 @@ app.post('/RegistroPlanta/UpdateTrazabilidad', (request, reply) => {
                 where
                     ID = ${T.ID}
         `;
-    await mesQuery(q_update);
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en post regplanta/updateTraza');
-  }
+		await mesQuery(q_update);
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en post regplanta/updateTraza');
+	}
 });
 
 app.post('/RegPlanta/Trazabilidad', (request, reply) => {
-  console.log(request.body);
-  const OF = request.body.OF;
-  const ModPr = request.body.ModPor;
-  const EnvPor = request.body.EnvPor;
-  async function f() {
-    try {
-      const q_update_insercion = `
+	console.log(request.body);
+	const OF = request.body.OF;
+	const ModPr = request.body.ModPor;
+	const EnvPor = request.body.EnvPor;
+	async function f() {
+		try {
+			const q_update_insercion = `
             use MES;
             BEGIN 
                 /*En caso de que ya existe un registro se modifica*/
@@ -737,22 +739,22 @@ app.post('/RegPlanta/Trazabilidad', (request, reply) => {
                 
             END
             `;
-      await mesQuery(q_update_insercion);
-    } catch {
-      console.log('Error post en registro de planta (Trazabilidad)');
-    }
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en RegPlanta trazabilidad post');
-  }
+			await mesQuery(q_update_insercion);
+		} catch {
+			console.log('Error post en registro de planta (Trazabilidad)');
+		}
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en RegPlanta trazabilidad post');
+	}
 });
 app.get('/RegistroPlanta/GestionDesperdicios/:OF', (request, reply) => {
-  const OF = request.params.OF;
-  async function f() {
-    try {
-      const q_residuo_des = `
+	const OF = request.params.OF;
+	async function f() {
+		try {
+			const q_residuo_des = `
             use MES;
             SELECT 
                 *
@@ -762,7 +764,7 @@ app.get('/RegistroPlanta/GestionDesperdicios/:OF', (request, reply) => {
                 [OF] = '${OF}'
             ;`;
 
-      const q_residuo_rech = `
+			const q_residuo_rech = `
             Use MES;
             SELECT
                 *
@@ -772,28 +774,28 @@ app.get('/RegistroPlanta/GestionDesperdicios/:OF', (request, reply) => {
                 [OFResiduoRech].[OF] = '${OF}'
             ;`;
 
-      const res_residuo_rech = await mesQuery(q_residuo_rech);
-      const res_residuo_des = await mesQuery(q_residuo_des);
-      reply.send({
-        Rech: res_residuo_rech.query[0],
-        Des: res_residuo_des.query[0],
-      });
-    } catch {
-      console.log('Error consulta datos gestion desperdicio');
-    }
-  }
-  f();
+			const res_residuo_rech = await mesQuery(q_residuo_rech);
+			const res_residuo_des = await mesQuery(q_residuo_des);
+			reply.send({
+				Rech: res_residuo_rech.query[0],
+				Des: res_residuo_des.query[0],
+			});
+		} catch {
+			console.log('Error consulta datos gestion desperdicio');
+		}
+	}
+	f();
 });
 
 app.get('/Mantenimiento/Tareas', (request, reply) => {
-  async function f() {
-    const q_empleados = `
+	async function f() {
+		const q_empleados = `
 
                 select ID,Codigo,Alias,Nombre,Apellidos, '00:00' as tiempo
                 from WEB_API_TABLES.dbo.tbEmpleados 
                 WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;`;
 
-    const q_maquinas = `
+		const q_maquinas = `
             use MES;
             SELECT
                 tbCOD1.Nombre as 'COD1NOMBRE'
@@ -804,7 +806,7 @@ app.get('/Mantenimiento/Tareas', (request, reply) => {
                 tbCOD2.ID = tbMaquina.COD2
             GROUP BY tbCOD1.Nombre;
         `;
-    const q_next_id = `
+		const q_next_id = `
         use MES;
         select TOP 1
             (ID + 1) AS NextID
@@ -812,34 +814,34 @@ app.get('/Mantenimiento/Tareas', (request, reply) => {
             vwTareasMantenimiento
         ORDER BY ID DESC;
         `;
-    const q_materiales = `
+		const q_materiales = `
         use MES;
         select ID,Referencia,Descripcion, 0 as Cantidad
         from tbMaterial
         ORDER by Referencia;
         `;
-    const res_next_id = await mesQuery(q_next_id);
-    const res_maquinas = await mesQuery(q_maquinas);
-    const res_empleados = await mesQuery(q_empleados);
-    const res_materiales = await mesQuery(q_materiales);
-    reply.send({
-      Maquinas: res_maquinas.query,
-      NextID: res_next_id.query[0],
-      Empleados: res_empleados.query,
-      Materiales: res_materiales.query,
-    });
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error querying en tareas mantenimiento');
-  }
+		const res_next_id = await mesQuery(q_next_id);
+		const res_maquinas = await mesQuery(q_maquinas);
+		const res_empleados = await mesQuery(q_empleados);
+		const res_materiales = await mesQuery(q_materiales);
+		reply.send({
+			Maquinas: res_maquinas.query,
+			NextID: res_next_id.query[0],
+			Empleados: res_empleados.query,
+			Materiales: res_materiales.query,
+		});
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error querying en tareas mantenimiento');
+	}
 });
 
 app.post('/Mantenimiento/Tareas', (request, reply) => {
-  console.log(request.body);
-  async function f() {
-    const q_maquinas = `
+	console.log(request.body);
+	async function f() {
+		const q_maquinas = `
             USE MES;
 
                 SELECT 
@@ -855,22 +857,22 @@ app.post('/Mantenimiento/Tareas', (request, reply) => {
                 
         `;
 
-    try {
-      const res_maquinas = await mesQuery(q_maquinas);
+		try {
+			const res_maquinas = await mesQuery(q_maquinas);
 
-      reply.send({FilteredMaquina: res_maquinas.query});
-    } catch {
-      reply.send('Error obteniendo lista de maquinas con ese codigo');
-    }
-  }
-  f();
+			reply.send({ FilteredMaquina: res_maquinas.query });
+		} catch {
+			reply.send('Error obteniendo lista de maquinas con ese codigo');
+		}
+	}
+	f();
 });
 
 app.post('/Mantenimiento/CreateTarea', (request, reply) => {
-  async function f() {
-    try {
-      const DatosTarea = request.body.DatosTarea;
-      const q_insercion_tarea = `
+	async function f() {
+		try {
+			const DatosTarea = request.body.DatosTarea;
+			const q_insercion_tarea = `
             USE MES;
             INSERT INTO tbTareas
                 (Codigo, CriticidadID, Descripcion,
@@ -881,77 +883,77 @@ app.post('/Mantenimiento/CreateTarea', (request, reply) => {
                 ${DatosTarea.CategoriaID},${DatosTarea.EstadoTareaID},'${DatosTarea.FechaHora}',
                 ${DatosTarea.EquipoID},'${DatosTarea.Observaciones}',${DatosTarea.TiempoEstimado})
             `;
-      await mesQuery(q_insercion_tarea);
-      console.log('Tarea Insertada');
-    } catch {
-      console.log('Error en la creacion de la tarea');
-    }
-  }
-  f();
+			await mesQuery(q_insercion_tarea);
+			console.log('Tarea Insertada');
+		} catch {
+			console.log('Error en la creacion de la tarea');
+		}
+	}
+	f();
 });
 
 app.post('/Mantenimiento/ModificaAccion', (request, reply) => {
-  async function f() {
-    try {
-      const q_insercion_accion = `
+	async function f() {
+		try {
+			const q_insercion_accion = `
             USE MES;
             INSERT INTO tbAcciones
                 (TareasID,Accion,Notas,FechaHora)
             VALUES
                 (${NextIDTarea.query[0].ID}, '${DatosAccion.Accion}','${DatosAccion.Notas}','${DatosTarea.FechaHora}');
             `;
-      await mesQuery(q_insercion_accion);
+			await mesQuery(q_insercion_accion);
 
-      // Como el numero de empleados implicados es variable, tenemos que
-      // preparar la query
+			// Como el numero de empleados implicados es variable, tenemos que
+			// preparar la query
 
-      let q_insercion_AccEmpl = `
+			let q_insercion_AccEmpl = `
             USE MES;
             INSERT INTO tbAccEmpleados
                 (AccionID, EmpleadoID,AccionTiempo,FechaCreacion)
             VALUES
             `;
 
-      const q_NextID_Accion = `
+			const q_NextID_Accion = `
             use mes;
                 select top 1 ID as NEXTID from tbAcciones order by ID desc;
             `;
-      const AccNEXTID = await mesQuery(q_NextID_Accion);
+			const AccNEXTID = await mesQuery(q_NextID_Accion);
 
-      EmpleadosAccion.map((i) => {
-        q_insercion_AccEmpl += `(${AccNEXTID.query[0].NEXTID},${i.ID},'${i.tiempo}','${DatosTarea.FechaHora}'),`;
-      });
-      let corrected_query =
-        q_insercion_AccEmpl.substring(0, q_insercion_AccEmpl.length - 1) + ';';
-      q_insercion_AccEmpl = corrected_query;
+			EmpleadosAccion.map((i) => {
+				q_insercion_AccEmpl += `(${AccNEXTID.query[0].NEXTID},${i.ID},'${i.tiempo}','${DatosTarea.FechaHora}'),`;
+			});
+			let corrected_query =
+				q_insercion_AccEmpl.substring(0, q_insercion_AccEmpl.length - 1) + ';';
+			q_insercion_AccEmpl = corrected_query;
 
-      await mesQuery(q_insercion_AccEmpl);
+			await mesQuery(q_insercion_AccEmpl);
 
-      // Vinculamos accion con materiales
-      let q_AccMateriales = `
+			// Vinculamos accion con materiales
+			let q_AccMateriales = `
             USE MES;
             INSERT INTO tbAccMaterial
                 (AccionID, MaterialID,CantidadMaterial,EstadoConsumoID)
             VALUES 
             `;
-      MaterialesUsados.map((i) => {
-        q_AccMateriales += `(${AccNEXTID.query[0].NEXTID}, ${i.ID},${i.Cantidad},1),`;
-      });
+			MaterialesUsados.map((i) => {
+				q_AccMateriales += `(${AccNEXTID.query[0].NEXTID}, ${i.ID},${i.Cantidad},1),`;
+			});
 
-      corrected_query =
-        q_AccMateriales.substring(0, q_AccMateriales.length - 1) + ';';
-      q_AccMateriales = corrected_query;
-      await mesQuery(q_AccMateriales);
-    } catch {
-      console.log('Error Modificando Acciones');
-    }
-  }
-  f();
+			corrected_query =
+				q_AccMateriales.substring(0, q_AccMateriales.length - 1) + ';';
+			q_AccMateriales = corrected_query;
+			await mesQuery(q_AccMateriales);
+		} catch {
+			console.log('Error Modificando Acciones');
+		}
+	}
+	f();
 });
 
 app.get('/Mantenimiento/ListaTareas', (request, reply) => {
-  async function f() {
-    const q_lista_tareas = `  
+	async function f() {
+		const q_lista_tareas = `  
       USE MES;
       SELECT
           tbTareas.ID, tbTareas.Codigo,
@@ -966,25 +968,25 @@ app.get('/Mantenimiento/ListaTareas', (request, reply) => {
           tbMaquina.COD2 = vwEquipos.COD2
       order by ID desc;
       `;
-    const res_lista_tareas = await mesQuery(q_lista_tareas);
+		const res_lista_tareas = await mesQuery(q_lista_tareas);
 
-    // Obtencion de los codigo 2 para filtrar el datagrid
-    const q_lista_COD2 = 'use MES; SELECT nombre,cod FROM tbCOD2;';
-    const res_lista_COD2 = await mesQuery(q_lista_COD2);
+		// Obtencion de los codigo 2 para filtrar el datagrid
+		const q_lista_COD2 = 'use MES; SELECT nombre,cod FROM tbCOD2;';
+		const res_lista_COD2 = await mesQuery(q_lista_COD2);
 
-    reply.send({
-      ListaTareas: res_lista_tareas.query,
-      ListaCOD2: res_lista_COD2.query,
-    });
-  }
-  f();
+		reply.send({
+			ListaTareas: res_lista_tareas.query,
+			ListaCOD2: res_lista_COD2.query,
+		});
+	}
+	f();
 });
 
 app.post('/Mantenimiento/Tarea', (request, reply) => {
-  async function f() {
-    try {
-      console.table(request.body);
-      const q_get_tarea = `
+	async function f() {
+		try {
+			console.table(request.body);
+			const q_get_tarea = `
         use MES;
         SELECT top 1 
             ID, Codigo,
@@ -997,7 +999,7 @@ app.post('/Mantenimiento/Tarea', (request, reply) => {
         FROM tbTareas
         WHERE
             ID = '${request.body.ID}';`;
-      const q_accion_vinculada = `
+			const q_accion_vinculada = `
             use MES;
             SELECT 
                 ID,TareasID,Accion,
@@ -1008,10 +1010,10 @@ app.post('/Mantenimiento/Tarea', (request, reply) => {
                 TareasID = '${request.body.ID}'
             ;
         `;
-      const res_get_tarea = await mesQuery(q_get_tarea);
-      const res_get_accion = await mesQuery(q_accion_vinculada);
-      if (res_get_accion.query.length !== 0) {
-        const q_empleados_accion = `
+			const res_get_tarea = await mesQuery(q_get_tarea);
+			const res_get_accion = await mesQuery(q_accion_vinculada);
+			if (res_get_accion.query.length !== 0) {
+				const q_empleados_accion = `
             use MES;
             SELECT 
                 *
@@ -1021,8 +1023,8 @@ app.post('/Mantenimiento/Tarea', (request, reply) => {
                 AccionID = '${res_get_accion.query[0].ID}'
             ;
             `;
-        const res_get_empleados_accion = await mesQuery(q_empleados_accion);
-        const q_materiales_accion = `
+				const res_get_empleados_accion = await mesQuery(q_empleados_accion);
+				const q_materiales_accion = `
                 use MES;
                 SELECT 
                     *
@@ -1032,50 +1034,50 @@ app.post('/Mantenimiento/Tarea', (request, reply) => {
                     AccionID = '${res_get_accion.query[0].ID}'
                 ;
             `;
-        const res_get_materiales_accion = await mesQuery(q_materiales_accion);
-        reply.send({
-          Tarea: res_get_tarea.query[0],
-          Accion: res_get_accion.query,
-          Empleados: res_get_empleados_accion.query,
-          MaterialesAccion: res_get_materiales_accion.query,
-        });
-      } else {
-        reply.send({
-          Tarea: res_get_tarea.query[0],
-          Accion: [],
-          MaterialesAccion: [],
-          EmpleadosAccion: [],
-        });
-      }
-    } catch {
-      console.log('Error obteniendo datos de la tarea');
-    }
-  }
-  f();
+				const res_get_materiales_accion = await mesQuery(q_materiales_accion);
+				reply.send({
+					Tarea: res_get_tarea.query[0],
+					Accion: res_get_accion.query,
+					Empleados: res_get_empleados_accion.query,
+					MaterialesAccion: res_get_materiales_accion.query,
+				});
+			} else {
+				reply.send({
+					Tarea: res_get_tarea.query[0],
+					Accion: [],
+					MaterialesAccion: [],
+					EmpleadosAccion: [],
+				});
+			}
+		} catch {
+			console.log('Error obteniendo datos de la tarea');
+		}
+	}
+	f();
 });
 
 // Se encarga de crear una nueva accion vacia
 app.post('/Mantenimiento/NewAccion', (request, reply) => {
-  async function f() {
-    try {
-      const q_insercion_accion_vacia = `
+	async function f() {
+		try {
+			const q_insercion_accion_vacia = `
             USE MES;
             INSERT INTO tbAcciones
                 (TareasID,Accion,Notas,FechaHora)
             VALUES
                 ('${request.body.TAREAID}','Sin descripción asociada','Sin Notas Asociadas','${request.body.FechaHora}');
             `;
-      await mesQuery(q_insercion_accion_vacia);
-    } catch {
-      console.log('Error de insercion');
-    }
-  }
-  f();
+			await mesQuery(q_insercion_accion_vacia);
+		} catch {
+			console.log('Error de insercion');
+		}
+	}
+	f();
 });
 
 app.post('/Mantenimiento/DelAccion', (request, reply) => {
-  async function f() {
-    const q_delete_accion = `
+	async function f() {
+		const q_delete_accion = `
             USE MES;
             DELETE FROM tbAccMaterial
             WHERE
@@ -1089,32 +1091,32 @@ app.post('/Mantenimiento/DelAccion', (request, reply) => {
             WHERE
                 ID = ${request.body.AccionID};
         `;
-    await mesQuery(q_delete_accion);
-  }
-  f();
+		await mesQuery(q_delete_accion);
+	}
+	f();
 });
 
 app.post('/Mantenimiento/UpdateAccion', (request, reply) => {
-  async function f() {
-    const {Accion} = request.body;
-    console.table(Accion);
-    const q_update_accion = `
+	async function f() {
+		const { Accion } = request.body;
+		console.table(Accion);
+		const q_update_accion = `
         USE MES;
         UPDATE tbAcciones
         SET Accion = '${Accion.Accion}', Notas = '${Accion.Notas}', FechaHora = '${Accion.FechaHora}'
         WHERE
             ID = ${Accion.ID};
         `;
-    await mesQuery(q_update_accion);
-  }
-  f();
+		await mesQuery(q_update_accion);
+	}
+	f();
 });
 
 app.get('/Mantenimiento/Tareas/DatosAccion/:AccionID', (request, reply) => {
-  async function f() {
-    const AccionID = request.params.AccionID;
-    try {
-      const q_empleados_accion = `
+	async function f() {
+		const AccionID = request.params.AccionID;
+		try {
+			const q_empleados_accion = `
             use MES;
             SELECT 
                 *
@@ -1124,8 +1126,8 @@ app.get('/Mantenimiento/Tareas/DatosAccion/:AccionID', (request, reply) => {
                 AccionID = '${AccionID}'
             ;
             `;
-      const res_get_empleados_accion = await mesQuery(q_empleados_accion);
-      const q_materiales_accion = `
+			const res_get_empleados_accion = await mesQuery(q_empleados_accion);
+			const q_materiales_accion = `
                 use MES;
                 SELECT 
                     *
@@ -1135,25 +1137,25 @@ app.get('/Mantenimiento/Tareas/DatosAccion/:AccionID', (request, reply) => {
                     AccionID = '${AccionID}'
                 ;
             `;
-      const res_get_materiales_accion = await mesQuery(q_materiales_accion);
-      console.table(res_get_materiales_accion);
-      reply.send({
-        Empleados: res_get_empleados_accion.query,
-        MaterialesAccion: res_get_materiales_accion.query,
-      });
-    } catch {
-      console.log('Fallo');
-    }
-  }
-  f();
+			const res_get_materiales_accion = await mesQuery(q_materiales_accion);
+			console.table(res_get_materiales_accion);
+			reply.send({
+				Empleados: res_get_empleados_accion.query,
+				MaterialesAccion: res_get_materiales_accion.query,
+			});
+		} catch {
+			console.log('Fallo');
+		}
+	}
+	f();
 });
 
 app.post('/Mantenimiento/Tareas/UpdateEmpleadoAccion', (request, reply) => {
-  async function f() {
-    try {
-      // console.table(request.body);
-      const {Empleado, AccionID} = request.body;
-      const q_update_emp = `
+	async function f() {
+		try {
+			// console.table(request.body);
+			const { Empleado, AccionID } = request.body;
+			const q_update_emp = `
         use MES;
         DELETE FROM tbAccEmpleados
         WHERE
@@ -1165,18 +1167,18 @@ app.post('/Mantenimiento/Tareas/UpdateEmpleadoAccion', (request, reply) => {
           VALUES(${AccionID},${Empleado.ID},'${Empleado.tiempo}');
       `;
 
-      await mesQuery(q_update_emp);
-    } catch {
-      console.error('Error actualizando al empleado dado');
-    }
-  }
-  f();
+			await mesQuery(q_update_emp);
+		} catch {
+			console.error('Error actualizando al empleado dado');
+		}
+	}
+	f();
 });
 
 app.post('/Mantenimiento/Tareas/DelTarea', (request, reply) => {
-  async function f() {
-    try {
-      const q_borrar_Tarea = `
+	async function f() {
+		try {
+			const q_borrar_Tarea = `
         USE MES;
         USE MES;
         DELETE FROM tbAccMaterial
@@ -1201,29 +1203,29 @@ app.post('/Mantenimiento/Tareas/DelTarea', (request, reply) => {
         WHERE 
           ID = ${request.body.TareaID};
         `;
-      await mesQuery(q_borrar_Tarea);
-    } catch {
-      console.error('Fallo en la eliminacion de la tarea');
-    }
-  }
-  f();
+			await mesQuery(q_borrar_Tarea);
+		} catch {
+			console.error('Fallo en la eliminacion de la tarea');
+		}
+	}
+	f();
 });
 
 app.post('/Mantenimiento/Tareas/UpdateTarea', (request, reply) => {
-  async function f() {
-    try {
-      console.log(request.body);
-      const {
-        Tarea,
-        Descripcion,
-        CategoriaID,
-        CriticidadID,
-        EstadoTareaID,
-        NewCodigo,
-        NewFecha,
-      } = request.body;
+	async function f() {
+		try {
+			console.log(request.body);
+			const {
+				Tarea,
+				Descripcion,
+				CategoriaID,
+				CriticidadID,
+				EstadoTareaID,
+				NewCodigo,
+				NewFecha,
+			} = request.body;
 
-      const q_update_tarea = `
+			const q_update_tarea = `
       use MES;
       UPDATE tbTareas
       SET
@@ -1236,23 +1238,23 @@ app.post('/Mantenimiento/Tareas/UpdateTarea', (request, reply) => {
       WHERE
           ID = ${Tarea.ID}
     `;
-      await mesQuery(q_update_tarea);
-    } catch {
-      console.log('Error en la actualización de la tarea');
-    }
-  }
-  f();
+			await mesQuery(q_update_tarea);
+		} catch {
+			console.log('Error en la actualización de la tarea');
+		}
+	}
+	f();
 });
 
 app.post('/Mantenimiento/Tareas/UpdateMaterialAccion', (request, reply) => {
-  console.log(request.body);
-  async function f() {
-    const {Material, AccionID} = request.body;
-    console.log(Material);
-    let q_update_mat = '';
+	console.log(request.body);
+	async function f() {
+		const { Material, AccionID } = request.body;
+		console.log(Material);
+		let q_update_mat = '';
 
-    if (Material !== 'VACIO') {
-      q_update_mat = `
+		if (Material !== 'VACIO') {
+			q_update_mat = `
       use MES;
       DELETE FROM tbAccMaterial
       WHERE
@@ -1262,22 +1264,22 @@ app.post('/Mantenimiento/Tareas/UpdateMaterialAccion', (request, reply) => {
       INSERT INTO tbAccMaterial (AccionID, MaterialID,CantidadMaterial,EstadoConsumoID)
       VALUES(${AccionID},${Material.ID},${Material.Cantidad},1);
       `;
-    } else {
-      q_update_mat = `USE MES;DELETE FROM tbAccMaterial WHERE AccionID = ${AccionID};`;
-    }
-    await mesQuery(q_update_mat);
-  }
+		} else {
+			q_update_mat = `USE MES;DELETE FROM tbAccMaterial WHERE AccionID = ${AccionID};`;
+		}
+		await mesQuery(q_update_mat);
+	}
 
-  try {
-    f();
-  } catch {
-    console.log('Error en la inserción/actualización de la tarea');
-  }
+	try {
+		f();
+	} catch {
+		console.log('Error en la inserción/actualización de la tarea');
+	}
 });
 
 app.get('/Mantenimiento/RepuestosMaquina', (request, reply) => {
-  async function f() {
-    const q_lista_COD1 = `
+	async function f() {
+		const q_lista_COD1 = `
     USE MES;
     SELECT 
       Cod,
@@ -1286,7 +1288,7 @@ app.get('/Mantenimiento/RepuestosMaquina', (request, reply) => {
       tbCOD1;
     `;
 
-    const q_lista_COD2 = `
+		const q_lista_COD2 = `
     USE MES;
     SELECT 
       Cod,ISNULL(Descripcion,'Sin descripción') as Descripcion
@@ -1294,7 +1296,7 @@ app.get('/Mantenimiento/RepuestosMaquina', (request, reply) => {
     tbCOD2;
     `;
 
-    const q_get_maquinas = `
+		const q_get_maquinas = `
       USE MES;
       SELECT 
           tbMaquina.ID,tbMaquina.Codigo,
@@ -1311,7 +1313,7 @@ app.get('/Mantenimiento/RepuestosMaquina', (request, reply) => {
           tbCOD2.id = tbMaquina.COD2
       order by Codigo;`;
 
-    const sQueryListaRepuesto = `
+		const sQueryListaRepuesto = `
       USE MES;
       SELECT 
         tbMaterial.ID as ID, Descripcion
@@ -1319,43 +1321,43 @@ app.get('/Mantenimiento/RepuestosMaquina', (request, reply) => {
         tbMaterial;
     `;
 
-    const res_maquinas = await mesQuery(q_get_maquinas);
-    const res_cod1 = await mesQuery(q_lista_COD1);
-    const res_cod2 = await mesQuery(q_lista_COD2);
-    const qListaRepuesto = await mesQuery(sQueryListaRepuesto);
-    const aLCOD1 = [];
-    const aLCOD2 = [];
-    const aLRepuestos = [];
-    res_cod1.query.map((i) => {
-      aLCOD1.push(`${i.Cod} | ${i.Descripcion}`);
-    });
-    res_cod2.query.map((i) => {
-      aLCOD2.push(`${i.Cod} | ${i.Descripcion}`);
-    });
-    qListaRepuesto.query.map((i) => {
-      aLRepuestos.push(`${i.ID} | ${i.Descripcion}`);
-    });
+		const res_maquinas = await mesQuery(q_get_maquinas);
+		const res_cod1 = await mesQuery(q_lista_COD1);
+		const res_cod2 = await mesQuery(q_lista_COD2);
+		const qListaRepuesto = await mesQuery(sQueryListaRepuesto);
+		const aLCOD1 = [];
+		const aLCOD2 = [];
+		const aLRepuestos = [];
+		res_cod1.query.map((i) => {
+			aLCOD1.push(`${i.Cod} | ${i.Descripcion}`);
+		});
+		res_cod2.query.map((i) => {
+			aLCOD2.push(`${i.Cod} | ${i.Descripcion}`);
+		});
+		qListaRepuesto.query.map((i) => {
+			aLRepuestos.push(`${i.ID} | ${i.Descripcion}`);
+		});
 
-    reply.send({
-      Maquinas: res_maquinas.query,
-      ListaCOD1: aLCOD1,
-      ListaCOD2: aLCOD2,
-      ListaRepuestos: aLRepuestos,
-    });
-  }
-  try {
-    f();
-  } catch {
-    console.log('Fallo en la obtencion de los datos de la maquina');
-  }
+		reply.send({
+			Maquinas: res_maquinas.query,
+			ListaCOD1: aLCOD1,
+			ListaCOD2: aLCOD2,
+			ListaRepuestos: aLRepuestos,
+		});
+	}
+	try {
+		f();
+	} catch {
+		console.log('Fallo en la obtencion de los datos de la maquina');
+	}
 });
 
 app.post('/Mantenimiento/RepuestosMaquina', (request, reply) => {
-  async function f() {
-    const {sCodigoMaquina} = request.body;
+	async function f() {
+		const { sCodigoMaquina } = request.body;
 
-    // Fetch de Datos del repuesto (primero los datos)
-    const sQDatosMaterial = `
+		// Fetch de Datos del repuesto (primero los datos)
+		const sQDatosMaterial = `
     use MES;
     select 
         MaterialID as Referencia, 
@@ -1381,88 +1383,88 @@ app.post('/Mantenimiento/RepuestosMaquina', (request, reply) => {
         vwInventarioStock.MatID = tbMaterial.ID;
     `;
 
-    const QDatosMaterial = await mesQuery(sQDatosMaterial);
+		const QDatosMaterial = await mesQuery(sQDatosMaterial);
 
-    reply.send({
-      Materiales: QDatosMaterial.query,
-    });
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error obteniendo los repuestos de la máquina');
-  }
+		reply.send({
+			Materiales: QDatosMaterial.query,
+		});
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error obteniendo los repuestos de la máquina');
+	}
 });
 
 app.post('/Mantenimiento/RepuestosMaquina/UpdateStock', (request, reply) => {
-  async function f() {
-    const {iMatID, iSubstract} = request.body;
-    const sQuery = `
+	async function f() {
+		const { iMatID, iSubstract } = request.body;
+		const sQuery = `
       use MES;
       Insert Into tbMaterialAjustes (MatID,Ajuste)
       VALUES (${iMatID},-${iSubstract});
     `;
-    await mesQuery(sQuery);
-  }
+		await mesQuery(sQuery);
+	}
 
-  try {
-    f();
-  } catch {
-    console.log('Error en la actualizacion del stock');
-  }
+	try {
+		f();
+	} catch {
+		console.log('Error en la actualizacion del stock');
+	}
 });
 
 app.get('/Mantenimiento/RepuestosMaquina/Stock/:iID', (request, reply) => {
-  async function f() {
-    const {iID} = request.params;
-    const sQueryStringUpdate = `
+	async function f() {
+		const { iID } = request.params;
+		const sQueryStringUpdate = `
       use MES;
       select MatStock from vwInventarioStock
       where MatID = ${iID};
     `;
-    const qFetchStock = await mesQuery(sQueryStringUpdate);
-    reply.send({Stock: qFetchStock.query[0].MatStock});
-  }
-  try {
-    f();
-  } catch {
-    console.log('Error en la obtencion de datos del repuesto');
-  }
+		const qFetchStock = await mesQuery(sQueryStringUpdate);
+		reply.send({ Stock: qFetchStock.query[0].MatStock });
+	}
+	try {
+		f();
+	} catch {
+		console.log('Error en la obtencion de datos del repuesto');
+	}
 });
 
 app.get('/ServerState', (request, reply) => {
-  async function f() {
-    const sQueryStringServerState = `
+	async function f() {
+		const sQueryStringServerState = `
       use WEB_API_TABLES;
       Select top 1 * from tbCargos;
     `;
-    await mesQuery(sQueryStringServerState);
-    try {
-      console.log('Comprobación de conexion realizada');
-      reply.send({Status: true});
-    } catch {
-      reply.send({Status: false});
-    }
-  }
-  try {
-    f();
-  } catch {
-    reply.send({Status: false});
-  }
+		await mesQuery(sQueryStringServerState);
+		try {
+			console.log('Comprobación de conexion realizada');
+			reply.send({ Status: true });
+		} catch {
+			reply.send({ Status: false });
+		}
+	}
+	try {
+		f();
+	} catch {
+		reply.send({ Status: false });
+	}
 });
 
 app.post(
-    '/Mantenimiento/RepuestosMaquina/UpdatePhoto',
-    ImgUpload.single('file'),
-    function(req, res) {
-      console.log('Imagen de repuesto subida');
-    },
+	'/Mantenimiento/RepuestosMaquina/UpdatePhoto',
+	ImgUpload.single('file'),
+	function (req, res) {
+		console.log('Imagen de repuesto subida');
+	}
 );
 
 app.post('/Mantenimiento/RepuestosMaquina/Repuesto', (request, reply) => {
-  async function f() {
-    console.table(request.body.iMatID);
-    const sQRepuesto = `
+	async function f() {
+		console.table(request.body.iMatID);
+		const sQRepuesto = `
     use MES;
     select top 1
         tbMaterial.ID as Referencia,
@@ -1485,22 +1487,22 @@ app.post('/Mantenimiento/RepuestosMaquina/Repuesto', (request, reply) => {
     ;
     `;
 
-    try {
-      const QDatosMaterial = await mesQuery(sQRepuesto);
-      // console.log(QDatosMaterial.query);
-      reply.send({
-        Materiales: QDatosMaterial.query,
-      });
-    } catch {
-      console.log('Error en /Mantenimiento/RepuestosMaquina/Repuesto');
-    }
-  }
-  f();
+		try {
+			const QDatosMaterial = await mesQuery(sQRepuesto);
+			// console.log(QDatosMaterial.query);
+			reply.send({
+				Materiales: QDatosMaterial.query,
+			});
+		} catch {
+			console.log('Error en /Mantenimiento/RepuestosMaquina/Repuesto');
+		}
+	}
+	f();
 });
 
 app.get('/Mantenimiento/AsignarTareas', (request, reply) => {
-  async function f() {
-    const sQGetTareasPendientes = `
+	async function f() {
+		const sQGetTareasPendientes = `
       use MES;
       SELECT
           tbTareas.Codigo as Codigo,
@@ -1523,35 +1525,35 @@ app.get('/Mantenimiento/AsignarTareas', (request, reply) => {
       WHERE (((tbTareas.EstadoTareaID)=1))
       ORDER BY  tbTareas.ID desc,tbTareas.FechaProgramada, tbTareas.EmpleadoNom DESC , tbTareas.Orden;
     `;
-    const sQGetEmpleados = `
+		const sQGetEmpleados = `
       use WEB_API_TABLES;
       select ID,Alias, Nombre, Apellidos
       from dbo.tbEmpleados
       WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;
     `;
 
-    try {
-      const qTareasPendientes = await mesQuery(sQGetTareasPendientes);
-      const qEmpleados = await mesQuery(sQGetEmpleados);
-      reply.send({
-        Tareas: qTareasPendientes.query,
-        Empleados: qEmpleados.query,
-      });
-    } catch {
-      console.log('Error en la obtencion de las tareas (get AsignarTareas)');
-    }
-  }
-  f();
+		try {
+			const qTareasPendientes = await mesQuery(sQGetTareasPendientes);
+			const qEmpleados = await mesQuery(sQGetEmpleados);
+			reply.send({
+				Tareas: qTareasPendientes.query,
+				Empleados: qEmpleados.query,
+			});
+		} catch {
+			console.log('Error en la obtencion de las tareas (get AsignarTareas)');
+		}
+	}
+	f();
 });
 
 app.post('/Mantenimiento/AsignarTareas', (request, reply) => {
-  async function f() {
-    console.table(request.body);
-    const {TareaID, EmpleadoApoyo, FechaProgramada, EmpleadoAsignado} =
-      request.body;
-    let sQUpdateTarea;
-    if (EmpleadoApoyo === -1) {
-      sQUpdateTarea = `
+	async function f() {
+		console.table(request.body);
+		const { TareaID, EmpleadoApoyo, FechaProgramada, EmpleadoAsignado } =
+			request.body;
+		let sQUpdateTarea;
+		if (EmpleadoApoyo === -1) {
+			sQUpdateTarea = `
         USE MES;
         Update tbTareas SET
             EmpleadoNom = '${EmpleadoAsignado}',
@@ -1559,9 +1561,9 @@ app.post('/Mantenimiento/AsignarTareas', (request, reply) => {
         WHERE
             tbTareas.ID = ${TareaID}
       `;
-    } else {
-      // Existe un empleado de apoyo
-      sQUpdateTarea = `
+		} else {
+			// Existe un empleado de apoyo
+			sQUpdateTarea = `
         USE MES;
         Update tbTareas SET
             EmpleadoNom = '${EmpleadoAsignado}',
@@ -1570,20 +1572,20 @@ app.post('/Mantenimiento/AsignarTareas', (request, reply) => {
         WHERE
             tbTareas.ID = ${TareaID}
       `;
-    }
-    try {
-      await mesQuery(sQUpdateTarea);
-    } catch {
-      console.log('Error en update de Mantenimiento/AsignacionTarea');
-    }
-  }
-  f();
+		}
+		try {
+			await mesQuery(sQUpdateTarea);
+		} catch {
+			console.log('Error en update de Mantenimiento/AsignacionTarea');
+		}
+	}
+	f();
 });
 
 app.post('/Planta/TareasAsignadas', (request, reply) => {
-  async function f() {
-    const {Codigo} = request.body;
-    const sQTareas = `
+	async function f() {
+		const { Codigo } = request.body;
+		const sQTareas = `
     use MES;
     select
         tbTareas.ID,
@@ -1606,20 +1608,20 @@ app.post('/Planta/TareasAsignadas', (request, reply) => {
     order by tbTareas.id DESC;
     `;
 
-    try {
-      const qTareas = await mesQuery(sQTareas);
-      reply.send({Tareas: qTareas.query});
-    } catch {
-      console.log('Error obteniendo las Tareas asignadas');
-    }
-  }
-  f();
+		try {
+			const qTareas = await mesQuery(sQTareas);
+			reply.send({ Tareas: qTareas.query });
+		} catch {
+			console.log('Error obteniendo las Tareas asignadas');
+		}
+	}
+	f();
 });
 
 app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
-  async function f() {
-    const {TareaID} = request.body;
-    const sQuery = `
+	async function f() {
+		const { TareaID } = request.body;
+		const sQuery = `
     use MES;
     select
       tbTareas.ID,
@@ -1639,7 +1641,7 @@ app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
     	        tbTareas.EstadoTareaID = tbTareasEstados.ID
     	order by tbTareas.id desc;
     `;
-    const sAccionQuery = `
+		const sAccionQuery = `
     USE MES;
     Select
       tbAcciones.ID,
@@ -1653,24 +1655,23 @@ app.post('/Planta/TareasAsignadas/DetallesTarea', (request, reply) => {
     order by tbAcciones.ID DESC;
     `;
 
-    try {
-      const qGetTarea = await mesQuery(sQuery);
-      const qGetAccion = await mesQuery(sAccionQuery);
+		try {
+			const qGetTarea = await mesQuery(sQuery);
+			const qGetAccion = await mesQuery(sAccionQuery);
 
-      reply.send({Tarea: qGetTarea.query[0], Accion: qGetAccion.query});
-    } catch {
-      console.log('Error obteniendo detalles de la tarea');
-    }
-  }
-  f();
+			reply.send({ Tarea: qGetTarea.query[0], Accion: qGetAccion.query });
+		} catch {
+			console.log('Error obteniendo detalles de la tarea');
+		}
+	}
+	f();
 });
 
-app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
-  async function f() {
-    const {AccionID} = request.body;
+app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) => {
+	async function f() {
+		const { AccionID } = request.body;
 
-
-    const sQueryMaterialAccion = `
+		const sQueryMaterialAccion = `
     use MES;
     SELECT 
         tbMaterial.Descripcion,
@@ -1682,31 +1683,34 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/Accion', (request, reply) =>{
         tbAccMaterial.AccionID = ${AccionID} 
     `;
 
-    try {
-      const qGetMateriales = await mesQuery(sQGetMateriales);
-      const qGetTrabajadores = await mesQuery(sQGetTrabajadores);
-      const qGetEmpleadosAccion = await mesQuery(sQueryEmpleadosAccion);
-      const qGetMaterialAccion = await mesQuery(sQueryMaterialAccion);
-      reply.send({
-        Empleados: qGetEmpleadosAccion.query,
-        Materiales: qGetMaterialAccion.query,
-        aMateriales: qGetMateriales.query,
-        aTrabajadores: qGetTrabajadores.query,
-      });
-    } catch (e) {
-      console.log(e);
-      console.log('error en post /Planta/TareasAsignadas/DetallesTarea/Accion');
-    }
-  }
-  f();
+		try {
+			const qGetMateriales = await mesQuery(sQGetMateriales);
+			const qGetTrabajadores = await mesQuery(sQGetTrabajadores);
+			const qGetEmpleadosAccion = await mesQuery(sQueryEmpleadosAccion);
+			const qGetMaterialAccion = await mesQuery(sQueryMaterialAccion);
+			reply.send({
+				Empleados: qGetEmpleadosAccion.query,
+				Materiales: qGetMaterialAccion.query,
+				aMateriales: qGetMateriales.query,
+				aTrabajadores: qGetTrabajadores.query,
+			});
+		} catch (e) {
+			console.log(e);
+			console.log('error en post /Planta/TareasAsignadas/DetallesTarea/Accion');
+		}
+	}
+	f();
 });
 
-app.post('/Planta/TareasAsignadas/DetallesTarea/Accion/Empleados', (request, reply) =>{
-  async function f() {
-    const {AccionID} = request.body;
-    const sQueryEmpleadosAccion = `
+app.post(
+	'/Planta/TareasAsignadas/DetallesTarea/Accion/Empleados',
+	(request, reply) => {
+		async function f() {
+			const { AccionID } = request.body;
+			const sQueryEmpleadosAccion = `
     use MES;
     select
+        tbEmpleado.ID as ID,
         tbEmpleado.Codigo as Codigo,
         tbEmpleado.Apellidos as Apellidos,
         tbEmpleado.Nombre as Nombre,
@@ -1716,7 +1720,7 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/Accion/Empleados', (request, rep
         and
         tbAccEmpleados.AccionID = ${AccionID} 
     `;
-    const sQGetTrabajadores = `
+			const sQGetTrabajadores = `
       use WEB_API_TABLES;
       Select 
         ID, Codigo, Nombre, Apellidos, '00:00' as AccionTiempo
@@ -1727,45 +1731,53 @@ app.post('/Planta/TareasAsignadas/DetallesTarea/Accion/Empleados', (request, rep
         ContratoEstadoID = 1
       ;`;
 
-    try {
-      const qGetImplicadosAccion = await mesQuery(sQueryEmpleadosAccion);
-      const qGetTrabajadores = await mesQuery(sQGetTrabajadores);
-      reply.send({
-        Empleados: qGetImplicadosAccion.query,
-        aTrabajadores: qGetTrabajadores.query,
-      });
-    } catch (e) {
-      console.log(e);
-      console.log('error en post /Planta/TareasAsignadas/DetallesTarea/Accion');
-    }
-  }
-  f();
-});
+			try {
+				const qGetImplicadosAccion = await mesQuery(sQueryEmpleadosAccion);
+				const qGetTrabajadores = await mesQuery(sQGetTrabajadores);
+				reply.send({
+					Empleados: qGetImplicadosAccion.query,
+					aTrabajadores: qGetTrabajadores.query,
+				});
+			} catch (e) {
+				console.log(e);
+				console.log(
+					'error en post /Planta/TareasAsignadas/DetallesTarea/Accion'
+				);
+			}
+		}
+		f();
+	}
+);
 
-app.post('/Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea', (request, reply) => {
-  async function f() {
-    const {iTareaID} = request.body;
-    const sQUpdateTarea = `
+app.post(
+	'/Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea',
+	(request, reply) => {
+		async function f() {
+			const { iTareaID } = request.body;
+			const sQUpdateTarea = `
       use MES;
       UPDATE tbTareas SET
         EstadoTareaID = 2
       WHERE
         tbTareas.ID = ${iTareaID};
     `;
-    try {
-      await mesQuery(sQUpdateTarea);
-    } catch (e) {
-      console.log('Error en /Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea');
-      console.log(e);
-    }
-  }
-  f();
-});
+			try {
+				await mesQuery(sQUpdateTarea);
+			} catch (e) {
+				console.log(
+					'Error en /Planta/TareasAsignadas/DetallesTarea/UpdateEstadoTarea'
+				);
+				console.log(e);
+			}
+		}
+		f();
+	}
+);
 
-app.post('/Mantenimiento/TareasAsignadas', (request, reply) =>{
-  async function f() {
-    const {iTareaID} = request.body;
-    const sqUnassingnTask = `
+app.post('/Mantenimiento/TareasAsignadas', (request, reply) => {
+	async function f() {
+		const { iTareaID } = request.body;
+		const sqUnassingnTask = `
       use MES;
       Update tbTareas 
       SET 
@@ -1773,19 +1785,19 @@ app.post('/Mantenimiento/TareasAsignadas', (request, reply) =>{
       WHERE
         ID = ${iTareaID}
     `;
-    try {
-      await mesQuery(sqUnassingnTask);
-    } catch (e) {
-      console.log(e);
-      console.log('Error en /Mantenimiento/TareasAsignadas');
-    }
-  }
-  f();
+		try {
+			await mesQuery(sqUnassingnTask);
+		} catch (e) {
+			console.log(e);
+			console.log('Error en /Mantenimiento/TareasAsignadas');
+		}
+	}
+	f();
 });
 
 app.get('/Mantenimiento/TareasAsignadas', (request, reply) => {
-  async function f() {
-    const sQueryEmpleados = `
+	async function f() {
+		const sQueryEmpleados = `
       USE WEB_API_TABLES;
       select 
         Codigo,Nombre,Apellidos,Alias
@@ -1794,12 +1806,12 @@ app.get('/Mantenimiento/TareasAsignadas', (request, reply) => {
       WHERE 
         Pwd_Hashed is not NULL and ContratoEstadoID = 1;
     `;
-    try {
-      const qEmpleados = await mesQuery(sQueryEmpleados);
-      reply.send({Empleados: qEmpleados.query});
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  f();
+		try {
+			const qEmpleados = await mesQuery(sQueryEmpleados);
+			reply.send({ Empleados: qEmpleados.query });
+		} catch (e) {
+			console.log(e);
+		}
+	}
+	f();
 });

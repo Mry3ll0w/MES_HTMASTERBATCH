@@ -2,4 +2,6 @@
     "window.commandCenter": true,
     "window.title": "${dirty}${separator}${rootName}${separator}${activeEditorShort}",
     "workbench.editor.showTabs": true,
+    "prettier.singleQuote": true,
+    "prettier.useTabs": true,
 }
