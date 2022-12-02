@@ -32,11 +32,15 @@ export default function DetallesTareaEmpleados({ AccionID }) {
             {
               index: state.length,
               Codigo: "Ejemplo",
-              Nombre: "saas",
-              Apellidos: "adada",
-              AccionTiempo: "0:00",
+              Nombre: "vacio",
+              Apellidos: "vacio",
+              AccionTiempo: "00:00",
             },
           ];
+        }
+
+        case 'clearAll':{
+          return state.filter(i => i.index === -1);
         }
 
         case 'modSeleccionEmpleado':{
@@ -53,6 +57,10 @@ export default function DetallesTareaEmpleados({ AccionID }) {
             )
         }
 
+        case 'eraseIndex':{
+            return state.filter(i => i.index !== action.index);
+        }
+
         default: {
           return state;
         }
@@ -65,7 +73,6 @@ export default function DetallesTareaEmpleados({ AccionID }) {
 
   // useStates
 
-    const [aEmpleados, setaEmpleados] = useState([]);
     const [saOpsEmpleados, setasOpsEmpleados] = useState([])
   //functions
   function fetchAccionData() {
@@ -76,7 +83,7 @@ export default function DetallesTareaEmpleados({ AccionID }) {
       )
       .catch((e) => console.log(e))
       .then((response) => {
-        
+        dispatchReducerEmpleados({type: 'clearAll'})
         var _aEmpleados = [];
         var _OpsEmpleados = []
         _aEmpleados = response.data.Empleados;
@@ -101,7 +108,7 @@ export default function DetallesTareaEmpleados({ AccionID }) {
 
         try {
             setasOpsEmpleados(_OpsEmpleados);
-            setaEmpleados(response.data.aEmpleados);
+            
         } catch {
           console.log("Error obteniendo datos de la accion");
         }
@@ -109,7 +116,11 @@ export default function DetallesTareaEmpleados({ AccionID }) {
   }
 
   //Functions
-  function handleSubmit() {}
+  function handleSubmit() {
+    if(aReducerEmpleados.length === 0) {
+      alert('La lista de ')
+    }
+  }
 
   useEffect(() => {
     fetchAccionData();
@@ -174,7 +185,7 @@ export default function DetallesTareaEmpleados({ AccionID }) {
             {aReducerEmpleados &&
               aReducerEmpleados.map((i, n) => {
                 return (
-                  <tr id={n++}>
+                <tr id={n++}>
                     <td key={Math.random()} className='p-2 border border-dark text-center'>
                       <Select
                         value={i.Codigo}
@@ -185,28 +196,51 @@ export default function DetallesTareaEmpleados({ AccionID }) {
                     </td>
                     
                     <td key={Math.random()} className='p-2 border border-dark text-center'>
-                        <input type='time' value={i.AccionTiempo} 
+                        <input type='time' value={i.AccionTiempo} defaultValue='00:00'
                             onChange={(e)=> 
                                 dispatchReducerEmpleados({type: 'modAccionTiempo', index: i.index, AccionTiempo: e.target.value})
                             } 
                         />
                     </td>
-                  </tr>
+                    <td className='border border-dark text-center'>
+                        <button className="btn btn-primary small" 
+                        onClick={()=>{dispatchReducerEmpleados({type: 'eraseIndex', index: i.index})}}
+                        >
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
                 );
               })}
           </tbody>
         </table>
       </div>
-      <div key={Math.random()} className='row'>
-        <button
-          className='btn btn-primary'
-          onClick={() => {
-            dispatchReducerEmpleados({ type: "addEmpleado" });
-          }}
-        >
-          ADD
-        </button>
+      <div key={Math.random()} className='row w-25'>
+        <div className="col">
+            <button
+                className='btn btn-primary w-75 ms-2'
+                onClick={() => {
+                    dispatchReducerEmpleados({ type: "addEmpleado" });
+                }}
+            >
+                Agregar Empleado
+            </button>
+        </div>
       </div>
+      <div key={Math.random()} className='row'>
+        <div className="col">
+            <button
+                className='btn btn-primary w-75 ms-2'
+                onClick={() => {
+                    dispatchReducerEmpleados({ type: "addEmpleado" });
+                }}
+            >
+                Agregar Empleado
+            </button>
+        </div>
+      </div>
+      
+      
     </Fragment>
   );
 }
