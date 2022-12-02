@@ -1153,15 +1153,13 @@ app.get('/Mantenimiento/Tareas/DatosAccion/:AccionID', (request, reply) => {
 app.post('/Mantenimiento/Tareas/UpdateEmpleadoAccion', (request, reply) => {
 	async function f() {
 		try {
-			// console.table(request.body);
+			console.table(request.body.Empleado);
 			const { Empleado, AccionID } = request.body;
 			const q_update_emp = `
         use MES;
         DELETE FROM tbAccEmpleados
         WHERE
           AccionID = ${AccionID}
-          AND
-          EmpleadoID = ${Empleado.ID};
         
         INSERT INTO tbAccEmpleados (AccionID, EmpleadoID,AccionTiempo)
           VALUES(${AccionID},${Empleado.ID},'${Empleado.tiempo}');
@@ -1721,10 +1719,10 @@ app.post(
         tbAccEmpleados.AccionID = ${AccionID} 
     `;
 			const sQGetTrabajadores = `
-      use WEB_API_TABLES;
+      use MES;
       Select 
         ID, Codigo, Nombre, Apellidos, '00:00' as AccionTiempo
-      from tbEmpleados 
+      from tbEmpleado
       WHERE 
         FechaBaja is NULL
         AND 

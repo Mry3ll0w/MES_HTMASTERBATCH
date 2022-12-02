@@ -31,9 +31,7 @@ export default function DetallesTareaEmpleados({ AccionID }) {
             ...state,
             {
               index: state.length,
-              Codigo: "Ejemplo",
-              Nombre: "vacio",
-              Apellidos: "vacio",
+              Codigo: "vacio",
               AccionTiempo: "00:00",
             },
           ];
@@ -110,7 +108,7 @@ export default function DetallesTareaEmpleados({ AccionID }) {
             setasOpsEmpleados(_OpsEmpleados);
             
         } catch {
-          console.log("Error obteniendo datos de la accion");
+          alert("Error obteniendo datos de la accion");
         }
       });
   }
@@ -118,7 +116,29 @@ export default function DetallesTareaEmpleados({ AccionID }) {
   //Functions
   function handleSubmit() {
     if(aReducerEmpleados.length === 0) {
-      alert('La lista de ')
+      alert('La lista de empleados esta vacia, tienes que asignar al menos a una persona')
+    }
+    else if(aReducerEmpleados.length === 1 && aReducerEmpleados[0].Codigo === 'vacio'){
+      alert('El empleado asignado esta vacio, selecciona uno de la lista')
+    }
+    else if(aReducerEmpleados.filter(i => i.Codigo === 'vacio') > 0){
+      alert('Rellena todos los empleados correctamente, no dejes ninguno para seleccionar')
+    }
+    else{
+      aReducerEmpleados.forEach(i => {
+        
+        axios.post(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateEmpleadoAccion`,
+          {
+            Empleado: {
+              ID : i.Codigo.value,
+              tiempo: i.AccionTiempo
+            },
+            AccionID: AccionID
+          }
+        )
+        .catch(() => alert('Error al actualizar los empleados, comprueba el estado del servidor'))
+        //.then(()=> alert('Empleados de la accion actualizados'))
+      })
     }
   }
 
@@ -227,15 +247,15 @@ export default function DetallesTareaEmpleados({ AccionID }) {
             </button>
         </div>
       </div>
-      <div key={Math.random()} className='row'>
+      <div key={Math.random()} className='row mt-3'>
         <div className="col">
             <button
-                className='btn btn-primary w-75 ms-2'
+                className='btn btn-primary w-25 ms-2'
                 onClick={() => {
-                    dispatchReducerEmpleados({ type: "addEmpleado" });
+                    handleSubmit();
                 }}
             >
-                Agregar Empleado
+              Actualizar empleados
             </button>
         </div>
       </div>
