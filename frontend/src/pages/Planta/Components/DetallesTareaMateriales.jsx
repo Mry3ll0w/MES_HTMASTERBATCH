@@ -14,7 +14,7 @@ export default function DeteallesTareaMateriales({AccionID}) {
               ...state,
               {
                 index: state.length,
-                Data: {value: action.payload.ID, label: `${action.payload.Descripcion}`},
+                option: {value: action.payload.ID, label: `${action.payload.Descripcion}`},
                 Cantidad: action.payload.Cantidad
               },
             ];
@@ -28,7 +28,7 @@ export default function DeteallesTareaMateriales({AccionID}) {
             ...state,
             {
               index: state.length,
-              Data: "vacio",
+              option: "vacio",
               Cantidad: "1",
             },
           ];
@@ -38,16 +38,16 @@ export default function DeteallesTareaMateriales({AccionID}) {
           return state.filter(i => i.index === -1);
         }
 
-        case 'modSeleccionEmpleado':{
+        case 'modSeleccionMaterial':{
             return state.map((item, i) => i === action.index 
-                ? {...item, Codigo: {value: action.selectedOption.value, label: action.selectedOption.label}}
+                ? {...item, option: {value: action.selectedOption.value, label: action.selectedOption.label}}
                 : item
             )
         }
 
-        case "modAccionTiempo": {
+        case "modCantidad": {
           return state.map((item, i) => i === action.index 
-                ? {...item, AccionTiempo: action.AccionTiempo}
+                ? {...item, Cantidad: action.Cantidad}
                 : item
             )
         }
@@ -72,7 +72,7 @@ export default function DeteallesTareaMateriales({AccionID}) {
       try{
         dispatchMaterialesUsados({type: 'clearAll'})
         var _aOpsMateriales = []
-        r.data.aMateriales.map( i => {
+        r.data.aMateriales.forEach( i => {
           _aOpsMateriales = [..._aOpsMateriales, {value: i.ID, label: i.Descripcion}]
         })
         setaOpsMateriales(_aOpsMateriales);
@@ -103,17 +103,27 @@ export default function DeteallesTareaMateriales({AccionID}) {
               </thead>
               <tbody>
                 {aMaterialesUsados && aMaterialesUsados.map(i=>{
-                  
                   return(
                     <Fragment>
                       <tr>
                         <td key={Math.random()} className='p-2 border border-dark text-center'>
-                          <input type='number'value={i.Cantidad} className='w-50 text-center' />
+                          <input 
+                            type='number'value={i.Cantidad} 
+                            min={0}
+                            className='w-50 text-center' 
+                            onChange={(e) => {
+                              dispatchMaterialesUsados({type: 'modCantidad', index: i.index, Cantidad: e.target.value});
+                            }}
+                          />
                         </td>
                         <td key={Math.random()} className='p-2 border border-dark text-center'>
                           <Select 
                             options={aOpsMateriales}
-                            value={i.Data}
+                            isSearchable={true}
+                            onChange={(e) => {
+                              dispatchMaterialesUsados({type: 'modSeleccionMaterial', index: i.index, selectedOption: e});
+                            }}
+                            value={i.option}
                           />
                         </td>
                         <td key={Math.random()} className='p-2 border border-dark text-center'>
