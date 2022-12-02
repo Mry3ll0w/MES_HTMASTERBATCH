@@ -1813,3 +1813,39 @@ app.get('/Mantenimiento/TareasAsignadas', (request, reply) => {
 	}
 	f();
 });
+
+app.post(
+	'/Planta/TareasAsignadas/DetallesTarea/Accion/Materiales',
+	(request, reply) => {
+		async function f() {
+			const { iAccionID } = request.body;
+			try {
+				const qaMateriales = await mesQuery(`
+					use MES;
+					select 
+						ID, Descripcion, 0 as Cantidad 
+					from tbMaterial;
+				`);
+				const qaMaterialesUsados = await mesQuery(`
+					use MES;
+					select 
+						tbMaterial.ID as ID,
+						tbMaterial.Descripcion as Descripcion,
+						tbAccMaterial.CantidadMaterial as Cantidad
+					from tbMaterial 
+						INNER JOIN tbAccMaterial ON
+							tbAccMaterial.MaterialID = tbMaterial.ID
+							and 
+							tbAccMaterial.AccionID = ${iAccionID}
+				`);
+				reply.send({
+					aMateriales: qaMateriales.query,
+					aMaterialesImplicados: qaMaterialesUsados.query,
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		}
+		f();
+	}
+);

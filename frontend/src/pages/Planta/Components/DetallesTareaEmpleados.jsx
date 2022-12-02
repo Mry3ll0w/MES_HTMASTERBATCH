@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect } from "react";
 import axios from "axios";
-import { useState, useRef, useReducer } from "react";
+import { useState, useReducer } from "react";
 import Select from "react-select";
 
 export default function DetallesTareaEmpleados({ AccionID }) {
@@ -66,8 +66,7 @@ export default function DetallesTareaEmpleados({ AccionID }) {
     }
   );
 
-  //Refs
-  const formRef = useRef();
+  
 
   // useStates
 
@@ -148,34 +147,7 @@ export default function DetallesTareaEmpleados({ AccionID }) {
   /*
     function dispMaterialesAccion(){
         if(Materiales.length > 0){
-            return(
-                <Fragment>
-                    <div className='row d-flex'>
-                <p className='h3 mt-3 mb-3'>
-                    Materiales usados en la accion
-                </p>
-                </div>
-                <div className='row d-flex'>
-                    <div className='table table-responsive-sm'>
-                    <table>
-                        <thead>
-                            <th scope='col' className='text-center p-2'>Cantidad utilizada</th>
-                            <th scope='col' className='text-center p-2' >Descripción</th>
-                        </thead>
-                        <tbody>
-                            {Materiales.map( (i,n) => {
-                                return(
-                                    <tr id={n++}>
-                                        <td className='p-2 border border-dark text-center'>{i.CantidadMaterial}</td>
-                                        <td className='p-2 border border-dark text-center'>{i.Descripcion}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-                </div>
-                </Fragment>
+            
             )
         }else{
             return(
