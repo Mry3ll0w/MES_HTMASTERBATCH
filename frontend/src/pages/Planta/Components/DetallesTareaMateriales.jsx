@@ -63,6 +63,38 @@ export default function DeteallesTareaMateriales({AccionID}) {
     }
   );
 
+  function handleUpdate(){
+    if(aMaterialesUsados.filter( i => i.option === 'vacio') > 0){
+      alert('No puede actualizar un material vacio, seleccione el material y la cantidad del mismo');
+    }
+    else if(aMaterialesUsados.filter( i => i.Cantidad === 0) > 0){
+      alert('No puede actualizar materiales con cantidades iguales a 0, corrija la cantidad');
+    }
+    else if(aMaterialesUsados.length === 0){
+      axios.post(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateMaterialAccion`,{
+        Material: 'VACIO',
+        AccionID: AccionID
+      })
+      .catch(() => alert('Error de actualizacio, comprueba el estado del servidor'))
+      .then(() => alert('Materiales actualizados correctamente'))
+    }
+    else{
+      aMaterialesUsados.forEach(i =>{
+        axios.post(`http://${process.env.REACT_APP_SERVER}/Mantenimiento/Tareas/UpdateMaterialAccion`,{
+          Material: {
+            ID: i.option.value,
+            Cantidad: i.Cantidad
+          },
+          AccionID: AccionID
+        })
+        .catch(() => alert('Error de actualizacion, comprueba el estado del servidor'))
+        .then(() => alert('Materiales actualizados correctamente'))
+      })
+      
+    }
+    
+  }
+
   useEffect(() => {
     axios.post(`http://${process.env.REACT_APP_SERVER}/Planta/TareasAsignadas/DetallesTarea/Accion/Materiales`,{
       iAccionID: AccionID
@@ -141,14 +173,25 @@ export default function DeteallesTareaMateriales({AccionID}) {
               </tbody>
           </table>
       </div>
+      
       <div className='row'>
         <button 
-          className='btn btn-primary small w-25' 
+          className='btn btn-primary small w-25 ms-3' 
           onClick={()=> dispatchMaterialesUsados({type: 'addMaterial'})}
         >
           Agregar Material
         </button>
       </div>
+      
+      <div className='row'>
+        <button 
+          className='btn btn-primary small w-25 mt-3 ms-3'
+          onClick={() => handleUpdate()}
+        >
+          Actualizar Materiales
+        </button>
+      </div>
+
       </div>
       </Fragment>
   )
