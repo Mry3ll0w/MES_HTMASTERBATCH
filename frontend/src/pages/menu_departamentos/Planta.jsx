@@ -33,6 +33,16 @@ export default function HomePlanta() {
     },
   ];
 
+  const menu_maquinaria = [
+    {
+      element: (
+        <Button onClick={() => navigate("/Planta/RepuestosMaquina")} variant='contained'>
+          Repuestos/Consumibles
+        </Button>
+      ),
+    },
+  ];
+
   const menu_tareas = [
     {
       element: (
@@ -68,6 +78,9 @@ export default function HomePlanta() {
         </div>
         <div className='col d-flex'>
           <DropDownMenu elements={menu_tareas} label='Tareas' />
+        </div>
+        <div className='col d-flex'>
+          <DropDownMenu elements={menu_maquinaria} label='Maquinaria' />
         </div>
       </div>
     </Fragment>

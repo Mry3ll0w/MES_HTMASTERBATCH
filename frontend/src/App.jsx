@@ -81,6 +81,10 @@ export function App() {
               element={<RepuestosMaquina />}
             />
             <Route
+              path='/Planta/RepuestosMaquina'
+              element={<RepuestosMaquina />}
+            />
+            <Route
               path='/Mantenimiento/AsignarTareas'
               element={<AsignaTareas />}
             />

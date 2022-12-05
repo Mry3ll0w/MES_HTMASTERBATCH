@@ -106,7 +106,9 @@ export default function CardRepuesto({
             </span>{" "}
             <a href='#!' className='text-muted'>
               <i className='fa fa-heart-o'>
-                <div>
+                <div
+                  hidden={sessionStorage.getItem('Formulario') === 'Planta'}
+                >
                   <DropDownMenu
                     label={"Cambiar imagen del repuesto"}
                     elements={aDropElements}
