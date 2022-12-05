@@ -185,7 +185,7 @@ export default function DeteallesTareaMateriales({AccionID}) {
       
       <div className='row'>
         <button 
-          className='btn btn-primary small w-25 mt-3 ms-3'
+          className='btn btn-primary small w-25 mt-3 ms-3 mb-4'
           onClick={() => handleUpdate()}
         >
           Actualizar Materiales

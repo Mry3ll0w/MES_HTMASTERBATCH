@@ -8,6 +8,9 @@ export default function DetallesTarea({
   Accion,
 }) {
 
+  //useStates
+  const [accion,setaccion] = useState(Accion);
+
   //Funciones
   function addAction(){
         var dNow = DateTime.now();
@@ -30,6 +33,27 @@ export default function DetallesTarea({
     })
     window.location.reload(false)
     ;
+  }
+
+  function updateAccion(Accion) {
+    //Comprobamos que tenga al menos un empleado asignado a la accion
+    if (Accion !== undefined && Accion !== null) {
+      axios
+        .post(
+          `http://${process.env.REACT_APP_SERVER}/Mantenimiento/UpdateAccion`,
+          {
+            Accion: {
+              ID: Accion.ID,
+              Accion: Accion.Descripcion,
+              FechaHora: Accion.FechaCreacion,
+              Notas: Accion.Notas
+            }
+          }
+        )
+        .catch((e) => console.table(e));
+      //fetchSelectedAction();
+    }
+    
   }
 
   //UseStates
@@ -78,6 +102,7 @@ export default function DetallesTarea({
           <textarea
             className="form-control w-50"
             readOnly={true}
+            onFocus={(event) => event.target.select()}
             value={Tarea.Descripcion || "No hay Descripcion asociada"}
             aria-label="With textarea"
           ></textarea>
@@ -126,27 +151,56 @@ export default function DetallesTarea({
             <h3> Acciones vinculadas </h3>
           </div>
         </div>
-        {Accion.map((i, n) => {
+        {accion.map((i, n) => {
           return (
             <div id={n+1} className='printDiv'>
-              <div className="container d-flex" style={{pageBreakBefore : 'always'}}>
-                <div className="row d-flex">
+              <div className="container d-flex border border-dark" style={{pageBreakBefore : 'always'}}>
+                <div className="row d-flex mt-4">
                   <div className="row">
                     <button className="btn btn-primary ms-3 d-print-none mb-3" style={{width: '200px'}} onClick={()=> eraseAction(i.ID)}>
                     Eliminar Accion
+                    </button>
+                    <button className="btn btn-primary ms-3 d-print-none mb-3" style={{width: '200px'}} onClick={()=> updateAccion(i)}>
+                      Actualizar accion
                     </button>
                   </div>
                   <div className="input-group w-75">
                     <span className="input-group-text w-25 justify-content-center h-100">
                       Accion Nº {n+1}{" "}
                     </span>
-                    <p className="form-control w-75 h-100">{i.Descripcion}</p>
+                    <textarea 
+                      className="form-control w-75 h-100"
+                      value={i.Descripcion}
+                      onChange={(e)=>{
+                        setaccion(
+                                  accion.map((j) =>
+                                    j.ID === i.ID
+                                      ? { ...j,Descripcion: e.target.value }
+                                      : j
+                                  )
+                                );
+                      }}
+                    >
+                    </textarea>
                   </div>
                   <div className="input-group w-75 mt-3">
                     <span className="input-group-text w-25 justify-content-center h-100">
                       Observaciones{" "}
                     </span>
-                      <p className="form-control w-75 h-100">{i.Observaciones || 'No hay notas asociadas'}</p>
+                      <textarea 
+                        className="form-control w-75 h-100"
+                        value={i.Notas }
+                        onChange={(e)=>{
+                          setaccion(
+                                  accion.map((j) =>
+                                    j.ID === i.ID
+                                      ? { ...j,Notas: e.target.value }
+                                      : j
+                                  )
+                                );
+                        }}
+                      >
+                      </textarea>
                   </div>
                   <div className="row d-flex mt-3 mb-3">
                     <p className="h3">Empleados Implicados en la Acción</p>

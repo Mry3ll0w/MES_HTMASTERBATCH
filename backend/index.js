@@ -1098,6 +1098,7 @@ app.post('/Mantenimiento/DelAccion', (request, reply) => {
 
 app.post('/Mantenimiento/UpdateAccion', (request, reply) => {
 	async function f() {
+		console.log(request.body);
 		const { Accion } = request.body;
 		console.table(Accion);
 		const q_update_accion = `
