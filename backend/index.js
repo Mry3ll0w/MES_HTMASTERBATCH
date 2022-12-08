@@ -321,21 +321,29 @@ app.get('/Login', (request, res) => {
 
 app.post('/Login', (request, reply) => {
 	async function f() {
-		const { Usuario, Pass } = request.body;
-		console.log(Usuario);
-		const q_usuario = `
-      select Codigo,Pwd_Hashed 
-      from WEB_API_TABLES.dbo.tbEmpleados 
-      WHERE 
-        ID = ${Usuario[0].ID}
-    `;
-		const res_user = await mesQuery(q_usuario);
+		try {
+			const { Usuario, Pass } = request.body;
+			console.log(Usuario);
+			const q_usuario = `
+			select Codigo,Pwd_Hashed 
+			from WEB_API_TABLES.dbo.tbEmpleados 
+			WHERE 
+				ID = ${Usuario[0].ID}
+    		`;
+			try {
+				const res_user = await mesQuery(q_usuario);
 
-		console.table(res_user.query[0]);
+				// console.table(res_user.query[0]);
 
-		const token = bcrypt.compareSync(Pass, res_user.query[0].Pwd_Hashed);
-		console.table(token);
-		reply.send({ token: token });
+				const token = bcrypt.compareSync(Pass, res_user.query[0].Pwd_Hashed);
+				console.table(token);
+				reply.send({ token: token });
+			} catch (e) {
+				console.log(e);
+			}
+		} catch {
+			console.log('Error obteniendo datos del post /Login');
+		}
 	}
 	try {
 		f();
