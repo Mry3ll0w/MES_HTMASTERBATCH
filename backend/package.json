@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "Up": "nodemon index.js"
+    "Dev": "nodemon index.js",
+    "Up": "pm2 start index.js --max-memory-restart 200 --name back-end-server",
+    "Stop": "pm2 stop back-end-server"
   },
   "author": "Antonio Roldán Andrade",
   "license": "ISC",

@@ -1858,3 +1858,10 @@ app.post(
 		f();
 	}
 );
+
+app.get('/break', (request, reply) => {
+	async function f() {
+		throw Error('Nuke Server');
+	}
+	f();
+});
