@@ -308,7 +308,7 @@ app.get('/Login', (request, res) => {
 	async function f() {
 		try {
 			const query =
-				'select ID,Formulario,CargoID,Codigo,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;';
+				'select ID,Formulario,CargoID,Codigo,Alias,Nombre,Apellidos from WEB_API_TABLES.dbo.tbEmpleados WHERE Pwd_Hashed is not NULL and ContratoEstadoID = 1;';
 			const resultado = await mesQuery(query);
 			res.send({ user: resultado.query });
 		} catch {

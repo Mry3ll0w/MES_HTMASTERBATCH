@@ -60,13 +60,10 @@ export default function LoginForm() {
         .then((r) => {
           //console.log(r.data.token);
           if (r.data.token) {
-            var temp_apellidos = Sel_user[0].Apellidos.split(" ");
-            var iniciales = `${Sel_user[0].Nombre[0]}${temp_apellidos[0][0]}${temp_apellidos[1][0]}`;
-
             //Guardamos los datos necesarios del que inicia sesión
             sessionStorage.setItem("Responsabilidad", Sel_user[0].CargoID);
             sessionStorage.setItem("logged", Sel_user[0].Nombre);
-            sessionStorage.setItem("iniciales", iniciales); //Para la visualizacion en el registro de ensacado
+            sessionStorage.setItem("iniciales", Sel_user[0].Alias); //Para la visualizacion en el registro de ensacado
             sessionStorage.setItem("codigo", Sel_user[0].Codigo); //Para la visualizacion en el registro de ensacado
             sessionStorage.setItem("Formulario", Sel_user[0].Formulario);
             nav_home();
