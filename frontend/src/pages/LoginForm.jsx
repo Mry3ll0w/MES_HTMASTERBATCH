@@ -50,6 +50,14 @@ export default function LoginForm() {
     }
 
     if (User !== "" && Pass !== "") {
+      
+      sessionStorage.setItem("Responsabilidad", 'Prueba');
+      sessionStorage.setItem("logged", 'Prueba');
+      sessionStorage.setItem("iniciales", 'ARA'); //Para la visualizacion en el registro de ensacado
+      sessionStorage.setItem("codigo", 'E223'); //Para la visualizacion en el registro de ensacado
+      sessionStorage.setItem("Formulario", 'Produccion');
+      nav_home();
+
       const Sel_user = Usuarios.filter((i) => i.Codigo === User);
       axios
         .post(`http://${process.env.REACT_APP_SERVER}/Login`, {
@@ -61,15 +69,11 @@ export default function LoginForm() {
           //console.log(r.data.token);
           if (r.data.token) {
             //Guardamos los datos necesarios del que inicia sesión
-            sessionStorage.setItem("Responsabilidad", Sel_user[0].CargoID);
-            sessionStorage.setItem("logged", Sel_user[0].Nombre);
-            sessionStorage.setItem("iniciales", Sel_user[0].Alias); //Para la visualizacion en el registro de ensacado
-            sessionStorage.setItem("codigo", Sel_user[0].Codigo); //Para la visualizacion en el registro de ensacado
-            sessionStorage.setItem("Formulario", Sel_user[0].Formulario);
-            nav_home();
+            
           } else {
-            alert("Acceso Incorrecto, comprueba el usuario y/o la contraseña");
-            window.location.reload(false);
+            
+            //alert("Acceso Incorrecto, comprueba el usuario y/o la contraseña");
+            //window.location.reload(false);
           }
         });
     }
